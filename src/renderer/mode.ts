@@ -1,10 +1,10 @@
 import { addButton, backSpan, titleH1 } from "./elements.js";
 
-type modeType = 'work-list';
+type ModeType = 'work-list';
 
-export let currentMode: modeType = 'work-list';
+export let currentMode: ModeType = 'work-list';
 
-export function setMode(mode: modeType) {
+export function setMode(mode: ModeType) {
   currentMode = mode;
 
   backSpan.style.display = 'block';
