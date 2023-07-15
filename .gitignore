@@ -1,0 +1,7 @@
+node_modules/
+dist/
+build/
+tsconfig.tsbuildinfo
+*.css
+*.css.map
+.vscode/settings.json

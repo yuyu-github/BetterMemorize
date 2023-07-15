@@ -1,0 +1,71 @@
+* {
+  font-family: 'Yu Gothic UI';
+}
+
+body {
+  margin: 0px;
+}
+
+:not(p) {
+  user-select: none;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: #cacaca solid 1px;
+  box-shadow: 0 0 4px #c0c0c0;
+
+  #back {
+    display: block;
+    position: relative;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+
+    &::before, &::after {
+      content: '';
+      display: block;
+      position: absolute;
+      width: 60%;
+      height: 1px;
+      background: black;
+      transform: rotate(30deg);
+      transform-origin: top left;
+      top: 50%;
+      left: 25%;
+    }
+
+    &::after {
+      transform: rotate(-30deg);
+      transform-origin: bottom left;
+    }
+  }
+
+  #title {
+    font-weight: normal;
+    font-size: 20px;
+    margin: 0 5px;
+  }
+}
+
+main {
+  padding: 10px 15px;
+}
+
+#menu {
+  button {
+    background-color: white;
+    border: #cacaca solid 1px;
+    border-radius: 5px;
+    box-shadow: 1px 1px 2px #c0c0c0;
+    padding: 6px 12px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #fafafa;
+      box-shadow: 1px 1px 2px #d0d0d0;
+    }
+  }
+}
