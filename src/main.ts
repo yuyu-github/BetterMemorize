@@ -1,7 +1,9 @@
 import { app, ipcMain, BrowserWindow, Menu } from 'electron';
 import path from 'path';
+import fs from 'fs';
 import { env } from 'process';
 import ipc from './ipc/ipc.js';
+import { dataFolder } from './utils.js';
 
 export let mainWindow: BrowserWindow | null;
 function createMainWindow() {
@@ -34,6 +36,8 @@ function createMainWindow() {
     mainWindow = null;
   });
 }
+
+if (!fs.existsSync(dataFolder)) fs.mkdirSync(dataFolder);
 
 ipc();
 createMainWindow();

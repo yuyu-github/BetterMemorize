@@ -1,4 +1,5 @@
 import { addButton, backSpan, titleH1 } from "./elements.js";
+import { updateWorks } from "./work_list/work_list.js";
 
 type ModeType = 'work-list';
 
@@ -13,6 +14,8 @@ export function setMode(mode: ModeType) {
     case 'work-list': {
       titleH1.innerText = 'すべてのワーク';
       backSpan.style.display = 'none';
+
+      updateWorks();
     }
     break;
   }

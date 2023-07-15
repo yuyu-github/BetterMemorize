@@ -1,8 +1,8 @@
 {
-  "name": "crall-new-maps",
-  "productName": "Crall NewMaps",
-  "version": "1.6.0",
-  "description": "It is an application that you can freely create a map.",
+  "name": "better-memorize",
+  "productName": "BetterMemorize",
+  "version": "1.0.0",
+  "description": "",
   "author": "yuyu",
   "main": "build/main.cjs",
   "license": "MIT",
@@ -18,14 +18,8 @@
     },
     "files": [
       "build",
-      "renderer",
-      "assets",
-      "icon"
+      "renderer"
     ],
-    "win": {
-      "icon": "icon/win.ico",
-      "target": "nsis"
-    },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true
