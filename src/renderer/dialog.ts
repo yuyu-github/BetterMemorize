@@ -25,6 +25,7 @@ export function showDialog<T extends InputListType>(title: string, message: stri
     dialogDiv.appendChild(messageElem);
   }
 
+  let inputElems: HTMLElement[] = [];
   for (let [id, {name, type}] of Object.entries(inputList ?? {})) {
     let nameElem = document.createElement('p');
     nameElem.innerText = name;
@@ -42,12 +43,14 @@ export function showDialog<T extends InputListType>(title: string, message: stri
     if (inputElem != null) {
       inputElem.dataset.id = id;
       dialogDiv.appendChild(inputElem);
+      inputElems.push(inputElem);
     }
   }
 
-  let buttonsElem = document.createElement('div');
-  buttonsElem.classList.add('buttons');
+  let buttonsOuterElem = document.createElement('div');
+  buttonsOuterElem.classList.add('buttons');
   let buttons: [string, number][] = [];
+  let buttonElems: HTMLButtonElement[] = [];
   switch (buttonList) {
     case 'ok-cancel': 
       buttons = [['OK', ButtonResult.Ok], ['キャンセル', ButtonResult.Cancel]]
@@ -57,11 +60,13 @@ export function showDialog<T extends InputListType>(title: string, message: stri
     let elem = document.createElement('button');
     elem.innerText = button[0],
     elem.dataset.value = button[1].toString();
-    buttonsElem.appendChild(elem);
+    buttonsOuterElem.appendChild(elem);
+    buttonElems.push(elem);
   }
-  dialogDiv.appendChild(buttonsElem);
+  dialogDiv.appendChild(buttonsOuterElem);
 
   dialogDisplayDiv.style.display = 'block';
+  if (inputElems.length > 0) inputElems[0].focus();
 
   return new Promise(resolve => {
     function returnResult(button: HTMLButtonElement) {
@@ -80,10 +85,39 @@ export function showDialog<T extends InputListType>(title: string, message: stri
 
       dialogDiv.innerHTML = '';
       dialogDisplayDiv.style.display = 'none';
+      dialogDiv.removeEventListener('keydown', onKeydown);
     }
 
-    for (let button of buttonsElem.children) {
+    for (let button of buttonsOuterElem.children) {
       button.addEventListener('click', e => returnResult(e.currentTarget as HTMLButtonElement));
     }
+
+    function onKeydown(e: KeyboardEvent) {
+      if (e.key == 'Enter') {
+        let index = inputElems.indexOf(document.activeElement as HTMLElement)
+        if (index == -1 || index == inputElems.length - 1) {
+          let defaultButton = buttons.reduce((p, c, i) => p.max < c[1] ? {index: i, max: c[1]} : p, {index: 0, max: -1}).index;
+          returnResult(buttonElems[defaultButton]);
+        } else {
+          inputElems[index + 1].focus();
+        }
+      } else if (e.key == 'Tab') {
+        e.preventDefault();
+
+        let index = inputElems.indexOf(document.activeElement as HTMLElement)
+        if (index == -1) index = inputElems.length + buttonElems.indexOf(document.activeElement as HTMLButtonElement);
+        if (index == -1) index = 0;
+
+        let focusable = [...inputElems, ...buttonElems];
+        if (focusable.length > 0) {
+          if (index == focusable.length - 1) index = -1;
+          focusable[index + 1].focus();
+        }
+      } else if (e.key == 'Escape') {
+        let defaultButton = buttons.reduce((p, c, i) => p.min >= c[1] || p.min == -1 ? {index: i, min: c[1]} : p, {index: 0, min: -1}).index;
+        returnResult(buttonElems[defaultButton]);
+      }
+    }
+    dialogDiv.addEventListener('keydown', onKeydown);
   })
 }
