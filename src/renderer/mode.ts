@@ -5,8 +5,17 @@ import { currentWork, updateWorks, works } from "./work/work.js";
 type ModeType = 
 | 'all-work'
 | 'work'
+const modeToBack: {[key in ModeType]?: ModeType} = {
+  'work': 'all-work',
+}
 
 export let currentMode: ModeType = 'all-work';
+
+export function init() {
+  backSpan.addEventListener('click', () => {
+    setMode(modeToBack[currentMode] ?? 'all-work');
+  })
+}
 
 export function setMode(mode: ModeType) {
   currentMode = mode;

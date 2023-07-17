@@ -1,6 +1,7 @@
-import { setMode } from "./mode.js";
-import { init as initWorkList } from './work/work.js';
+import { init as initMode, setMode } from "./mode.js";
+import { init as initWork } from './work/work.js';
 
-initWorkList();
+initMode();
+initWork();
 
 setMode('all-work');
