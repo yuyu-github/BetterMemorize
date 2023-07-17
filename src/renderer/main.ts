@@ -3,4 +3,4 @@ import { init as initWorkList } from './work/work.js';
 
 initWorkList();
 
-setMode('work-list');
+setMode('all-work');

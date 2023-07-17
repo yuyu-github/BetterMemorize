@@ -11,11 +11,11 @@ export function init() {
     let id = (e.target as HTMLElement).dataset.id;
     if (id == null) return;
     currentWork = id;
-    setMode('group-list');
+    setMode('work');
   })
 
   listViewAddButton.addEventListener('click', async () => {
-    if (currentMode == 'work-list') {
+    if (currentMode == 'all-work') {
       let result = await showDialog('ワークを追加', null, 'ok-cancel', {name: {name: '名前', type: 'text'}});
       if (result.button == ButtonResult.Ok && result.input.name != '') {
         addWork(result.input.name);

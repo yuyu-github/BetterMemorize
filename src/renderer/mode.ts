@@ -3,10 +3,10 @@ import { updateGroups } from "./group/group.js";
 import { currentWork, updateWorks, works } from "./work/work.js";
 
 type ModeType = 
-| 'work-list'
-| 'group-list'
+| 'all-work'
+| 'work'
 
-export let currentMode: ModeType = 'work-list';
+export let currentMode: ModeType = 'all-work';
 
 export function setMode(mode: ModeType) {
   currentMode = mode;
@@ -14,14 +14,14 @@ export function setMode(mode: ModeType) {
   [backSpan, listViewAddButton].forEach(i => i.style.display = 'block');
 
   switch (mode) {
-    case 'work-list': {
+    case 'all-work': {
       titleH1.innerText = 'すべてのワーク';
       backSpan.style.display = 'none';
 
       updateWorks();
     }
     break;
-    case 'group-list': {
+    case 'work': {
       titleH1.innerText = works[currentWork].name;
 
       updateGroups();
