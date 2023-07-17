@@ -75,14 +75,30 @@ header {
 }
 
 main {
-  padding: 10px 15px;
+  #menu {
+    display: flex;
+    gap: 6px;
+    padding: 8px 10px;
+    border-bottom: #c0c0c0 1px solid;
+
+    button {
+      @include button();
+      font-size: 15px;
+      padding: 10px 20px;
+    }
+  }
 
   #list-view {
+    padding: 8px 10px;
+
     .menu {
+      display: flex;
+      gap: 6px;
+
       button {
         @include button();
         font-size: 15px;
-        padding: 10px 20px;
+        padding: 8px 16px;
       }
     }
   
