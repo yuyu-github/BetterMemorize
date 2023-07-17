@@ -1,6 +1,6 @@
 export interface IApi {
   addWork: (name: string) => Promise<void>;
-  getWorks: () => Promise<{name: string, id: string}[]>;
+  getWorks: () => Promise<{[id: string]: {name: string}}>;
 }
 
 declare global {

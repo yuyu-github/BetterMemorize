@@ -15,13 +15,14 @@ export default () => {
 
   ipcMain.handle('getWorks', (e) => {
     let dirs = fs.readdirSync(path.join(dataFolder, 'works'))
-    let works: {name: string, id: string}[] = [];
+    let works: {[id: string]: {name: string}} = {};
     dirs.map(dir => path.join(dataFolder, 'works', dir)).filter(dir => fs.statSync(dir).isDirectory()).forEach(dir => {
       let infoFile = path.join(dir, 'info.json');
-      if (fs.existsSync(infoFile)) works.push({
-        name: JSON.parse(fs.readFileSync(infoFile).toString()).name ?? '',
-        id: path.basename(dir)
-      })
+      if (fs.existsSync(infoFile)) {
+        works[path.basename(dir)] = {
+          name: JSON.parse(fs.readFileSync(infoFile).toString()).name ?? ''
+        };
+      }
     })
     return works;
   })

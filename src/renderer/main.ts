@@ -1,5 +1,5 @@
 import { setMode } from "./mode.js";
-import { init as initWorkList } from './work_list/work_list.js';
+import { init as initWorkList } from './work/work.js';
 
 initWorkList();
 
