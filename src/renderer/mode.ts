@@ -1,4 +1,4 @@
-import { listViewAddButton, backSpan, titleH1 } from "./elements.js";
+import { listViewAddButton, backSpan, titleH1, menuDiv, listViewDiv } from "./elements.js";
 import { updateGroups } from "./group/group.js";
 import { currentWork, updateWorks, works } from "./work/work.js";
 
@@ -20,21 +20,24 @@ export function init() {
 export function setMode(mode: ModeType) {
   currentMode = mode;
 
-  [backSpan, listViewAddButton].forEach(i => i.style.display = 'block');
+  backSpan.style.display = modeToBack[currentMode] == null ? 'none' : 'block';
+  [menuDiv, listViewDiv, listViewAddButton].forEach(i => i.style.display = 'none');
 
+  let viewElems: HTMLElement[] = [];
   switch (mode) {
     case 'all-work': {
       titleH1.innerText = 'すべてのワーク';
-      backSpan.style.display = 'none';
-
+      viewElems = [listViewDiv, listViewAddButton];
       updateWorks();
     }
     break;
     case 'work': {
       titleH1.innerText = works[currentWork].name;
+      viewElems = [menuDiv, listViewDiv, listViewAddButton];
 
       updateGroups();
     }
     break;
   }
+  viewElems.forEach(i => i.style.display = 'block');
 }
