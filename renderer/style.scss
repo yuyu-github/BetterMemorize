@@ -39,15 +39,16 @@ header {
   #back {
     display: block;
     position: relative;
-    width: 20px;
-    height: 20px;
+    width: 25px;
+    height: 25px;
+    border-radius: 20px;
     cursor: pointer;
 
     &::before, &::after {
       content: '';
       display: block;
       position: absolute;
-      width: 60%;
+      width: 50%;
       height: 1px;
       background: black;
       transform: rotate(30deg);
@@ -59,6 +60,10 @@ header {
     &::after {
       transform: rotate(-30deg);
       transform-origin: bottom left;
+    }
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.1);
     }
   }
 
