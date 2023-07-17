@@ -1,4 +1,4 @@
-import { dialogDisplayDiv, dialogDiv } from "./elements.js";
+import { dialogDiv, dialogViewDiv } from "./elements.js";
 
 type InputType = 'text' | 'subject';
 type ButtonType = 'ok-cancel'
@@ -17,19 +17,19 @@ export enum ButtonResult {
 export function showDialog<T extends InputListType>(title: string, message: string | null, buttonList: ButtonType, inputList?: T): Promise<{button: ButtonResult, input: {[key in keyof T]: string}}> {
   let titleElem = document.createElement('h1');
   titleElem.innerText = title;
-  dialogDiv.appendChild(titleElem);
+  dialogViewDiv.appendChild(titleElem);
   if (message != null) {
     let messageElem = document.createElement('p');
     messageElem.innerText = message;
     messageElem.classList.add('message')
-    dialogDiv.appendChild(messageElem);
+    dialogViewDiv.appendChild(messageElem);
   }
 
   let inputElems: HTMLElement[] = [];
   for (let [id, {name, type}] of Object.entries(inputList ?? {})) {
     let nameElem = document.createElement('p');
     nameElem.innerText = name;
-    dialogDiv.appendChild(nameElem);
+    dialogViewDiv.appendChild(nameElem);
 
     let inputElem: HTMLElement | null = null;
     switch (type) {
@@ -42,13 +42,13 @@ export function showDialog<T extends InputListType>(title: string, message: stri
     }
     if (inputElem != null) {
       inputElem.dataset.id = id;
-      dialogDiv.appendChild(inputElem);
+      dialogViewDiv.appendChild(inputElem);
       inputElems.push(inputElem);
     }
   }
 
   let buttonsOuterElem = document.createElement('div');
-  buttonsOuterElem.classList.add('buttons');
+  buttonsOuterElem.classList.add('button-outer');
   let buttons: [string, number][] = [];
   let buttonElems: HTMLButtonElement[] = [];
   switch (buttonList) {
@@ -63,16 +63,16 @@ export function showDialog<T extends InputListType>(title: string, message: stri
     buttonsOuterElem.appendChild(elem);
     buttonElems.push(elem);
   }
-  dialogDiv.appendChild(buttonsOuterElem);
+  dialogViewDiv.appendChild(buttonsOuterElem);
 
-  dialogDisplayDiv.style.display = 'block';
+  dialogDiv.style.display = 'block';
   if (inputElems.length > 0) inputElems[0].focus();
 
   return new Promise(resolve => {
     function returnResult(button: HTMLButtonElement) {
       let buttonResult = parseInt(button.dataset.value ?? '0');
       let inputResult = {};
-      dialogDiv.querySelectorAll('input').forEach(e => {
+      dialogViewDiv.querySelectorAll('input').forEach(e => {
         if (e.dataset.id != null) {
           switch (e.tagName) {
             case 'INPUT':
@@ -83,9 +83,9 @@ export function showDialog<T extends InputListType>(title: string, message: stri
       })
       resolve({button: buttonResult, input: inputResult as {[key in keyof T]: string}});
 
-      dialogDiv.innerHTML = '';
-      dialogDisplayDiv.style.display = 'none';
-      dialogDiv.removeEventListener('keydown', onKeydown);
+      dialogViewDiv.innerHTML = '';
+      dialogDiv.style.display = 'none';
+      dialogViewDiv.removeEventListener('keydown', onKeydown);
     }
 
     for (let button of buttonsOuterElem.children) {
@@ -118,6 +118,6 @@ export function showDialog<T extends InputListType>(title: string, message: stri
         returnResult(buttonElems[defaultButton]);
       }
     }
-    dialogDiv.addEventListener('keydown', onKeydown);
+    dialogViewDiv.addEventListener('keydown', onKeydown);
   })
 }
