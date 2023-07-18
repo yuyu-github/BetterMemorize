@@ -157,6 +157,7 @@ main {
     border-radius: 10px;
     box-shadow: 1px 1px 2px #c0c0c0;
     padding: 20px;
+    min-width: 200px;
 
     h1 {
       font-weight: 500;
@@ -181,7 +182,6 @@ main {
       width: 300px;
       font-size: 18px;
       padding: 4px 6px;
-      margin-bottom: 4px;
       border: #cacaca solid 1px;
       border-radius: 5px;
       outline: none;
@@ -193,7 +193,7 @@ main {
 
     .button-outer {
       display: flex;
-      margin-top: 10px;
+      margin-top: 14px;
       justify-content: flex-end;
       gap: 8px;
 

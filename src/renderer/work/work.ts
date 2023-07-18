@@ -18,7 +18,7 @@ export function init() {
 
   menuDeleteButton.addEventListener('click', async () => {
     if (currentMode == 'work') {
-      let result = await showDialog('ワークを削除', '本当に削除しますか?', 'yes-no');
+      let result = await showDialog('ワークを削除', '本当に削除しますか？', 'yes-no');
       if (result.button == ButtonResult.Yes) {
         deleteWork(currentWork);
       }
