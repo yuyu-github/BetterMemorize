@@ -1,7 +1,7 @@
 import { contextBridge, ipcRenderer } from "electron";
 
 contextBridge.exposeInMainWorld('api', {
-  addWork: name => ipcRenderer.invoke('addWork', name),
+  addWork: data => ipcRenderer.invoke('addWork', data),
   editWork: (id, data) => ipcRenderer.invoke('editWork', id, data),
   getWorks: () => ipcRenderer.invoke('getWorks'),
 })

@@ -36,7 +36,7 @@ export function init() {
 }
 
 async function addWork(name: string) {
-  await api.addWork(name);
+  await api.addWork({name});
   updateWorks();
 }
 

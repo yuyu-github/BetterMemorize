@@ -5,12 +5,12 @@ import crypto from 'crypto';
 import { dataFolder } from '../utils.js';
 
 export default () => {
-  ipcMain.handle('addWork', (e, name: string) => {
+  ipcMain.handle('addWork', (e, data: object) => {
     let worksdir = path.join(dataFolder, 'works');
     if (!fs.existsSync(worksdir)) fs.mkdirSync(worksdir);
     let dir = path.join(worksdir, crypto.randomUUID());
     fs.mkdirSync(dir);
-    fs.writeFileSync(path.join(dir, 'info.json'), JSON.stringify({name}));
+    fs.writeFileSync(path.join(dir, 'info.json'), JSON.stringify(data));
   })
 
   ipcMain.handle('editWork', (e, id: string, data: object) => {
