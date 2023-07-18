@@ -10,7 +10,7 @@
   cursor: pointer;
 
   &:hover, &:focus {
-    background-color: #f6f6f6;
+    filter: brightness(0.96);
     box-shadow: 1px 1px 1px #e0e0e0;
   }
 }
