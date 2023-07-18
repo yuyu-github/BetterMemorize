@@ -5,7 +5,8 @@ type ButtonType = 'ok-cancel'
 type InputListType = {
   [id: string]: {
     name: string,
-    type: InputType
+    type: InputType,
+    init?: any
   }
 }
 
@@ -14,7 +15,7 @@ export enum ButtonResult {
   Ok = 1,
 }
 
-export function showDialog<T extends InputListType>(title: string, message: string | null, buttonList: ButtonType, inputList?: T): Promise<{button: ButtonResult, input: {[key in keyof T]: string}}> {
+export function showDialog<T extends InputListType>(title: string, message: string | null, buttonList: ButtonType, inputList?: T): Promise<{button: ButtonResult, input: {[key in keyof T]: any}}> {
   let titleElem = document.createElement('h1');
   titleElem.innerText = title;
   dialogViewDiv.appendChild(titleElem);
@@ -26,7 +27,7 @@ export function showDialog<T extends InputListType>(title: string, message: stri
   }
 
   let inputElems: HTMLElement[] = [];
-  for (let [id, {name, type}] of Object.entries(inputList ?? {})) {
+  for (let [id, {name, type, init}] of Object.entries(inputList ?? {})) {
     let nameElem = document.createElement('p');
     nameElem.innerText = name;
     dialogViewDiv.appendChild(nameElem);
@@ -41,6 +42,12 @@ export function showDialog<T extends InputListType>(title: string, message: stri
       break;
     }
     if (inputElem != null) {
+      if (init != null) {
+        switch (type) {
+          default: (inputElem as HTMLInputElement).value = init; 
+        }
+      }
+
       inputElem.dataset.id = id;
       dialogViewDiv.appendChild(inputElem);
       inputElems.push(inputElem);

@@ -41,3 +41,7 @@ export function setMode(mode: ModeType) {
   }
   viewElems.forEach(i => i.style.display = 'block');
 }
+
+export function reload() {
+  setMode(currentMode);
+}

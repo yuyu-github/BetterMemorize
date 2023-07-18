@@ -13,6 +13,10 @@ export default () => {
     fs.writeFileSync(path.join(dir, 'info.json'), JSON.stringify({name}));
   })
 
+  ipcMain.handle('editWork', (e, id: string, data: object) => {
+    fs.writeFileSync(path.join(dataFolder, 'works', id, 'info.json'), JSON.stringify(data));
+  })
+
   ipcMain.handle('getWorks', (e) => {
     let dirs = fs.readdirSync(path.join(dataFolder, 'works'))
     let works: {[id: string]: {name: string}} = {};
