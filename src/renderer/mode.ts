@@ -1,12 +1,14 @@
 import { listViewAddButton, backSpan, titleH1, menuDiv, listViewDiv } from "./elements.js";
-import { updateGroups } from "./group/group.js";
+import { currentGroup, groups, updateGroups } from "./group/group.js";
 import { currentWork, updateWorks, works } from "./work/work.js";
 
 type ModeType = 
 | 'all-work'
 | 'work'
+| 'group'
 const modeToBack: {[key in ModeType]?: ModeType} = {
   'work': 'all-work',
+  'group': 'work',
 }
 
 export let currentMode: ModeType = 'all-work';
@@ -32,8 +34,12 @@ export function setMode(mode: ModeType) {
     case 'work': {
       titleH1.innerText = works[currentWork].name;
       viewElems = [menuDiv, listViewDiv, listViewAddButton];
-
       updateGroups();
+    }
+    break;
+    case 'group': {
+      titleH1.innerText = groups[currentGroup].name;
+      viewElems = [menuDiv, listViewDiv, listViewAddButton];
     }
     break;
   }

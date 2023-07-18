@@ -22,16 +22,38 @@ export default () => {
   })
 
   ipcMain.handle('getWorks', (e) => {
-    let dirs = fs.readdirSync(path.join(dataFolder, 'works'))
-    let works: {[id: string]: {name: string}} = {};
-    dirs.map(dir => path.join(dataFolder, 'works', dir)).filter(dir => fs.statSync(dir).isDirectory()).forEach(dir => {
+    let dirname = path.join(dataFolder, 'works');
+    if (!fs.existsSync(dirname)) return;
+    let dirs = fs.readdirSync(dirname)
+    let works: {[id: string]: object} = {};
+    dirs.map(dir => path.join(dirname, dir)).filter(dir => fs.statSync(dir).isDirectory()).forEach(dir => {
       let infoFile = path.join(dir, 'info.json');
       if (fs.existsSync(infoFile)) {
-        works[path.basename(dir)] = {
-          name: JSON.parse(fs.readFileSync(infoFile).toString()).name ?? ''
-        };
+        works[path.basename(dir)] = JSON.parse(fs.readFileSync(infoFile).toString());
       }
     })
     return works;
+  })
+
+  ipcMain.handle('addGroup', (e, workId: string, data: object) => {
+    let groupsdir = path.join(dataFolder, 'works', workId, 'groups');
+    if (!fs.existsSync(groupsdir)) fs.mkdirSync(groupsdir);
+    let dir = path.join(groupsdir, crypto.randomUUID());
+    fs.mkdirSync(dir);
+    fs.writeFileSync(path.join(dir, 'info.json'), JSON.stringify(data));
+  })
+
+  ipcMain.handle('getGroups', (e, workId: string) => {
+    let dirname = path.join(dataFolder, 'works', workId, 'groups');
+    if (!fs.existsSync(dirname)) return;
+    let dirs = fs.readdirSync(dirname)
+    let groups: {[id: string]: object} = {};
+    dirs.map(dir => path.join(dirname, dir)).filter(dir => fs.statSync(dir).isDirectory()).forEach(dir => {
+      let infoFile = path.join(dir, 'info.json');
+      if (fs.existsSync(infoFile)) {
+        groups[path.basename(dir)] = JSON.parse(fs.readFileSync(infoFile).toString());
+      }
+    })
+    return groups;
   })
 }

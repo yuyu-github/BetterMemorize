@@ -1,4 +1,5 @@
 import { dialogDiv, dialogViewDiv } from "./elements.js";
+import { Subject, createElement, subjectName } from "./utils.js";
 
 type InputType = 'text' | 'subject';
 type ButtonType = 'ok-cancel' | 'yes-no' | 'yes-no-danger';
@@ -48,6 +49,10 @@ export function showDialog<T extends InputListType>(title: string, message: stri
         inputElem = elem;
       }
       break;
+      case 'subject': {
+        inputElem = createElement('select', {}, Object.values(Subject).filter(i => typeof i == 'number').map(i => createElement('option', {value: i}, [subjectName[i]])));
+      }
+      break;
     }
     if (inputElem != null) {
       if (init != null) {
@@ -56,6 +61,7 @@ export function showDialog<T extends InputListType>(title: string, message: stri
         }
       }
 
+      inputElem.classList.add('input');
       inputElem.dataset.id = id;
       dialogViewDiv.appendChild(inputElem);
       inputElems.push(inputElem);
@@ -91,10 +97,11 @@ export function showDialog<T extends InputListType>(title: string, message: stri
     function returnResult(button: HTMLButtonElement) {
       let buttonResult = parseInt(button.dataset.value ?? '0');
       let inputResult = {};
-      dialogViewDiv.querySelectorAll('input').forEach(e => {
+      dialogViewDiv.querySelectorAll<HTMLInputElement | HTMLSelectElement>('.input').forEach(e => {
         if (e.dataset.id != null) {
           switch (e.tagName) {
             case 'INPUT':
+            case 'SELECT':
               inputResult[e.dataset.id] = e.value;
               break;
           }

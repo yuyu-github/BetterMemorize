@@ -163,7 +163,7 @@ main {
       font-weight: 500;
       font-size: 22px;
       margin: 0;
-      margin-bottom: 6px;
+      margin-bottom: 2px;
     }
 
     p.message {
@@ -175,10 +175,10 @@ main {
 
     p {
       font-size: 14px;
-      margin: 0 2px;
+      margin: 4px 2px 0;
     }
 
-    input {
+    input, select {
       width: 300px;
       font-size: 18px;
       padding: 4px 6px;
@@ -189,6 +189,10 @@ main {
       &:focus {
         border: #b0b0b0 solid 1px;
       }
+    }
+
+    select {
+      width: 312px;
     }
 
     .button-outer {

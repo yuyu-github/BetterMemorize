@@ -40,6 +40,7 @@ export function init() {
       if (id == null) return;
       currentWork = id;
       setMode('work');
+      e.stopImmediatePropagation();
     }
   })
 }
