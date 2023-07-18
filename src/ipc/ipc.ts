@@ -17,6 +17,10 @@ export default () => {
     fs.writeFileSync(path.join(dataFolder, 'works', id, 'info.json'), JSON.stringify(data));
   })
 
+  ipcMain.handle('deleteWork', (e, id: string) => {
+    fs.rmdirSync(path.join(dataFolder, 'works', id), {recursive: true});
+  })
+
   ipcMain.handle('getWorks', (e) => {
     let dirs = fs.readdirSync(path.join(dataFolder, 'works'))
     let works: {[id: string]: {name: string}} = {};

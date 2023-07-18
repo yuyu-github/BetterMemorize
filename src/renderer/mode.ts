@@ -12,9 +12,7 @@ const modeToBack: {[key in ModeType]?: ModeType} = {
 export let currentMode: ModeType = 'all-work';
 
 export function init() {
-  backSpan.addEventListener('click', () => {
-    setMode(modeToBack[currentMode] ?? 'all-work');
-  })
+  backSpan.addEventListener('click', back);
 }
 
 export function setMode(mode: ModeType) {
@@ -44,4 +42,8 @@ export function setMode(mode: ModeType) {
 
 export function reload() {
   setMode(currentMode);
+}
+
+export function back() {
+  setMode(modeToBack[currentMode] ?? 'all-work');
 }

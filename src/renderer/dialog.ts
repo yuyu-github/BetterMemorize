@@ -1,7 +1,7 @@
 import { dialogDiv, dialogViewDiv } from "./elements.js";
 
 type InputType = 'text' | 'subject';
-type ButtonType = 'ok-cancel'
+type ButtonType = 'ok-cancel' | 'yes-no';
 type InputListType = {
   [id: string]: {
     name: string,
@@ -12,7 +12,9 @@ type InputListType = {
 
 export enum ButtonResult {
   Cancel = 0,
-  Ok = 1,
+  No = 1,
+  Ok = 10,
+  Yes = 11,
 }
 
 export function showDialog<T extends InputListType>(title: string, message: string | null, buttonList: ButtonType, inputList?: T): Promise<{button: ButtonResult, input: {[key in keyof T]: any}}> {
@@ -59,9 +61,8 @@ export function showDialog<T extends InputListType>(title: string, message: stri
   let buttons: [string, number][] = [];
   let buttonElems: HTMLButtonElement[] = [];
   switch (buttonList) {
-    case 'ok-cancel': 
-      buttons = [['OK', ButtonResult.Ok], ['キャンセル', ButtonResult.Cancel]]
-      break;
+    case 'ok-cancel': buttons = [['OK', ButtonResult.Ok], ['キャンセル', ButtonResult.Cancel]]; break;
+    case 'yes-no': buttons = [['はい', ButtonResult.Yes], ['いいえ', ButtonResult.No]]; break;
   }
   for (let button of buttons) {
     let elem = document.createElement('button');

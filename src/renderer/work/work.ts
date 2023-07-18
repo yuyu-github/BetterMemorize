@@ -1,7 +1,7 @@
 import { createElement } from "../utils.js";
 import { ButtonResult, showDialog } from "../dialog.js";
-import { listViewAddButton, listViewListDiv, menuEditButton } from "../elements.js";
-import { currentMode, reload, setMode } from "../mode.js";
+import { listViewAddButton, listViewListDiv, menuDeleteButton, menuEditButton } from "../elements.js";
+import { back, currentMode, reload, setMode } from "../mode.js";
 
 export let works: {[id: string]: {name: string}} = {};
 export let currentWork = '';
@@ -12,6 +12,15 @@ export function init() {
       let result = await showDialog('ワークを編集', null, 'ok-cancel', {name: {name: '名前', type: 'text', init: works[currentWork].name}});
       if (result.button == ButtonResult.Ok && result.input.name != '') {
         editWork(currentWork, result.input.name);
+      }
+    }
+  })
+
+  menuDeleteButton.addEventListener('click', async () => {
+    if (currentMode == 'work') {
+      let result = await showDialog('ワークを削除', '本当に削除しますか?', 'yes-no');
+      if (result.button == ButtonResult.Yes) {
+        deleteWork(currentWork);
       }
     }
   })
@@ -44,6 +53,12 @@ async function editWork(id: string, name: string) {
   works[id] = {name};
   await api.editWork(id, works[id]);
   reload();
+}
+
+async function deleteWork(id: string) {
+  delete works[id];
+  await api.deleteWork(id);
+  back();
 }
 
 export async function updateWorks() {
