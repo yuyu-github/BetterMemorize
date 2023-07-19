@@ -3,7 +3,11 @@ import { ButtonResult, showDialog } from "../dialog.js";
 import { listViewAddButton, listViewListDiv, menuDeleteButton, menuEditButton } from "../elements.js";
 import { back, currentMode, reload, setMode } from "../mode.js";
 
-export let works: {[id: string]: {name: string}} = {};
+export type Work = {
+  name: string,
+}
+
+export let works: {[id: string]: Work} = {};
 export let currentWork = '';
 
 export function init() {

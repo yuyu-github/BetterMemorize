@@ -4,7 +4,12 @@ import { back, currentMode, reload, setMode } from "../mode.js";
 import { Subject, createElement } from "../utils.js";
 import { currentWork } from "../work/work.js";
 
-export let groups: {[id: string]: {name: string, subject: Subject}} = {};
+export type Group = {
+  name: string,
+  subject: Subject
+}
+
+export let groups: {[id: string]: Group} = {};
 export let currentGroup = '';
 
 export function init() {
