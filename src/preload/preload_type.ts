@@ -1,3 +1,4 @@
+import { Question } from "../renderer/question/question.js";
 import { Subject } from "../renderer/utils.js";
 
 export interface IApi {
@@ -9,6 +10,7 @@ export interface IApi {
   editGroup: (workId: string, id: string, data: object) => Promise<void>;
   deleteGroup: (workId: string, id: string) => Promise<void>;
   getGroups: (workId: string) => Promise<{[id: string]: {name: string, subject: Subject}}>;
+  getQuestions: (workId: string, groupId: string) => Promise<{[id: string]: Question}>;
 }
 
 declare global {

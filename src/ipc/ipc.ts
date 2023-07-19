@@ -64,4 +64,15 @@ export default () => {
     })
     return groups;
   })
+
+  ipcMain.handle('getQuestions', (e, workId: string, groupId: string) => {
+    let dirname = path.join(dataFolder, 'works', workId, 'groups', groupId);
+    if (!fs.existsSync(dirname)) return;
+    let questions: {[id: string]: object} = {};
+    let dataFile = path.join(dirname, 'questions.json');
+    if (fs.existsSync(dataFile)) {
+      questions = JSON.parse(fs.readFileSync(dataFile).toString());
+    }
+    return questions;
+  })
 }

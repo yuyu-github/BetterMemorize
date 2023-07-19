@@ -1,14 +1,17 @@
 import { listViewAddButton, backSpan, titleH1, menuDiv, listViewDiv } from "./elements.js";
 import { currentGroup, groups, updateGroups } from "./group/group.js";
+import { currentQuestion, updateQuestions } from "./question/question.js";
 import { currentWork, updateWorks, works } from "./work/work.js";
 
 type ModeType = 
 | 'all-work'
 | 'work'
 | 'group'
+| 'question'
 const modeToBack: {[key in ModeType]?: ModeType} = {
   'work': 'all-work',
   'group': 'work',
+  'question': 'group',
 }
 
 export let currentMode: ModeType = 'all-work';
@@ -40,6 +43,11 @@ export function setMode(mode: ModeType) {
     case 'group': {
       titleH1.innerText = groups[currentGroup].name;
       viewElems = [menuDiv, listViewDiv, listViewAddButton];
+      updateQuestions();
+    }
+    break;
+    case 'question': {
+      titleH1.innerText = groups[currentQuestion].name;
     }
     break;
   }
