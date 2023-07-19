@@ -6,6 +6,8 @@ export interface IApi {
   deleteWork: (id: string) => Promise<void>;
   getWorks: () => Promise<{[id: string]: {name: string}}>;
   addGroup: (workId: string, data: object) => Promise<void>;
+  editGroup: (workId: string, id: string, data: object) => Promise<void>;
+  deleteGroup: (workId: string, id: string) => Promise<void>;
   getGroups: (workId: string) => Promise<{[id: string]: {name: string, subject: Subject}}>;
 }
 

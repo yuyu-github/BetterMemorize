@@ -57,7 +57,12 @@ export function showDialog<T extends InputListType>(title: string, message: stri
     if (inputElem != null) {
       if (init != null) {
         switch (type) {
-          default: (inputElem as HTMLInputElement).value = init; 
+          case 'subject':
+            inputElem.querySelectorAll('option').forEach(i => {if (i.value == init) i.selected = true;});
+            break;
+          default:
+            (inputElem as HTMLInputElement).value = init;
+            break;
         }
       }
 

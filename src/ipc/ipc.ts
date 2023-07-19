@@ -43,6 +43,14 @@ export default () => {
     fs.writeFileSync(path.join(dir, 'info.json'), JSON.stringify(data));
   })
 
+  ipcMain.handle('editGroup', (e, workId: string, id: string, data: object) => {
+    fs.writeFileSync(path.join(dataFolder, 'works', workId, 'groups', id, 'info.json'), JSON.stringify(data));
+  })
+
+  ipcMain.handle('deleteGroup', (e, workId: string, id: string) => {
+    fs.rmdirSync(path.join(dataFolder, 'works', workId, 'groups', id), {recursive: true});
+  })
+
   ipcMain.handle('getGroups', (e, workId: string) => {
     let dirname = path.join(dataFolder, 'works', workId, 'groups');
     if (!fs.existsSync(dirname)) return;
