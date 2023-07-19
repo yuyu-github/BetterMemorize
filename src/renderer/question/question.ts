@@ -24,8 +24,14 @@ export function init() {
   })
 }
 
+export function cacheQuestions(data: {[key: string]: Question}) {
+  questions = {...questions, ...data};
+}
+
 export async function updateQuestions() {
-  questions = await api.getQuestions(currentWork, currentGroup);
+  let questions = await api.getQuestions(currentWork, currentGroup);
+  cacheQuestions(questions);
+  
   let newelem = createElement('div');
   for (let id in questions) {
     newelem.appendChild(createElement('div', {data: {id: id}}, [createElement('p', {}, [questions[id].question])]));

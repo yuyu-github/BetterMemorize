@@ -68,8 +68,14 @@ async function deleteGroup(workId: string, id: string) {
   back();
 }
 
+export function cacheGroups(data: {[key: string]: Group}) {
+  groups = {...groups, ...data};
+}
+
 export async function updateGroups() {
-  groups = await api.getGroups(currentWork);
+  let groups = await api.getGroups(currentWork);
+  cacheGroups(groups);
+  
   let newelem = createElement('div');
   for (let id in groups) {
     newelem.appendChild(createElement('div', {data: {id: id}}, [createElement('p', {}, [groups[id].name])]));
