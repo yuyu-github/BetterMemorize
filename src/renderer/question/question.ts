@@ -1,6 +1,6 @@
-import { listViewListDiv } from "../elements.js";
+import { editQuestionAnswerTextarea, editQuestionCancelButton, editQuestionOkButton, editQuestionQuestionTextarea, listViewAddButton, listViewListDiv, titleH1 } from "../elements.js";
 import { currentGroup } from "../group/group.js";
-import { currentMode, setMode } from "../mode.js";
+import { back, currentMode, setMode } from "../mode.js";
 import { createElement } from "../utils.js";
 import { currentWork } from "../work/work.js";
 
@@ -22,6 +22,33 @@ export function init() {
       e.stopImmediatePropagation();
     }
   })
+
+  listViewAddButton.addEventListener('click', async e => {
+    if (currentMode == 'group') {
+      setMode('add-question');
+      e.stopImmediatePropagation();
+    }
+  });
+
+  editQuestionQuestionTextarea.addEventListener('input', () => {
+    titleH1.innerText = editQuestionQuestionTextarea.value;
+  })
+
+  editQuestionOkButton.addEventListener('click', () => {
+    if (editQuestionQuestionTextarea.value != '' && editQuestionAnswerTextarea.value != '') {
+      addQuestion(editQuestionQuestionTextarea.value, editQuestionAnswerTextarea.value);
+    }
+    back();
+  })
+
+  editQuestionCancelButton.addEventListener('click', () => {
+    back();
+  })
+}
+
+async function addQuestion(question: string, answer: string) {
+  await api.addQuestion(currentWork, currentGroup, {question, answer});
+  updateQuestions();
 }
 
 export function cacheQuestions(data: {[key: string]: Question}) {
@@ -31,7 +58,7 @@ export function cacheQuestions(data: {[key: string]: Question}) {
 export async function updateQuestions() {
   let questions = await api.getQuestions(currentWork, currentGroup);
   cacheQuestions(questions);
-  
+
   let newelem = createElement('div');
   for (let id in questions) {
     newelem.appendChild(createElement('div', {data: {id: id}}, [createElement('p', {}, [questions[id].question])]));

@@ -65,6 +65,13 @@ export default () => {
     return groups;
   })
 
+  ipcMain.handle('addQuestion', (e, workId: string, groupId: string, data: object) => {
+    let filename = path.join(dataFolder, 'works', workId, 'groups', groupId, 'questions.json');
+    let currentData = fs.existsSync(filename) ? JSON.parse(fs.readFileSync(filename).toString()) : {};
+    currentData[crypto.randomUUID()] = data;
+    fs.writeFileSync(filename, JSON.stringify(currentData));
+  })
+
   ipcMain.handle('getQuestions', (e, workId: string, groupId: string) => {
     let dirname = path.join(dataFolder, 'works', workId, 'groups', groupId);
     if (!fs.existsSync(dirname)) return;
