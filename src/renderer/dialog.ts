@@ -18,12 +18,6 @@ export enum ButtonResult {
   Yes = 11,
 }
 
-type Color = [`#${string}`, 0 | 1]
-const colors: {[key: string]: Color} = {
-  red: ['#e56060', 1],
-  blue: ['#3a72d2', 1],
-}
-
 export function showDialog<T extends InputListType>(title: string, message: string | null, buttonList: ButtonType, inputList?: T): Promise<{button: ButtonResult, input: {[key in keyof T]: any}}> {
   let titleElem = document.createElement('h1');
   titleElem.innerText = title;
@@ -75,20 +69,19 @@ export function showDialog<T extends InputListType>(title: string, message: stri
 
   let buttonsOuterElem = document.createElement('div');
   buttonsOuterElem.classList.add('button-outer');
-  let buttons: [string, number, Color?][]= [];
+  let buttons: [string, number, string?][]= [];
   let buttonElems: HTMLButtonElement[] = [];
   switch (buttonList) {
-    case 'ok-cancel': buttons = [['OK', ButtonResult.Ok, colors.blue], ['キャンセル', ButtonResult.Cancel]]; break;
-    case 'yes-no': buttons = [['はい', ButtonResult.Yes, colors.blue], ['いいえ', ButtonResult.No]]; break;
-    case 'yes-no-danger': buttons = [['はい', ButtonResult.Yes, colors.red], ['いいえ', ButtonResult.No]]; break;
+    case 'ok-cancel': buttons = [['OK', ButtonResult.Ok, 'blue'], ['キャンセル', ButtonResult.Cancel]]; break;
+    case 'yes-no': buttons = [['はい', ButtonResult.Yes, 'blue'], ['いいえ', ButtonResult.No]]; break;
+    case 'yes-no-danger': buttons = [['はい', ButtonResult.Yes, 'red'], ['いいえ', ButtonResult.No]]; break;
   }
   for (let button of buttons) {
     let elem = document.createElement('button');
     elem.innerText = button[0],
     elem.dataset.value = button[1].toString();
     if (button[2] != null) {
-      elem.style.backgroundColor = button[2][0];
-      elem.style.color = button[2][1] == 1 ? 'white' : 'black';
+      elem.classList.add('color-' + button[2]);
     }
     buttonsOuterElem.appendChild(elem);
     buttonElems.push(elem);
