@@ -1,4 +1,4 @@
-import { editQuestionAnswerTextarea, editQuestionCancelButton, editQuestionOkButton, editQuestionQuestionTextarea, listViewAddButton, listViewListDiv, titleH1 } from "../elements.js";
+import { editQuestionViewAnswerTextarea, editQuestionViewCancelButton, editQuestionViewOkButton, editQuestionViewQuestionTextarea, listViewAddButton, listViewListDiv, titleH1 } from "../elements.js";
 import { currentGroup } from "../group/group.js";
 import { back, currentMode, setMode } from "../mode.js";
 import { createElement } from "../utils.js";
@@ -30,18 +30,18 @@ export function init() {
     }
   });
 
-  editQuestionQuestionTextarea.addEventListener('input', () => {
-    titleH1.innerText = editQuestionQuestionTextarea.value;
+  editQuestionViewQuestionTextarea.addEventListener('input', () => {
+    titleH1.innerText = editQuestionViewQuestionTextarea.value;
   })
 
-  editQuestionOkButton.addEventListener('click', () => {
-    if (editQuestionQuestionTextarea.value != '' && editQuestionAnswerTextarea.value != '') {
-      addQuestion(editQuestionQuestionTextarea.value, editQuestionAnswerTextarea.value);
+  editQuestionViewOkButton.addEventListener('click', () => {
+    if (editQuestionViewQuestionTextarea.value != '' && editQuestionViewAnswerTextarea.value != '') {
+      addQuestion(editQuestionViewQuestionTextarea.value, editQuestionViewAnswerTextarea.value);
     }
     back();
   })
 
-  editQuestionCancelButton.addEventListener('click', () => {
+  editQuestionViewCancelButton.addEventListener('click', () => {
     back();
   })
 }

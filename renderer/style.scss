@@ -22,7 +22,7 @@
   border-radius: 5px;
   outline: none;
 
-  &:focus {
+  &:not(:read-only):focus {
     border: #b0b0b0 solid 1px;
   }
 }
@@ -104,6 +104,8 @@ header {
 }
 
 main {
+  display: flex;
+  flex-direction: column;
   flex-grow: 1;
 
   #menu {
@@ -164,7 +166,7 @@ main {
     }
   }
 
-  #edit-question-view {
+  #question-view, #edit-question-view {
     $gap: 8px;
 
     display: grid;
@@ -172,7 +174,8 @@ main {
     grid-template-rows: auto 1fr auto;
     gap: $gap;
     padding: $gap;
-    height: calc(100% - 2 * $gap);
+    height: 100%;
+    box-sizing: border-box;
 
     p {
       grid-row: 1;
@@ -215,7 +218,10 @@ main {
         min-width: 100px;
       }
     }
+  }
 
+  #question-view {
+    grid-template-rows: auto 1fr;
   }
 }
 

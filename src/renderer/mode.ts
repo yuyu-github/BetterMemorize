@@ -1,6 +1,6 @@
-import { listViewAddButton, backSpan, titleH1, menuDiv, listViewDiv, editQuestionDiv, editQuestionQuestionTextarea, editQuestionAnswerTextarea } from "./elements.js";
+import { listViewAddButton, backSpan, titleH1, menuDiv, listViewDiv, editQuestionViewDiv, editQuestionViewQuestionTextarea, editQuestionViewAnswerTextarea, questionViewDiv, questionViewQuestionTextarea, questionViewAnswerTextarea } from "./elements.js";
 import { currentGroup, groups, updateGroups } from "./group/group.js";
-import { currentQuestion, updateQuestions } from "./question/question.js";
+import { currentQuestion, questions, updateQuestions } from "./question/question.js";
 import { currentWork, updateWorks, works } from "./work/work.js";
 
 type ModeType = 
@@ -26,7 +26,7 @@ export function setMode(mode: ModeType) {
   currentMode = mode;
 
   backSpan.style.display = modeToBack[currentMode] == null ? 'none' : 'block';
-  [menuDiv, listViewDiv, listViewAddButton, editQuestionDiv].forEach(i => i.style.display = 'none');
+  [menuDiv, listViewDiv, listViewAddButton, editQuestionViewDiv, questionViewDiv].forEach(i => i.style.display = 'none');
 
   let viewElems: HTMLElement[] = [];
   switch (mode) {
@@ -49,14 +49,17 @@ export function setMode(mode: ModeType) {
     }
     break;
     case 'question': {
-      titleH1.innerText = groups[currentQuestion].name;
+      titleH1.innerText = questions[currentQuestion].question;
+      viewElems = [menuDiv, questionViewDiv];
+      questionViewQuestionTextarea.value = questions[currentQuestion].question;
+      questionViewAnswerTextarea.value = questions[currentQuestion].answer;
     }
     break;
     case 'add-question': {
       titleH1.innerText = '';
-      editQuestionQuestionTextarea.value = '';
-      editQuestionAnswerTextarea.value = '';
-      viewElems = [editQuestionDiv];
+      editQuestionViewQuestionTextarea.value = '';
+      editQuestionViewAnswerTextarea.value = '';
+      viewElems = [editQuestionViewDiv];
     }
     break;
   }
