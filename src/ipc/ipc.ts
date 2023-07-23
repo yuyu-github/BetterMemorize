@@ -72,6 +72,13 @@ export default () => {
     fs.writeFileSync(filename, JSON.stringify(currentData));
   })
 
+  ipcMain.handle('editQuestion', (e, workId: string, groupId: string, id: string, data: object) => {
+    let filename = path.join(dataFolder, 'works', workId, 'groups', groupId, 'questions.json');
+    let currentData = fs.existsSync(filename) ? JSON.parse(fs.readFileSync(filename).toString()) : {};
+    currentData[id] = data;
+    fs.writeFileSync(filename, JSON.stringify(currentData));
+  })
+  
   ipcMain.handle('getQuestions', (e, workId: string, groupId: string) => {
     let dirname = path.join(dataFolder, 'works', workId, 'groups', groupId);
     if (!fs.existsSync(dirname)) return;

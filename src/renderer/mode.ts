@@ -9,11 +9,13 @@ type ModeType =
 | 'group'
 | 'question'
 | 'add-question'
+| 'edit-question'
 const modeToBack: {[key in ModeType]?: ModeType} = {
   'work': 'all-work',
   'group': 'work',
   'question': 'group',
   'add-question': 'group',
+  'edit-question': 'question',
 }
 
 export let currentMode: ModeType = 'all-work';
@@ -59,6 +61,13 @@ export function setMode(mode: ModeType) {
       titleH1.innerText = '';
       editQuestionViewQuestionTextarea.value = '';
       editQuestionViewAnswerTextarea.value = '';
+      viewElems = [editQuestionViewDiv];
+    }
+    break;
+    case 'edit-question': {
+      titleH1.innerText = questions[currentQuestion].question;
+      editQuestionViewQuestionTextarea.value = questions[currentQuestion].question;
+      editQuestionViewAnswerTextarea.value = questions[currentQuestion].answer;
       viewElems = [editQuestionViewDiv];
     }
     break;

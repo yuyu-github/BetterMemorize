@@ -13,6 +13,7 @@ export interface IApi {
   deleteGroup: (workId: string, id: string) => Promise<void>;
   getGroups: (workId: string) => Promise<{[id: string]: Group}>;
   addQuestion: (workId: string, groupId: string, data: Question) => Promise<void>;
+  editQuestion: (workId: string, groupId: string, id: string, data: Question) => Promise<void>;
   getQuestions: (workId: string, groupId: string) => Promise<{[id: string]: Question}>;
 }
 
