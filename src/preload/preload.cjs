@@ -11,5 +11,6 @@ contextBridge.exposeInMainWorld('api', {
   getGroups: (workId) => ipcRenderer.invoke('getGroups', workId),
   addQuestion: (workId, groupId, data) => ipcRenderer.invoke('addQuestion', workId, groupId, data),
   editQuestion: (workId, groupId, id, data) => ipcRenderer.invoke('editQuestion', workId, groupId, id, data),
+  deleteQuestion: (workId, groupId, id) => ipcRenderer.invoke('deleteQuestion', workId, groupId, id),
   getQuestions: (workId, groupId) => ipcRenderer.invoke('getQuestions', workId, groupId),
 })

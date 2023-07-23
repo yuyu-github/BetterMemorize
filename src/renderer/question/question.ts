@@ -1,4 +1,5 @@
-import { editQuestionViewAnswerTextarea, editQuestionViewCancelButton, editQuestionViewOkButton, editQuestionViewQuestionTextarea, listViewAddButton, listViewListDiv, menuEditButton, titleH1 } from "../elements.js";
+import { ButtonResult, showDialog } from "../dialog.js";
+import { editQuestionViewAnswerTextarea, editQuestionViewCancelButton, editQuestionViewOkButton, editQuestionViewQuestionTextarea, listViewAddButton, listViewListDiv, menuDeleteButton, menuEditButton, titleH1 } from "../elements.js";
 import { currentGroup } from "../group/group.js";
 import { back, currentMode, setMode } from "../mode.js";
 import { createElement } from "../utils.js";
@@ -17,6 +18,16 @@ export function init() {
     if (currentMode == 'question') {
       setMode('edit-question');
       e.stopImmediatePropagation();
+    }
+  })
+
+  menuDeleteButton.addEventListener('click', async () => {
+    if (currentMode == 'question') {
+      let result = await showDialog('問題を削除', '本当に削除しますか？', 'yes-no-danger');
+      if (result.button == ButtonResult.Yes) {
+        deleteQuestion(currentWork, currentGroup, currentQuestion);
+        back();
+      }
     }
   })
 
@@ -62,6 +73,11 @@ async function addQuestion(question: string, answer: string) {
 async function editQuestion(workId: string, groupId: string, id: string, question: string, answer: string) {
   questions[id] = {question, answer};
   await api.editQuestion(workId, groupId, id, {question, answer});
+}
+
+async function deleteQuestion(workId: string, groupId: string, id: string) {
+  delete questions[id];
+  await api.deleteQuestion(workId, groupId, id);
 }
 
 export function cacheQuestions(data: {[key: string]: Question}) {
