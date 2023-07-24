@@ -1,4 +1,4 @@
-import { listViewAddButton, backSpan, titleH1, menuDiv, listViewDiv, editQuestionViewDiv, editQuestionViewQuestionTextarea, editQuestionViewAnswerTextarea, questionViewDiv, questionViewQuestionTextarea, questionViewAnswerTextarea } from "./elements.js";
+import { listViewAddButton, backSpan, titleH1, menuDiv, listViewDiv, editQuestionViewDiv, editQuestionViewQuestionTextarea, editQuestionViewAnswerTextarea, questionViewDiv, questionViewQuestionTextarea, questionViewAnswerTextarea, listViewListDiv } from "./elements.js";
 import { currentGroup, groups, updateGroups } from "./group/group.js";
 import { currentQuestion, questions, updateQuestions } from "./question/question.js";
 import { currentWork, updateWorks, works } from "./work/work.js";
@@ -29,6 +29,7 @@ export function setMode(mode: ModeType) {
 
   backSpan.style.display = modeToBack[currentMode] == null ? 'none' : 'block';
   [menuDiv, listViewDiv, listViewAddButton, editQuestionViewDiv, questionViewDiv].forEach(i => i.style.display = 'none');
+  listViewListDiv.innerHTML = '';
 
   let viewElems: HTMLElement[] = [];
   switch (mode) {
