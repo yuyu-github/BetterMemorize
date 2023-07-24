@@ -54,7 +54,10 @@ export function init() {
 
   editQuestionViewOkButton.addEventListener('click', () => {
     if (editQuestionViewQuestionTextarea.value != '' && editQuestionViewAnswerTextarea.value != '') {
-      if (currentMode == 'add-question') addQuestion(editQuestionViewQuestionTextarea.value, editQuestionViewAnswerTextarea.value);
+      if (currentMode == 'add-question') {
+        addQuestion(editQuestionViewQuestionTextarea.value, editQuestionViewAnswerTextarea.value);
+        updateQuestions();
+      }
       else if (currentMode == 'edit-question') editQuestion(currentWork, currentGroup, currentQuestion, editQuestionViewQuestionTextarea.value, editQuestionViewAnswerTextarea.value)
     }
     back();
@@ -67,7 +70,6 @@ export function init() {
 
 async function addQuestion(question: string, answer: string) {
   await api.addQuestion(currentWork, currentGroup, {question, answer});
-  updateQuestions();
 }
 
 async function editQuestion(workId: string, groupId: string, id: string, question: string, answer: string) {

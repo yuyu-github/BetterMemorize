@@ -16,6 +16,7 @@ export function init() {
       let result = await showDialog('ワークを編集', null, 'ok-cancel', {name: {name: '名前', type: 'text', init: works[currentWork].name}});
       if (result.button == ButtonResult.Ok && result.input.name != '') {
         editWork(currentWork, result.input.name);
+        reload();
       }
     }
   })
@@ -25,6 +26,7 @@ export function init() {
       let result = await showDialog('ワークを削除', '本当に削除しますか？', 'yes-no-danger');
       if (result.button == ButtonResult.Yes) {
         deleteWork(currentWork);
+        back();
       }
     }
   })
@@ -34,6 +36,7 @@ export function init() {
       let result = await showDialog('ワークを追加', null, 'ok-cancel', {name: {name: '名前', type: 'text'}});
       if (result.button == ButtonResult.Ok && result.input.name != '') {
         addWork(result.input.name);
+        updateWorks();
       }
     }
   });
@@ -51,19 +54,16 @@ export function init() {
 
 async function addWork(name: string) {
   await api.addWork({name});
-  updateWorks();
 }
 
 async function editWork(id: string, name: string) {
   works[id] = {name};
   await api.editWork(id, works[id]);
-  reload();
 }
 
 async function deleteWork(id: string) {
   delete works[id];
   await api.deleteWork(id);
-  back();
 }
 
 export async function updateWorks() {
