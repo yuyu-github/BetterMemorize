@@ -49,7 +49,7 @@ export function init() {
   });
 
   editQuestionViewQuestionTextarea.addEventListener('input', () => {
-    titleH1.innerText = editQuestionViewQuestionTextarea.value;
+    titleH1.innerText = editQuestionViewQuestionTextarea.value.replace('\n', ' ');
   })
 
   editQuestionViewOkButton.addEventListener('click', () => {

@@ -51,7 +51,7 @@ export function setMode(mode: ModeType) {
     }
     break;
     case 'question': {
-      titleH1.innerText = questions[currentQuestion].question;
+      titleH1.innerText = questions[currentQuestion].question.replace('\n', ' ');
       viewElems = [menuDiv, questionViewDiv];
       questionViewQuestionTextarea.value = questions[currentQuestion].question;
       questionViewAnswerTextarea.value = questions[currentQuestion].answer;
@@ -65,7 +65,7 @@ export function setMode(mode: ModeType) {
     }
     break;
     case 'edit-question': {
-      titleH1.innerText = questions[currentQuestion].question;
+      titleH1.innerText = questions[currentQuestion].question.replace('\n', ' ');
       editQuestionViewQuestionTextarea.value = questions[currentQuestion].question;
       editQuestionViewAnswerTextarea.value = questions[currentQuestion].answer;
       viewElems = [editQuestionViewDiv];
