@@ -9,3 +9,4 @@ initGroup();
 initQuestion();
 
 setMode('all-work');
+document.documentElement.style.display = 'block';

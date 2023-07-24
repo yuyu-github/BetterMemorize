@@ -1,4 +1,4 @@
-import { listViewAddButton, backSpan, titleH1, menuDiv, listViewDiv, editQuestionViewDiv, editQuestionViewQuestionTextarea, editQuestionViewAnswerTextarea, questionViewDiv, questionViewQuestionTextarea, questionViewAnswerTextarea, listViewListDiv } from "./elements.js";
+import { listViewAddButton, backSpan, titleH1, menuDiv, listViewDiv, editQuestionViewDiv, editQuestionViewQuestionTextarea, editQuestionViewAnswerTextarea, questionViewDiv, questionViewQuestionTextarea, questionViewAnswerTextarea, listViewListDiv, menuStartButton } from "./elements.js";
 import { currentGroup, groups, updateGroups } from "./group/group.js";
 import { currentQuestion, questions, updateQuestions } from "./question/question.js";
 import { currentWork, updateWorks, works } from "./work/work.js";
@@ -10,6 +10,7 @@ type ModeType =
 | 'question'
 | 'add-question'
 | 'edit-question'
+| 'start-test'
 const modeToBack: {[key in ModeType]?: ModeType} = {
   'work': 'all-work',
   'group': 'work',
@@ -19,6 +20,7 @@ const modeToBack: {[key in ModeType]?: ModeType} = {
 }
 
 export let currentMode: ModeType = 'all-work';
+let previousMode: ModeType = 'all-work';
 
 export function init() {
   backSpan.addEventListener('click', back);
@@ -28,7 +30,7 @@ export function setMode(mode: ModeType) {
   currentMode = mode;
 
   backSpan.style.display = modeToBack[currentMode] == null ? 'none' : 'block';
-  [menuDiv, listViewDiv, listViewAddButton, editQuestionViewDiv, questionViewDiv].forEach(i => i.style.display = 'none');
+  [menuDiv, menuStartButton, listViewDiv, listViewAddButton, editQuestionViewDiv, questionViewDiv].forEach(i => i.style.display = 'none');
   listViewListDiv.innerHTML = '';
 
   let viewElems: HTMLElement[] = [];
@@ -41,13 +43,13 @@ export function setMode(mode: ModeType) {
     break;
     case 'work': {
       titleH1.innerText = works[currentWork].name;
-      viewElems = [menuDiv, listViewDiv, listViewAddButton];
+      viewElems = [menuDiv, menuStartButton, listViewDiv, listViewAddButton];
       updateGroups();
     }
     break;
     case 'group': {
       titleH1.innerText = groups[currentGroup].name;
-      viewElems = [menuDiv, listViewDiv, listViewAddButton];
+      viewElems = [menuDiv, menuStartButton, listViewDiv, listViewAddButton];
       updateQuestions();
     }
     break;
@@ -72,6 +74,9 @@ export function setMode(mode: ModeType) {
       viewElems = [editQuestionViewDiv];
     }
     break;
+    case 'start-test': {
+      
+    }
   }
   viewElems.forEach(i => i.style.display = '');
 }
@@ -81,5 +86,5 @@ export function reload() {
 }
 
 export function back() {
-  setMode(modeToBack[currentMode] ?? 'all-work');
+  setMode(modeToBack[currentMode] ?? previousMode);
 }

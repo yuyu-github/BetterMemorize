@@ -36,8 +36,9 @@ export function createElement<T extends HTMLElement>(tag: string, attrs: {[key: 
       for (let data in attrs.data) {
         elem.dataset[data] = attrs.data[data];
       }
-    } else {
-      if (attr == 'class') attr = 'className';
+    }
+    else if (attr == 'class') elem.className = attrs[attr];
+    else {
       elem[attr] = attrs[attr];
     }
   }

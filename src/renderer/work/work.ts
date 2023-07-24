@@ -70,7 +70,10 @@ export async function updateWorks() {
   works = await api.getWorks();
   let newelem = createElement('div');
   for (let id in works) {
-    newelem.appendChild(createElement('div', {data: {id: id}}, [createElement('p', {}, [works[id].name])]));
+    newelem.appendChild(createElement('div', {data: {id: id}}, [
+      createElement('p', {}, [works[id].name]),
+      createElement('button', {class: 'start color-green'}, ['スタート'])
+    ]));
   }
   listViewListDiv.innerHTML = newelem.innerHTML;
 }

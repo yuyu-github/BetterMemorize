@@ -1,6 +1,7 @@
 export const titleH1 = document.querySelector('#title') as HTMLElement;
 export const backSpan = document.querySelector('#back') as HTMLElement;
 export const menuDiv = document.querySelector('#menu') as HTMLElement;
+export const menuStartButton = document.querySelector('#menu .start') as HTMLElement;
 export const menuEditButton = document.querySelector('#menu .edit') as HTMLElement;
 export const menuDeleteButton = document.querySelector('#menu .delete') as HTMLElement;
 export const listViewDiv = document.querySelector('#list-view') as HTMLElement;
