@@ -1,5 +1,5 @@
 import { ButtonResult, showDialog } from "../dialog.js";
-import { editQuestionViewAnswerTextarea, editQuestionViewCancelButton, editQuestionViewOkButton, editQuestionViewQuestionTextarea, listViewAddButton, listViewListDiv, menuDeleteButton, menuEditButton, titleH1 } from "../elements.js";
+import { backSpan, editQuestionViewAnswerTextarea, editQuestionViewCancelButton, editQuestionViewOkButton, editQuestionViewQuestionTextarea, listViewAddButton, listViewListDiv, menuDeleteButton, menuEditButton, titleH1 } from "../elements.js";
 import { currentGroup } from "../group/group.js";
 import { back, currentMode, reload, setMode } from "../mode.js";
 import { createElement } from "../utils.js";
@@ -65,6 +65,12 @@ export function init() {
     titleH1.innerText = editQuestionViewQuestionTextarea.value.replace('\n', ' ');
   })
 
+  backSpan.addEventListener('click', e => {
+    if (currentMode == 'edit-question') {
+      editQuestionViewOkButton.click();
+      e.stopImmediatePropagation();
+    }
+  }, {capture: true})
   editQuestionViewOkButton.addEventListener('click', () => {
     if (editQuestionViewQuestionTextarea.value != '' && editQuestionViewAnswerTextarea.value != '') {
       if (currentMode == 'add-question') {
