@@ -24,10 +24,9 @@ export function init() {
 
 export function setMode(mode: ModeType, updateHistory = true) {
   currentMode = mode;
-  if (updateHistory) {
-    if (['test-question', 'test-answer'].includes(modeHistory.at(-1)!) && ['test-question', 'test-answer'].includes(mode));
-    else modeHistory.push(mode);
-  }
+  
+  if (['test-question', 'test-answer'].includes(modeHistory.at(-1)!) && ['test-question', 'test-answer'].includes(mode)) updateHistory = false;
+  if (updateHistory) modeHistory.push(mode);
 
   backSpan.style.display = 'block';
   [menuDiv, menuStartButton, listViewDiv, listViewAddButton, editQuestionViewDiv, questionViewDiv, startTestViewDiv, testQuestionViewDiv, testAnswerViewDiv].forEach(i => i.style.display = 'none');
