@@ -1,6 +1,7 @@
 import { testAnswerViewButtonOuterDiv, testAnswerViewContentP, testQuestionViewCheckButton, testQuestionViewContentP, titleH1 } from "../elements.js";
 import { setMode } from "../mode.js";
 import { Question } from "../question/question.js";
+import { createElement } from "../utils.js";
 
 export type TestOptions = {
   method: 'auto' | 'random',
@@ -45,12 +46,21 @@ export async function test(title: string, questions: Question[], options: TestOp
   showQuestion();
 }
 
+function calcFontSize(str: string) {
+  let ctx = document.createElement('canvas').getContext('2d')!;
+  let width = ctx.measureText(str).width;
+  let size = 64 - width / 15;
+  return Math.max(36, Math.ceil(size / 4) * 4);
+}
+
 function showQuestion() {
   setMode('test-question');
+  testQuestionViewContentP.style.fontSize = calcFontSize(sortedQuestions[index].question) + 'px';
   testQuestionViewContentP.innerText = sortedQuestions[index].question;
 }
 
 function showAnswer() {
   setMode('test-answer');
+  testAnswerViewContentP.style.fontSize = calcFontSize(sortedQuestions[index].answer) + 'px';
   testAnswerViewContentP.innerText = sortedQuestions[index].answer;
 }
