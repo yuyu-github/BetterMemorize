@@ -87,14 +87,25 @@ label:has(input[type=radio]) {
   }
 }
 
+::-webkit-scrollbar {
+  width: 10px;
+
+  &-thumb {
+    background-color: #a0a0a0;
+    border-radius: 5px;
+    border: transparent 2px solid;
+    background-clip: content-box;
+  }
+}
+
 html {
   display: none;
 }
 
 body {
   display: flex;
-  height: 100vh;
   flex-direction: column;
+  height: 100vh;
   margin: 0px;
 }
 
@@ -146,9 +157,11 @@ header {
 }
 
 main {
+  position: relative;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  overflow: hidden;
 
   #menu {
     display: flex;
@@ -165,9 +178,13 @@ main {
   }
 
   #list-view {
-    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    margin-top: 10px;
 
     .menu {
+      padding: 0 10px;
       display: flex;
       gap: 8px;
 
@@ -179,10 +196,11 @@ main {
     }
   
     .list {
-      margin: 10px 0;
+      padding: 10px;
       display: flex;
       flex-direction: column;
       gap: 10px;
+      overflow-y: scroll;
 
       & > div {
         display: flex;
