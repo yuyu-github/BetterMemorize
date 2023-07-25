@@ -14,27 +14,22 @@ type ModeType =
 | 'start-test'
 | 'test-question'
 | 'test-answer'
-const modeToBack: {[key in ModeType]?: ModeType} = {
-  'work': 'all-work',
-  'group': 'work',
-  'question': 'group',
-  'add-question': 'group',
-  'test-question': 'start-test',
-  'test-answer': 'start-test',
-}
 
 export let currentMode: ModeType = 'all-work';
-let previousMode: ModeType = 'all-work';
+export let modeHistory: ModeType[] = [];
 
 export function init() {
   backSpan.addEventListener('click', back);
 }
 
-export function setMode(mode: ModeType) {
-  previousMode = currentMode;
+export function setMode(mode: ModeType, updateHistory = true) {
   currentMode = mode;
+  if (updateHistory) {
+    if (['test-question', 'test-answer'].includes(modeHistory.at(-1)!) && ['test-question', 'test-answer'].includes(mode));
+    else modeHistory.push(mode);
+  }
 
-  backSpan.style.display = modeToBack[currentMode] == null ? 'none' : 'block';
+  backSpan.style.display = 'block';
   [menuDiv, menuStartButton, listViewDiv, listViewAddButton, editQuestionViewDiv, questionViewDiv, startTestViewDiv, testQuestionViewDiv, testAnswerViewDiv].forEach(i => i.style.display = 'none');
   listViewListDiv.innerHTML = '';
 
@@ -42,6 +37,7 @@ export function setMode(mode: ModeType) {
   switch (mode) {
     case 'all-work': {
       titleH1.innerText = 'すべてのワーク';
+      backSpan.style.display = 'none'
       viewElems = [listViewDiv, listViewAddButton];
       updateWorks();
     }
@@ -76,12 +72,12 @@ export function setMode(mode: ModeType) {
       titleH1.innerText = questions[currentQuestion].question.replace('\n', ' ');
       editQuestionViewQuestionTextarea.value = questions[currentQuestion].question;
       editQuestionViewAnswerTextarea.value = questions[currentQuestion].answer;
-      viewElems = [backSpan, editQuestionViewDiv];
+      viewElems = [editQuestionViewDiv];
     }
     break;
     case 'start-test': {
       titleH1.innerText = getTestTitleName();
-      viewElems = [backSpan, startTestViewDiv];
+      viewElems = [startTestViewDiv];
     }
     break;
     case 'test-question': {
@@ -97,9 +93,14 @@ export function setMode(mode: ModeType) {
 }
 
 export function reload() {
-  setMode(currentMode);
+  setMode(currentMode, false);
 }
 
 export function back() {
-  setMode(modeToBack[currentMode] ?? previousMode);
+  if (modeHistory.length > 0) {
+    modeHistory.pop();
+    setMode(modeHistory.at(-1)!, false);
+  } else {
+    setMode('all-work', false);
+  }
 }
