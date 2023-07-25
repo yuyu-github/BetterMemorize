@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500&family=Noto+Sans:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500&family=Noto+Sans:wght@300&display=swap');
 
 @mixin button() {
   font-size: 13px;
@@ -316,6 +316,54 @@ main {
       font-size: 16px;
       padding: 10px 20px;
       margin: 16px auto;
+    }
+  }
+
+  #test-question-view, #test-answer-view {
+    .content {
+      position: absolute;
+      top: 45%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 60px;
+      margin: 0;
+      text-align: center;
+      width: 90%;
+    }
+  }
+
+  #test-question-view {
+    .check {
+      @include button();
+      position: absolute;
+      margin: 20px;
+      right: 0px;
+      bottom: 0px;
+      height: 100px;
+      width: 150px;
+      font-size: 40px;
+      font-weight: 300;
+      border-radius: 10px;
+    }
+  }
+
+  #test-answer-view {
+    .button-outer {
+      margin: 20px;
+      right: 0px;
+      bottom: 0px;
+      position: absolute;
+      display: flex;
+      gap: 15px;
+
+      button {
+        @include button();
+        height: 100px;
+        width: 150px;
+        font-size: 40px;
+        font-weight: 300;
+        border-radius: 10px;
+      }
     }
   }
 }

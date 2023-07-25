@@ -47,3 +47,8 @@ export function createElement<T extends HTMLElement>(tag: string, attrs: {[key: 
   }
   return elem as T;
 }
+
+export function toNumberOrString(str: string) {
+  if (isNaN(Number(str))) return str;
+  else return Number(str);
+}

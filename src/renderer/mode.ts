@@ -1,4 +1,4 @@
-import { listViewAddButton, backSpan, titleH1, menuDiv, listViewDiv, editQuestionViewDiv, editQuestionViewQuestionTextarea, editQuestionViewAnswerTextarea, questionViewDiv, questionViewQuestionTextarea, questionViewAnswerTextarea, listViewListDiv, menuStartButton, startTestViewDiv } from "./elements.js";
+import { listViewAddButton, backSpan, titleH1, menuDiv, listViewDiv, editQuestionViewDiv, editQuestionViewQuestionTextarea, editQuestionViewAnswerTextarea, questionViewDiv, questionViewQuestionTextarea, questionViewAnswerTextarea, listViewListDiv, menuStartButton, startTestViewDiv, testQuestionViewDiv, testAnswerViewDiv } from "./elements.js";
 import { currentGroup, groups, updateGroups } from "./group/group.js";
 import { currentQuestion, questions, updateQuestions } from "./question/question.js";
 import { getTitleName as getTestTitleName } from "./test/start.js";
@@ -12,11 +12,15 @@ type ModeType =
 | 'add-question'
 | 'edit-question'
 | 'start-test'
+| 'test-question'
+| 'test-answer'
 const modeToBack: {[key in ModeType]?: ModeType} = {
   'work': 'all-work',
   'group': 'work',
   'question': 'group',
   'add-question': 'group',
+  'test-question': 'start-test',
+  'test-answer': 'start-test',
 }
 
 export let currentMode: ModeType = 'all-work';
@@ -31,7 +35,7 @@ export function setMode(mode: ModeType) {
   currentMode = mode;
 
   backSpan.style.display = modeToBack[currentMode] == null ? 'none' : 'block';
-  [menuDiv, menuStartButton, listViewDiv, listViewAddButton, editQuestionViewDiv, questionViewDiv, startTestViewDiv].forEach(i => i.style.display = 'none');
+  [menuDiv, menuStartButton, listViewDiv, listViewAddButton, editQuestionViewDiv, questionViewDiv, startTestViewDiv, testQuestionViewDiv, testAnswerViewDiv].forEach(i => i.style.display = 'none');
   listViewListDiv.innerHTML = '';
 
   let viewElems: HTMLElement[] = [];
@@ -78,6 +82,14 @@ export function setMode(mode: ModeType) {
     case 'start-test': {
       titleH1.innerText = getTestTitleName();
       viewElems = [backSpan, startTestViewDiv];
+    }
+    break;
+    case 'test-question': {
+      viewElems = [testQuestionViewDiv];
+    }
+    break;
+    case 'test-answer': {
+      viewElems = [testAnswerViewDiv]
     }
     break;
   }

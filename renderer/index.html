@@ -45,8 +45,8 @@
         <div>
           <p>順序</p>
           <div>
-            <label><input type="radio" name="method" value="auto" checked>自動</label>
-            <label><input type="radio" name="method" value="random">ランダム</label>
+            <label><input type="radio" name="method" value="auto">自動</label>
+            <label><input type="radio" name="method" value="random" checked>ランダム</label>
           </div>
         </div>
         <div>
@@ -61,6 +61,18 @@
         </div>
       </div>
       <button class="start color-green">スタート</button>
+    </div>
+    <div id="test-question-view">
+      <p class="content"></p>
+      <button class="check">確認</button>
+    </div>
+    <div id="test-answer-view">
+      <p class="content"></p>
+      <div class="button-outer">
+        <button value="correct">正解</button>
+        <button value="incorrect">不正解</button>
+        <button value="not-memorized">未暗記</button>
+      </div>
     </div>
   </main>
   <div id="dialog">
