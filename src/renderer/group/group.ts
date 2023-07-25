@@ -15,7 +15,7 @@ export let currentGroup = '';
 export function init() {
   menuEditButton.addEventListener('click', async () => {
     if (currentMode == 'group') {
-      let result = await showDialog('ワークを編集', null, 'ok-cancel', {name: {name: '名前', type: 'text', init: groups[currentGroup].name}, subject: {name: '教科', type: 'subject', init: groups[currentGroup].subject}});
+      let result = await showDialog('グループを編集', null, 'ok-cancel', {name: {name: '名前', type: 'text', init: groups[currentGroup].name}, subject: {name: '教科', type: 'subject', init: groups[currentGroup].subject}});
       if (result.button == ButtonResult.Ok && result.input.name != '') {
         editGroup(currentWork, currentGroup, result.input.name, result.input.subject);
         reload();
@@ -25,7 +25,7 @@ export function init() {
 
   menuDeleteButton.addEventListener('click', async () => {
     if (currentMode == 'group') {
-      let result = await showDialog('ワークを削除', '本当に削除しますか？', 'yes-no-danger');
+      let result = await showDialog('グループを削除', '本当に削除しますか？', 'yes-no-danger');
       if (result.button == ButtonResult.Yes) {
         deleteGroup(currentWork, currentGroup);
         back();
