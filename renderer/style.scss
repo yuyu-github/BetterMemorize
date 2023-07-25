@@ -230,6 +230,13 @@ main {
           padding: 10px 30px;
         }
       }
+
+      & > hr {
+        height: 0px;
+        width: 98%;
+        border-top: #d4d4d4 1px solid;
+        margin: 5px auto;
+      }
     }
   }
 

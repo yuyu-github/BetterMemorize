@@ -35,28 +35,41 @@ export default () => {
     return works;
   })
 
-  ipcMain.handle('addGroup', (e, workId: string, data: object) => {
+  ipcMain.handle('addGroup', (e, workId: string, groupId: string | null, data: object) => {
     let groupsdir = path.join(dataFolder, 'works', workId, 'groups');
     if (!fs.existsSync(groupsdir)) fs.mkdirSync(groupsdir);
-    let dir = path.join(groupsdir, crypto.randomUUID());
+    let id = crypto.randomUUID();
+    let dir = path.join(groupsdir, id);
     fs.mkdirSync(dir);
     fs.writeFileSync(path.join(dir, 'info.json'), JSON.stringify(data));
+
+    let groupsFile = groupId == null ? path.join(dataFolder, 'works', workId, 'groups.json') : path.join(dataFolder, 'works', workId, 'groups', groupId, 'groups.json');
+    let groupsFileData: string[] = fs.existsSync(groupsFile) ? JSON.parse(fs.readFileSync(groupsFile).toString()) : [];
+    groupsFileData.push(id)
+    fs.writeFileSync(groupsFile, JSON.stringify(groupsFileData));
   })
 
   ipcMain.handle('editGroup', (e, workId: string, id: string, data: object) => {
     fs.writeFileSync(path.join(dataFolder, 'works', workId, 'groups', id, 'info.json'), JSON.stringify(data));
   })
 
-  ipcMain.handle('deleteGroup', (e, workId: string, id: string) => {
+  ipcMain.handle('deleteGroup', (e, workId: string, groupId: string | null, id: string) => {
     fs.rmdirSync(path.join(dataFolder, 'works', workId, 'groups', id), {recursive: true});
+
+    let groupsFile = groupId == null ? path.join(dataFolder, 'works', workId, 'groups.json') : path.join(dataFolder, 'works', workId, 'groups', groupId, 'groups.json');
+    let groupsFileData = JSON.parse(fs.readFileSync(groupsFile).toString());
+    groupsFileData.splice(groupsFileData.indexOf(id), 1);
+    fs.writeFileSync(groupsFile, JSON.stringify(groupsFileData));
   })
 
-  ipcMain.handle('getGroups', (e, workId: string) => {
+  ipcMain.handle('getGroups', (e, workId: string, groupId: string | null) => {
+    let groupsFile = groupId == null ? path.join(dataFolder, 'works', workId, 'groups.json') : path.join(dataFolder, 'works', workId, 'groups', groupId, 'groups.json');
     let dirname = path.join(dataFolder, 'works', workId, 'groups');
-    if (!fs.existsSync(dirname)) return;
-    let dirs = fs.readdirSync(dirname)
+    if (!fs.existsSync(dirname) || !fs.existsSync(groupsFile)) return [];
+    
+    let groupIdList = JSON.parse(fs.readFileSync(groupsFile).toString());
     let groups: {[id: string]: object} = {};
-    dirs.map(dir => path.join(dirname, dir)).filter(dir => fs.statSync(dir).isDirectory()).forEach(dir => {
+    groupIdList.map(dir => path.join(dirname, dir)).filter(dir => fs.statSync(dir).isDirectory()).forEach(dir => {
       let infoFile = path.join(dir, 'info.json');
       if (fs.existsSync(infoFile)) {
         groups[path.basename(dir)] = JSON.parse(fs.readFileSync(infoFile).toString());

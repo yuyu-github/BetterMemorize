@@ -1,6 +1,7 @@
 import { ButtonResult, showDialog } from "../dialog.js";
-import { listViewAddButton, listViewListDiv, menuDeleteButton, menuEditButton } from "../elements.js";
+import { listViewAddButton, listViewGroupAddButton, listViewListDiv, menuDeleteButton, menuEditButton } from "../elements.js";
 import { back, currentMode, reload, setMode } from "../mode.js";
+import { updateGroupChildren } from "../question/question.js";
 import { Subject, createElement } from "../utils.js";
 import { currentWork } from "../work/work.js";
 
@@ -11,6 +12,7 @@ export type Group = {
 
 export let groups: {[id: string]: Group} = {};
 export let currentGroup = '';
+export let groupPath: string[] = [];
 
 export function init() {
   menuEditButton.addEventListener('click', async () => {
@@ -27,16 +29,19 @@ export function init() {
     if (currentMode == 'group') {
       let result = await showDialog('グループを削除', '本当に削除しますか？', 'yes-no-danger');
       if (result.button == ButtonResult.Yes) {
-        deleteGroup(currentWork, currentGroup);
+        deleteGroup(currentWork, groupPath.at(-1) ?? null, currentGroup);
         back();
       }
     }
   })
 
   listViewListDiv.addEventListener('click', e => {
-    if (currentMode == 'work') {
-      let id = (e.target as HTMLElement).dataset.id;
+    if (currentMode == 'work' || currentMode == 'group') {
+      let target = e.target as HTMLElement;
+      if (currentMode == 'group' && target.dataset.type != 'group') return;
+      let id = target.dataset.id;
       if (id == null) return;
+      if (currentGroup != '') groupPath.push(currentGroup);
       currentGroup = id;
       setMode('group');
       e.stopImmediatePropagation();
@@ -47,15 +52,30 @@ export function init() {
     if (currentMode == 'work') {
       let result = await showDialog('グループを追加', null, 'ok-cancel', {name: {name: '名前', type: 'text'}, subject: {name: '教科', type: 'subject'}});
       if (result.button == ButtonResult.Ok && result.input.name != '') {
-        addGroup(result.input.name, result.input.subject);
+        addGroup(null, result.input.name, result.input.subject);
         updateGroups();
       }
     }
   });
+
+  listViewGroupAddButton.addEventListener('click', async () => {
+    if (currentMode == 'group') {
+      let result = await showDialog('グループを追加', null, 'ok-cancel', {name: {name: '名前', type: 'text'}, subject: {name: '教科', type: 'subject'}});
+      if (result.button == ButtonResult.Ok && result.input.name != '') {
+        addGroup(currentGroup, result.input.name, result.input.subject);
+        updateGroupChildren();
+      }
+    }
+  })
 }
 
-async function addGroup(name: string, subject: Subject) {
-  await api.addGroup(currentWork, {name, subject});
+export function backGroup() {
+  currentGroup = groupPath.at(-1) ?? '';
+  groupPath.pop();
+}
+
+async function addGroup(groupId: string | null, name: string, subject: Subject) {
+  await api.addGroup(currentWork, groupId, {name, subject});
 }
 
 async function editGroup(workId: string, id: string, name: string, subject: Subject) {
@@ -63,9 +83,9 @@ async function editGroup(workId: string, id: string, name: string, subject: Subj
   await api.editGroup(workId, id, groups[id]);
 }
 
-async function deleteGroup(workId: string, id: string) {
+async function deleteGroup(workId: string, groupId: string | null, id: string) {
   delete groups[id];
-  await api.deleteGroup(workId, id);
+  await api.deleteGroup(workId, groupId, id);
 }
 
 export function cacheGroups(data: {[key: string]: Group}) {

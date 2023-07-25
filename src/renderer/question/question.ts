@@ -1,6 +1,6 @@
 import { ButtonResult, showDialog } from "../dialog.js";
-import { backSpan, editQuestionViewAnswerTextarea, editQuestionViewCancelButton, editQuestionViewOkButton, editQuestionViewQuestionTextarea, listViewAddButton, listViewListDiv, menuDeleteButton, menuEditButton, titleH1 } from "../elements.js";
-import { currentGroup } from "../group/group.js";
+import { backSpan, editQuestionViewAnswerTextarea, editQuestionViewCancelButton, editQuestionViewOkButton, editQuestionViewQuestionTextarea, listViewAddButton, listViewListDiv, listViewQuestionAddButton, menuDeleteButton, menuEditButton, titleH1 } from "../elements.js";
+import { cacheGroups, currentGroup } from "../group/group.js";
 import { back, currentMode, reload, setMode } from "../mode.js";
 import { createElement } from "../utils.js";
 import { currentWork } from "../work/work.js";
@@ -34,6 +34,7 @@ export function init() {
   listViewListDiv.addEventListener('click', async e => {
     if (currentMode == 'group') {
       let target = e.target as HTMLElement;
+      if (target.dataset.type != 'question') return;
       let id = target.dataset.id;
       if (id != null) {
         currentQuestion = id;
@@ -54,7 +55,7 @@ export function init() {
     }
   })
 
-  listViewAddButton.addEventListener('click', async e => {
+  listViewQuestionAddButton.addEventListener('click', async e => {
     if (currentMode == 'group') {
       setMode('add-question');
       e.stopImmediatePropagation();
@@ -75,7 +76,7 @@ export function init() {
     if (editQuestionViewQuestionTextarea.value != '' && editQuestionViewAnswerTextarea.value != '') {
       if (currentMode == 'add-question') {
         addQuestion(editQuestionViewQuestionTextarea.value, editQuestionViewAnswerTextarea.value);
-        updateQuestions();
+        updateGroupChildren();
       }
       else if (currentMode == 'edit-question') editQuestion(currentWork, currentGroup, currentQuestion, editQuestionViewQuestionTextarea.value, editQuestionViewAnswerTextarea.value)
     }
@@ -105,17 +106,26 @@ export function cacheQuestions(data: {[key: string]: Question}) {
   questions = {...questions, ...data};
 }
 
-export async function updateQuestions() {
+export async function updateGroupChildren() {
+  let groups = await api.getGroups(currentWork, currentGroup);
+  cacheGroups(groups);
   let questions = await api.getQuestions(currentWork, currentGroup);
   cacheQuestions(questions);
 
-  let newelem = createElement('div');
+  let newElem = createElement('div');
+  for (let id in groups) {
+    newElem.appendChild(createElement('div', {data: {id: id, type: 'group'}}, [
+      createElement('p', {}, [groups[id].name]),
+      createElement('button', {class: 'start color-green'}, ['スタート'])
+    ]));
+  }
+  if (Object.keys(groups).length > 0 && Object.keys(questions).length > 0) newElem.appendChild(createElement('hr'));
   for (let id in questions) {
-    newelem.appendChild(createElement('div', {data: {id: id}}, [
+    newElem.appendChild(createElement('div', {data: {id: id, type: 'question'}}, [
       createElement('p', {}, [questions[id].question]),
       createElement('button', {class: 'edit'}, ['編集']),
       createElement('button', {class: 'delete'}, ['削除'])
     ]));
   }
-  listViewListDiv.innerHTML = newelem.innerHTML;
+  listViewListDiv.innerHTML = newElem.innerHTML;
 }
