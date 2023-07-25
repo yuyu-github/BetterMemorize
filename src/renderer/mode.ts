@@ -1,6 +1,7 @@
-import { listViewAddButton, backSpan, titleH1, menuDiv, listViewDiv, editQuestionViewDiv, editQuestionViewQuestionTextarea, editQuestionViewAnswerTextarea, questionViewDiv, questionViewQuestionTextarea, questionViewAnswerTextarea, listViewListDiv, menuStartButton } from "./elements.js";
+import { listViewAddButton, backSpan, titleH1, menuDiv, listViewDiv, editQuestionViewDiv, editQuestionViewQuestionTextarea, editQuestionViewAnswerTextarea, questionViewDiv, questionViewQuestionTextarea, questionViewAnswerTextarea, listViewListDiv, menuStartButton, startTestViewDiv } from "./elements.js";
 import { currentGroup, groups, updateGroups } from "./group/group.js";
 import { currentQuestion, questions, updateQuestions } from "./question/question.js";
+import { getTitleName as getTestTitleName } from "./test/start.js";
 import { currentWork, updateWorks, works } from "./work/work.js";
 
 type ModeType = 
@@ -30,7 +31,7 @@ export function setMode(mode: ModeType) {
   currentMode = mode;
 
   backSpan.style.display = modeToBack[currentMode] == null ? 'none' : 'block';
-  [menuDiv, menuStartButton, listViewDiv, listViewAddButton, editQuestionViewDiv, questionViewDiv].forEach(i => i.style.display = 'none');
+  [menuDiv, menuStartButton, listViewDiv, listViewAddButton, editQuestionViewDiv, questionViewDiv, startTestViewDiv].forEach(i => i.style.display = 'none');
   listViewListDiv.innerHTML = '';
 
   let viewElems: HTMLElement[] = [];
@@ -75,8 +76,10 @@ export function setMode(mode: ModeType) {
     }
     break;
     case 'start-test': {
-      
+      titleH1.innerText = getTestTitleName();
+      viewElems = [backSpan, startTestViewDiv];
     }
+    break;
   }
   viewElems.forEach(i => i.style.display = '');
 }

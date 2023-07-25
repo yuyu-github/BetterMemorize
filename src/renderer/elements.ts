@@ -15,5 +15,6 @@ export const editQuestionViewQuestionTextarea = document.querySelector('#edit-qu
 export const editQuestionViewAnswerTextarea = document.querySelector('#edit-question-view .answer') as HTMLTextAreaElement;
 export const editQuestionViewOkButton = document.querySelector('#edit-question-view .ok') as HTMLButtonElement;
 export const editQuestionViewCancelButton = document.querySelector('#edit-question-view .cancel') as HTMLButtonElement;
+export const startTestViewDiv = document.querySelector('#start-test-view') as HTMLElement;
 export const dialogViewDiv = document.querySelector('#dialog .view') as HTMLElement;
 export const dialogDiv = document.querySelector('#dialog') as HTMLElement;
