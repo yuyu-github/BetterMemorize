@@ -17,7 +17,6 @@ const modeToBack: {[key in ModeType]?: ModeType} = {
   'group': 'work',
   'question': 'group',
   'add-question': 'group',
-  'edit-question': 'question',
 }
 
 export let currentMode: ModeType = 'all-work';
@@ -28,6 +27,7 @@ export function init() {
 }
 
 export function setMode(mode: ModeType) {
+  previousMode = currentMode;
   currentMode = mode;
 
   backSpan.style.display = modeToBack[currentMode] == null ? 'none' : 'block';
@@ -72,7 +72,7 @@ export function setMode(mode: ModeType) {
       titleH1.innerText = questions[currentQuestion].question.replace('\n', ' ');
       editQuestionViewQuestionTextarea.value = questions[currentQuestion].question;
       editQuestionViewAnswerTextarea.value = questions[currentQuestion].answer;
-      viewElems = [editQuestionViewDiv];
+      viewElems = [backSpan, editQuestionViewDiv];
     }
     break;
     case 'start-test': {

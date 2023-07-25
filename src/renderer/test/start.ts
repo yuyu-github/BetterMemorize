@@ -21,7 +21,7 @@ export function init() {
 
   listViewListDiv.addEventListener('click', e => {
     let target = e.target as HTMLElement;
-    if (target.classList.contains('start')) {
+    if (target.nodeName == 'BUTTON' && target.classList.contains('start')) {
       if (currentMode == 'all-work') type = 'work';
       else if (currentMode == 'work') type = 'group';
       id = target.parentElement!.dataset.id!;

@@ -1,7 +1,7 @@
 import { ButtonResult, showDialog } from "../dialog.js";
 import { editQuestionViewAnswerTextarea, editQuestionViewCancelButton, editQuestionViewOkButton, editQuestionViewQuestionTextarea, listViewAddButton, listViewListDiv, menuDeleteButton, menuEditButton, titleH1 } from "../elements.js";
 import { currentGroup } from "../group/group.js";
-import { back, currentMode, setMode } from "../mode.js";
+import { back, currentMode, reload, setMode } from "../mode.js";
 import { createElement } from "../utils.js";
 import { currentWork } from "../work/work.js";
 
@@ -31,13 +31,26 @@ export function init() {
     }
   })
 
-  listViewListDiv.addEventListener('click', e => {
+  listViewListDiv.addEventListener('click', async e => {
     if (currentMode == 'group') {
-      let id = (e.target as HTMLElement).dataset.id;
-      if (id == null) return;
-      currentQuestion = id;
-      setMode('question');
-      e.stopImmediatePropagation();
+      let target = e.target as HTMLElement;
+      let id = target.dataset.id;
+      if (id != null) {
+        currentQuestion = id;
+        setMode('question');
+        e.stopImmediatePropagation();
+      } else if (target.nodeName == 'BUTTON' && target.classList.contains('edit')) {
+        currentQuestion = target.parentElement!.dataset.id!;
+        setMode('edit-question');
+        e.stopImmediatePropagation();
+      } else if (target.nodeName == 'BUTTON' && target.classList.contains('delete')) {
+        currentQuestion = target.parentElement!.dataset.id!;
+        let result = await showDialog('問題を削除', '本当に削除しますか？', 'yes-no-danger');
+        if (result.button == ButtonResult.Yes) {
+          deleteQuestion(currentWork, currentGroup, currentQuestion);
+          reload();
+        }
+      }
     }
   })
 
@@ -92,7 +105,11 @@ export async function updateQuestions() {
 
   let newelem = createElement('div');
   for (let id in questions) {
-    newelem.appendChild(createElement('div', {data: {id: id}}, [createElement('p', {}, [questions[id].question])]));
+    newelem.appendChild(createElement('div', {data: {id: id}}, [
+      createElement('p', {}, [questions[id].question]),
+      createElement('button', {class: 'edit'}, ['編集']),
+      createElement('button', {class: 'delete'}, ['削除'])
+    ]));
   }
   listViewListDiv.innerHTML = newelem.innerHTML;
 }

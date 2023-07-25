@@ -78,7 +78,10 @@ export async function updateGroups() {
 
   let newelem = createElement('div');
   for (let id in groups) {
-    newelem.appendChild(createElement('div', {data: {id: id}}, [createElement('p', {}, [groups[id].name])]));
+    newelem.appendChild(createElement('div', {data: {id: id}}, [
+      createElement('p', {}, [groups[id].name]),
+      createElement('button', {class: 'start color-green'}, ['スタート'])
+    ]));
   }
   listViewListDiv.innerHTML = newelem.innerHTML;
 }
