@@ -181,10 +181,9 @@ main {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    margin-top: 10px;
 
     .menu {
-      padding: 0 10px;
+      padding: 10px;
       display: flex;
       gap: 8px;
 
@@ -197,10 +196,11 @@ main {
   
     .list {
       padding: 10px;
+      padding-top: 2px;
       display: flex;
       flex-direction: column;
       gap: 10px;
-      overflow-y: scroll;
+      overflow-y: auto;
 
       & > div {
         display: flex;
