@@ -3,7 +3,7 @@ import { currentMode, setMode } from "../mode.js";
 import { Question, QuestionWithId } from "../question/question.js";
 import { createElement } from "../utils.js";
 import { currentWork } from "../work/work.js";
-import { cachePriority, calcPriority, resetPriorityCache, updatePriority } from "./priority.js";
+import { cachePriority, calcPriority, getPriorityScores, resetPriorityCache, updatePriority } from "./priority.js";
 
 export type TestOptions = {
   method: 'auto' | 'random',
@@ -44,6 +44,8 @@ export async function test(title: string, questions: QuestionWithId[], options: 
   let sortScores: [number, number][] = [];
   if (options.method === 'random') {
     sortScores = questions.map((i, index) => [index, Math.random()]);
+  } else if (options.method === 'auto') {
+    sortScores = (await getPriorityScores(questions)).map((item, index) => [index, item]);
   }
   sortScores.sort((a, b) => a[1] - b[1]);
   sortedQuestions = sortScores.map(i => questions[i[0]]);

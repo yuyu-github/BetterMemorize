@@ -1,3 +1,5 @@
+import { QuestionWithId } from "../question/question.js";
+
 export type PriorityData = {
   wrongAnswerRate: number;
   memorizationRate: number;
@@ -42,4 +44,24 @@ export async function updatePriority(workId: string) {
     }
     api.setPriorityData(workId, groupId, priorityData);
   }
+}
+
+export async function getPriorityScores(questions: QuestionWithId[]) {
+  let scores: number[] = [];
+  let priorityDataCache: {[groupId: string]: {[id: string]: PriorityData}} = {};
+  for (let question of questions) {
+    let priorityGroupData = priorityDataCache[question.groupId];
+    if (priorityGroupData == null) {
+      priorityGroupData = await api.getPriorityData(question.workId, question.groupId);
+      priorityDataCache[question.groupId] = priorityGroupData;
+    }
+    let priorityData = priorityGroupData[question.id];
+
+    let score = (1 - priorityData.memorizationRate) * 2 + priorityData.wrongAnswerRate;
+    let forgettingRate = Math.sqrt(Math.max(0, Math.log(Date.now() - priorityData.lastAnswerTime) - 11.2)) / 4;
+    score *= forgettingRate + 0.5;
+    score *= Math.random() / 5 + 0.9;
+    scores.push(score);
+  }
+  return scores;
 }
