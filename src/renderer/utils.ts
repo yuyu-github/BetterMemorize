@@ -1,30 +1,3 @@
-export enum Subject {
-  Japanese = 0,
-  Math = 10,
-  Science = 20,
-  SocialStudies = 30,
-  English = 40,
-  Music = 100,
-  Art = 110,
-  PE = 120,
-  Health = 130,
-  Technical = 140,
-  HomeEconomics = 150,
-}
-export const subjectName: {[key in Subject]: string} = {
-  0: '国語',
-  10: '数学',
-  20: '理科',
-  30: '社会',
-  40: '英語',
-  100: '音楽',
-  110: '美術',
-  120: '体育',
-  130: '保健',
-  140: '技術',
-  150: '家庭科',
-}
-
 export function createElement<T extends HTMLElement>(tag: string, attrs: {[key: string]: any} = {}, children: (string | HTMLElement)[] = []): T {
   let elem = document.createElement(tag);
   for (let attr in attrs) {

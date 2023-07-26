@@ -1,7 +1,6 @@
 import { dialogDiv, dialogViewDiv } from "./elements.js";
-import { Subject, createElement, subjectName } from "./utils.js";
 
-type InputType = 'text' | 'subject';
+type InputType = 'text';
 type ButtonType = 'ok-cancel' | 'yes-no' | 'yes-no-danger';
 type InputListType = {
   [id: string]: {
@@ -43,17 +42,10 @@ export function showDialog<T extends InputListType>(title: string, message: stri
         inputElem = elem;
       }
       break;
-      case 'subject': {
-        inputElem = createElement('select', {}, Object.values(Subject).filter(i => typeof i == 'number').map(i => createElement('option', {value: i}, [subjectName[i]])));
-      }
-      break;
     }
     if (inputElem != null) {
       if (init != null) {
         switch (type) {
-          case 'subject':
-            inputElem.querySelectorAll('option').forEach(i => {if (i.value == init) i.selected = true;});
-            break;
           default:
             (inputElem as HTMLInputElement).value = init;
             break;

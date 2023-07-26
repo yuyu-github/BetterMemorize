@@ -1,6 +1,5 @@
 import { Group } from "../renderer/group/group.js";
 import { Question } from "../renderer/question/question.js";
-import { Subject } from "../renderer/utils.js";
 import { Work } from "../renderer/work/work.js";
 
 export interface IApi {

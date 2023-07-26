@@ -2,12 +2,11 @@ import { ButtonResult, showDialog } from "../dialog.js";
 import { listViewAddButton, listViewGroupAddButton, listViewListDiv, menuDeleteButton, menuEditButton } from "../elements.js";
 import { back, currentMode, reload, setMode } from "../mode.js";
 import { updateGroupChildren } from "../question/question.js";
-import { Subject, createElement } from "../utils.js";
+import { createElement } from "../utils.js";
 import { currentWork } from "../work/work.js";
 
 export type Group = {
-  name: string,
-  subject: Subject
+  name: string
 }
 
 export let groups: {[id: string]: Group} = {};
@@ -17,9 +16,9 @@ export let groupPath: string[] = [];
 export function init() {
   menuEditButton.addEventListener('click', async () => {
     if (currentMode == 'group') {
-      let result = await showDialog('グループを編集', null, 'ok-cancel', {name: {name: '名前', type: 'text', init: groups[currentGroup].name}, subject: {name: '教科', type: 'subject', init: groups[currentGroup].subject}});
+      let result = await showDialog('グループを編集', null, 'ok-cancel', {name: {name: '名前', type: 'text', init: groups[currentGroup].name}});
       if (result.button == ButtonResult.Ok && result.input.name != '') {
-        editGroup(currentWork, currentGroup, result.input.name, result.input.subject);
+        editGroup(currentWork, currentGroup, result.input.name);
         reload();
       }
     }
@@ -50,9 +49,9 @@ export function init() {
 
   listViewAddButton.addEventListener('click', async () => {
     if (currentMode == 'work') {
-      let result = await showDialog('グループを追加', null, 'ok-cancel', {name: {name: '名前', type: 'text'}, subject: {name: '教科', type: 'subject'}});
+      let result = await showDialog('グループを追加', null, 'ok-cancel', {name: {name: '名前', type: 'text'}});
       if (result.button == ButtonResult.Ok && result.input.name != '') {
-        addGroup(null, result.input.name, result.input.subject);
+        addGroup(null, result.input.name);
         updateGroups();
       }
     }
@@ -60,9 +59,9 @@ export function init() {
 
   listViewGroupAddButton.addEventListener('click', async () => {
     if (currentMode == 'group') {
-      let result = await showDialog('グループを追加', null, 'ok-cancel', {name: {name: '名前', type: 'text'}, subject: {name: '教科', type: 'subject'}});
+      let result = await showDialog('グループを追加', null, 'ok-cancel', {name: {name: '名前', type: 'text'}});
       if (result.button == ButtonResult.Ok && result.input.name != '') {
-        addGroup(currentGroup, result.input.name, result.input.subject);
+        addGroup(currentGroup, result.input.name);
         updateGroupChildren();
       }
     }
@@ -74,12 +73,12 @@ export function backGroup() {
   groupPath.pop();
 }
 
-async function addGroup(groupId: string | null, name: string, subject: Subject) {
-  await api.addGroup(currentWork, groupId, {name, subject});
+async function addGroup(groupId: string | null, name: string) {
+  await api.addGroup(currentWork, groupId, {name});
 }
 
-async function editGroup(workId: string, id: string, name: string, subject: Subject) {
-  groups[id] = {name, subject};
+async function editGroup(workId: string, id: string, name: string) {
+  groups[id] = {name};
   await api.editGroup(workId, id, groups[id]);
 }
 
