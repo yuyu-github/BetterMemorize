@@ -41,6 +41,7 @@ export async function test(title: string, questions: Question[], options: TestOp
     if (options.amount == 'all') amount = sortedQuestions.length;
     else if (options.amount == 'half') amount = Math.ceil(sortedQuestions.length / 2);
   }
+  amount = Math.min(sortedQuestions.length, amount);
 
   index = 0;
   showQuestion();

@@ -23,7 +23,7 @@ export default () => {
 
   ipcMain.handle('getWorks', (e) => {
     let dirname = path.join(dataFolder, 'works');
-    if (!fs.existsSync(dirname)) return;
+    if (!fs.existsSync(dirname)) return {};
     let dirs = fs.readdirSync(dirname)
     let works: {[id: string]: object} = {};
     dirs.map(dir => path.join(dirname, dir)).filter(dir => fs.statSync(dir).isDirectory()).forEach(dir => {
@@ -65,8 +65,8 @@ export default () => {
   ipcMain.handle('getGroups', (e, workId: string, groupId: string | null) => {
     let groupsFile = groupId == null ? path.join(dataFolder, 'works', workId, 'groups.json') : path.join(dataFolder, 'works', workId, 'groups', groupId, 'groups.json');
     let dirname = path.join(dataFolder, 'works', workId, 'groups');
-    if (!fs.existsSync(dirname) || !fs.existsSync(groupsFile)) return [];
-    
+    if (!fs.existsSync(dirname) || !fs.existsSync(groupsFile)) return {};
+
     let groupIdList = JSON.parse(fs.readFileSync(groupsFile).toString());
     let groups: {[id: string]: object} = {};
     groupIdList.map(dir => path.join(dirname, dir)).filter(dir => fs.statSync(dir).isDirectory()).forEach(dir => {
@@ -101,7 +101,7 @@ export default () => {
   
   ipcMain.handle('getQuestions', (e, workId: string, groupId: string) => {
     let dirname = path.join(dataFolder, 'works', workId, 'groups', groupId);
-    if (!fs.existsSync(dirname)) return;
+    if (!fs.existsSync(dirname)) return {};
     let questions: {[id: string]: object} = {};
     let dataFile = path.join(dirname, 'questions.json');
     if (fs.existsSync(dataFile)) {

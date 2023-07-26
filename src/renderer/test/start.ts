@@ -27,6 +27,7 @@ export function init() {
     if (target.nodeName == 'BUTTON' && target.classList.contains('start')) {
       if (currentMode == 'all-work') type = 'work';
       else if (currentMode == 'work') type = 'group';
+      else if (currentMode == 'group') type = 'group';
       id = target.parentElement!.dataset.id!;
       setMode('start-test');
       e.stopImmediatePropagation();
@@ -47,7 +48,10 @@ export function getTitleName() {
 export async function getAllQuestion() {
   async function getGroupQuestions(workId: string, groupId: string) {
     let questions: Question[];
-    questions = Object.entries(await api.getQuestions(workId, groupId)).map(([k, v]) => ({id: k, ...v}));
+    questions = [
+      ...Object.entries(await api.getQuestions(workId, groupId)).map(([k, v]) => ({id: k, ...v})),
+      ...(await Promise.all(Object.entries(await api.getGroups(workId, groupId)).map(async ([k, v]) => await getGroupQuestions(workId, k)))).flat(),
+    ];
     return questions;
   }
 
