@@ -1,7 +1,7 @@
 import { listViewListDiv, menuStartButton, questionViewAnswerTextarea, startTestViewSettingDiv, startTestViewStartButton } from "../elements.js";
 import { currentGroup, groups } from "../group/group.js";
 import { currentMode, setMode } from "../mode.js";
-import { Question } from "../question/question.js";
+import { Question, QuestionWithId } from "../question/question.js";
 import { toNumberOrString } from "../utils.js";
 import { currentWork, works } from "../work/work.js";
 import { TestOptions, test } from "./test.js";
@@ -47,15 +47,15 @@ export function getTitleName() {
 
 export async function getAllQuestion() {
   async function getGroupQuestions(workId: string, groupId: string) {
-    let questions: Question[];
+    let questions: QuestionWithId[];
     questions = [
-      ...Object.entries(await api.getQuestions(workId, groupId)).map(([k, v]) => ({id: k, ...v})),
+      ...Object.entries(await api.getQuestions(workId, groupId)).map(([k, v]) => ({workId, groupId, id: k, ...v})),
       ...(await Promise.all(Object.entries(await api.getGroups(workId, groupId)).map(async ([k, v]) => await getGroupQuestions(workId, k)))).flat(),
     ];
     return questions;
   }
 
-  let questions: Question[] = [];
+  let questions: QuestionWithId[] = [];
   if (type == 'work') {
     for(let i of Object.keys(await api.getGroups(id))) {
       questions = [...questions, ...(await getGroupQuestions(id, i))]

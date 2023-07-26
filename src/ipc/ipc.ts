@@ -109,4 +109,15 @@ export default () => {
     }
     return questions;
   })
+
+  ipcMain.handle('getPriorityData', (e, workId: string, groupId: string) => {
+    let dataFile = path.join(dataFolder, 'works', workId, 'groups', groupId, 'priority.json');
+    if (!fs.existsSync(dataFile)) return {};
+    return JSON.parse(fs.readFileSync(dataFile).toString());
+  })
+
+  ipcMain.handle('setPriorityData', (e, workId: string, groupId: string, data: object) => {
+    let dataFile = path.join(dataFolder, 'works', workId, 'groups', groupId, 'priority.json');
+    return fs.writeFileSync(dataFile, JSON.stringify(data));
+  })
 }

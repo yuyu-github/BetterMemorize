@@ -1,5 +1,6 @@
 import { Group } from "../renderer/group/group.js";
 import { Question } from "../renderer/question/question.js";
+import { PriorityData } from "../renderer/test/priority.js";
 import { Work } from "../renderer/work/work.js";
 
 export interface IApi {
@@ -15,6 +16,8 @@ export interface IApi {
   editQuestion: (workId: string, groupId: string, id: string, data: Question) => Promise<void>;
   deleteQuestion: (workId: string, groupId: string, id: string) => Promise<void>;
   getQuestions: (workId: string, groupId: string) => Promise<{[id: string]: Question}>;
+  getPriorityData: (workId: string, groupId: string) => Promise<{[id: string]: PriorityData}>;
+  setPriorityData: (workId: string, groupId: string, data: {[id: string]: PriorityData}) => Promise<void>;
 }
 
 declare global {

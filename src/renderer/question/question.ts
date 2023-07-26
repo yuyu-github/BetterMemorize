@@ -9,6 +9,11 @@ export type Question = {
   question: string,
   answer: string,
 }
+export type QuestionWithId = Question & {
+  workId: string,
+  groupId: string,
+  id: string
+}
 
 export let questions: {[id: string]: Question} = {};
 export let currentQuestion = '';

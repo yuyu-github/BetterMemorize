@@ -1,18 +1,26 @@
-import { testAnswerViewButtonOuterDiv, testAnswerViewContentP, testQuestionViewCheckButton, testQuestionViewContentP, titleH1 } from "../elements.js";
-import { setMode } from "../mode.js";
-import { Question } from "../question/question.js";
+import { backSpan, testAnswerViewButtonOuterDiv, testAnswerViewContentP, testQuestionViewCheckButton, testQuestionViewContentP, titleH1 } from "../elements.js";
+import { currentMode, setMode } from "../mode.js";
+import { Question, QuestionWithId } from "../question/question.js";
 import { createElement } from "../utils.js";
+import { currentWork } from "../work/work.js";
+import { cachePriority, calcPriority, resetPriorityCache, updatePriority } from "./priority.js";
 
 export type TestOptions = {
   method: 'auto' | 'random',
   amount: number | 'half' | 'all',
 }
 
-let sortedQuestions: Question[] = [];
+let sortedQuestions: QuestionWithId[] = [];
 let amount = 0;
 let index = 0;
 
 export function init() {
+  backSpan.addEventListener('click', () => {
+    if (currentMode == 'test-question' || currentMode == 'test-answer') {
+      updatePriority(currentWork);
+    }
+  }, {capture: true})
+
   testQuestionViewCheckButton.addEventListener('click', () => {
     showAnswer();
   })
@@ -20,13 +28,17 @@ export function init() {
   testAnswerViewButtonOuterDiv.addEventListener('click', e => {
     let target = e.target as HTMLElement;
     if (target.tagName == 'BUTTON') {
+      cachePriority(sortedQuestions[index].groupId, sortedQuestions[index].id, calcPriority(Number((target as HTMLButtonElement).value)));
       index++;
       if (index < amount) showQuestion();
+      else {
+        updatePriority(currentWork);
+      }
     }
   })
 }
 
-export async function test(title: string, questions: Question[], options: TestOptions) {
+export async function test(title: string, questions: QuestionWithId[], options: TestOptions) {
   titleH1.innerText = title;
 
   let sortScores: [number, number][] = [];
@@ -44,6 +56,7 @@ export async function test(title: string, questions: Question[], options: TestOp
   amount = Math.min(sortedQuestions.length, amount);
 
   index = 0;
+  resetPriorityCache();
   showQuestion();
 }
 
