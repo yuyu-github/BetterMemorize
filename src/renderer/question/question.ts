@@ -34,7 +34,7 @@ export function init() {
   listViewListDiv.addEventListener('click', async e => {
     if (currentMode == 'group') {
       let target = e.target as HTMLElement;
-      if (target.dataset.type != 'question') return;
+      if (target.dataset.type != 'question' && target.parentElement?.dataset.type != 'question') return;
       let id = target.dataset.id;
       if (id != null) {
         currentQuestion = id;
