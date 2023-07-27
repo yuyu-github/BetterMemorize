@@ -12,11 +12,12 @@ export enum AnswerResult {
   NotMemorized = 2,
 }
 
-let cache: {[groupId: string]: {[id: string]: PriorityData}} = {};
+let cache: {[workId: string]: {[groupId: string]: {[id: string]: PriorityData}}} = {};
 
-export function cachePriority(groupId: string, id: string, priority: PriorityData) {
-  cache[groupId] ??= {};
-  cache[groupId][id] = priority;
+export function cachePriority(workId: string, groupId: string, id: string, priority: PriorityData) {
+  cache[workId] ??= {};
+  cache[workId][groupId] ??= {};
+  cache[workId][groupId][id] = priority;
 }
 
 export function resetPriorityCache() {
@@ -31,18 +32,20 @@ export function calcPriority(result: AnswerResult): PriorityData {
   }
 }
 
-export async function updatePriority(workId: string) {
-  for (let groupId in cache) {
-    let priorityData = await api.getPriorityData(workId, groupId);
-    for (let [id, data] of Object.entries(cache[groupId])) {
-      let scale = Math.max(0.5, Math.min(Math.sqrt(Date.now() - (priorityData[id]?.lastAnswerTime ?? 0)) / 6000, 2))
-      priorityData[id] = {
-        wrongAnswerRate: ((priorityData[id]?.wrongAnswerRate ?? 0) + data.wrongAnswerRate * scale) / (scale + 1),
-        memorizationRate: ((priorityData[id]?.memorizationRate ?? 0) + data.memorizationRate * scale) / (scale + 1),
-        lastAnswerTime: Date.now()
+export async function updatePriority() {
+  for (let workId in cache) {
+    for (let groupId in cache[workId]) {
+      let priorityData = await api.getPriorityData(workId, groupId);
+      for (let [id, data] of Object.entries(cache[workId][groupId])) {
+        let scale = Math.max(0.5, Math.min(Math.sqrt(Date.now() - (priorityData[id]?.lastAnswerTime ?? 0)) / 6000, 2))
+        priorityData[id] = {
+          wrongAnswerRate: ((priorityData[id]?.wrongAnswerRate ?? 0) + data.wrongAnswerRate * scale) / (scale + 1),
+          memorizationRate: ((priorityData[id]?.memorizationRate ?? 0) + data.memorizationRate * scale) / (scale + 1),
+          lastAnswerTime: Date.now()
+        }
       }
+      api.setPriorityData(workId, groupId, priorityData);
     }
-    api.setPriorityData(workId, groupId, priorityData);
   }
 }
 

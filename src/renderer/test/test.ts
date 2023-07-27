@@ -17,7 +17,7 @@ let index = 0;
 export function init() {
   backSpan.addEventListener('click', () => {
     if (currentMode == 'test-question' || currentMode == 'test-answer') {
-      updatePriority(currentWork);
+      updatePriority();
     }
   }, {capture: true})
 
@@ -28,11 +28,11 @@ export function init() {
   testAnswerViewButtonOuterDiv.addEventListener('click', e => {
     let target = e.target as HTMLElement;
     if (target.tagName == 'BUTTON') {
-      cachePriority(sortedQuestions[index].groupId, sortedQuestions[index].id, calcPriority(Number((target as HTMLButtonElement).value)));
+      cachePriority(sortedQuestions[index].workId, sortedQuestions[index].groupId, sortedQuestions[index].id, calcPriority(Number((target as HTMLButtonElement).value)));
       index++;
       if (index < amount) showQuestion();
       else {
-        updatePriority(currentWork);
+        updatePriority();
       }
     }
   })
