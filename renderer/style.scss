@@ -397,6 +397,47 @@ main {
       }
     }
   }
+
+  #test-result-view {
+    .correct-answer-rate {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      top: 35%;
+      left: 50%;
+
+      span:first-child {
+        position: relative;
+        top: 20px;
+        left: -20px;
+        font-size: 40px;
+      }
+
+      span:last-child {
+        font-size: 160px;
+        font-weight: 300;
+      }
+    }
+
+    .again, .back {
+      @include button();
+      position: absolute;
+      height: 100px;
+      width: 200px;
+      font-size: 40px;
+      font-weight: 300;
+      border-radius: 10px;
+      top: 70%;
+      transform: translateX(-50%);
+    }
+
+    .again {
+      left: 35%;
+    }
+
+    .back {
+      left: 65%;
+    }
+  }
 }
 
 #dialog {

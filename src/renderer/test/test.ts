@@ -1,5 +1,5 @@
-import { backSpan, testAnswerViewButtonOuterDiv, testAnswerViewContentP, testQuestionViewCheckButton, testQuestionViewContentP, titleH1 } from "../elements.js";
-import { currentMode, setMode } from "../mode.js";
+import { backSpan, testAnswerViewButtonOuterDiv, testAnswerViewContentP, testQuestionViewCheckButton, testQuestionViewContentP, testResultViewAgainButton, testResultViewBackButton, testResultViewCorrectAnswerRateSpan, titleH1 } from "../elements.js";
+import { back, currentMode, setMode } from "../mode.js";
 import { Question, QuestionWithId } from "../question/question.js";
 import { createElement } from "../utils.js";
 import { currentWork } from "../work/work.js";
@@ -13,6 +13,7 @@ export type TestOptions = {
 let sortedQuestions: QuestionWithId[] = [];
 let amount = 0;
 let index = 0;
+let correctCount = 0;
 
 export function init() {
   backSpan.addEventListener('click', () => {
@@ -29,12 +30,24 @@ export function init() {
     let target = e.target as HTMLElement;
     if (target.tagName == 'BUTTON') {
       cachePriority(sortedQuestions[index].workId, sortedQuestions[index].groupId, sortedQuestions[index].id, calcPriority(Number((target as HTMLButtonElement).value)));
+      if ((target as HTMLButtonElement).value == '0') correctCount++;
       index++;
       if (index < amount) showQuestion();
       else {
         updatePriority();
+
+        setMode('test-result');
+        testResultViewCorrectAnswerRateSpan.innerText = (Math.floor(correctCount / amount * 10) * 10) + '%';
       }
     }
+  })
+
+  testResultViewAgainButton.addEventListener('click', () => {
+    setMode('start-test');
+  })
+
+  testResultViewBackButton.addEventListener('click', () => {
+    back();
   })
 }
 
@@ -58,6 +71,7 @@ export async function test(title: string, questions: QuestionWithId[], options: 
   amount = Math.min(sortedQuestions.length, amount);
 
   index = 0;
+  correctCount = 0;
   resetPriorityCache();
   showQuestion();
 }
