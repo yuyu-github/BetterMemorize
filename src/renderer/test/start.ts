@@ -6,6 +6,11 @@ import { toNumberOrString } from "../utils.js";
 import { currentWork, works } from "../work/work.js";
 import { TestOptions, test } from "./test.js";
 
+type SavedOptions = TestOptions & {
+  amount: TestOptions['amount'] | 'custom',
+  customAmount: string,
+};
+
 let type: 'work' | 'group' = 'work';
 let id: string = '';
 
@@ -47,12 +52,21 @@ export function init() {
   startTestViewStartButton.addEventListener('click', () => {
     start();
   })
-}
+}  
 
 export function getTitleName() {
   if (type == 'work') return works[id].name;
   else if (type == 'group') return groups[id].name;
   return '';
+}
+
+export function loadPreviousOptions() {
+  if (localStorage.getItem('testOptions') != null) {
+    let options: SavedOptions = JSON.parse(localStorage.getItem('testOptions')!);
+    startTestViewSettingDiv.querySelector<HTMLInputElement>(`input[name=method][value=${options.method}]`)!.checked = true;
+    startTestViewSettingDiv.querySelector<HTMLInputElement>(`input[name=amount][value=${options.amount}]`)!.checked = true;
+    startTestViewCustomAmountInput.value = options.customAmount;
+  }
 }
 
 export async function getAllQuestion() {
@@ -85,5 +99,11 @@ export async function start() {
     method: startTestViewSettingDiv.querySelector<HTMLInputElement>('input[name=method]:checked')!.value as any,
     amount: amount as any,
   };
+  localStorage.setItem('testOptions', JSON.stringify({
+    ...options,
+    amount: startTestViewSettingDiv.querySelector<HTMLInputElement>('input[name=amount]:checked')!.value,
+    customAmount: startTestViewCustomAmountInput.value,
+  } as SavedOptions));
+
   test(getTitleName(), questions, options);
 }

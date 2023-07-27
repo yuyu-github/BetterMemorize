@@ -1,7 +1,8 @@
-import { listViewAddButton, backSpan, titleH1, menuDiv, listViewDiv, editQuestionViewDiv, editQuestionViewQuestionTextarea, editQuestionViewAnswerTextarea, questionViewDiv, questionViewQuestionTextarea, questionViewAnswerTextarea, listViewListDiv, menuStartButton, startTestViewDiv, testQuestionViewDiv, testAnswerViewDiv, listViewGroupAddButton, listViewQuestionAddButton } from "./elements.js";
+import { listViewAddButton, backSpan, titleH1, menuDiv, listViewDiv, editQuestionViewDiv, editQuestionViewQuestionTextarea, editQuestionViewAnswerTextarea, questionViewDiv, questionViewQuestionTextarea, questionViewAnswerTextarea, listViewListDiv, menuStartButton, startTestViewDiv, testQuestionViewDiv, testAnswerViewDiv, listViewGroupAddButton, listViewQuestionAddButton, startTestViewSettingDiv, startTestViewCustomAmountInput } from "./elements.js";
 import { backGroup, currentGroup, groups, updateGroups } from "./group/group.js";
 import { currentQuestion, questions, updateGroupChildren } from "./question/question.js";
-import { getTitleName as getTestTitleName } from "./test/start.js";
+import { getTitleName as getTestTitleName, loadPreviousOptions } from "./test/start.js";
+import { TestOptions } from "./test/test.js";
 import { currentWork, updateWorks, works } from "./work/work.js";
 
 type ModeType = 
@@ -77,6 +78,7 @@ export function setMode(mode: ModeType, updateHistory = true) {
     case 'start-test': {
       titleH1.innerText = getTestTitleName();
       viewElems = [startTestViewDiv];
+      loadPreviousOptions();
     }
     break;
     case 'test-question': {
