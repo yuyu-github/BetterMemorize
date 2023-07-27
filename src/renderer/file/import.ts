@@ -6,7 +6,7 @@ import { currentWork } from "../work/work.js";
 
 export function init() {
   listViewImportButton.addEventListener('click', async () => {
-    let path = await api.getImportSourceFile();
+    let path = await api.getImportSourceFile(currentMode);
     if (path == null) return;
     if (currentMode == 'all-work') await api.importWork(path);
     else {

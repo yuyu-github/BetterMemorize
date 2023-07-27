@@ -5,13 +5,13 @@ import path from "path";
 import fs from 'fs';
 import crypto from 'crypto';
 
-export function getImportSourceFile(e) {
+export function getImportSourceFile(e, mode) {
   return dialog.showOpenDialogSync(mainWindow!, {
     title: 'インポート',
     buttonLabel: 'インポート',
     filters: [
       {name: 'BetterMemorizeファイル', extensions: ['bmr']},
-      {name: 'CSVファイル', extensions: ['csv']},
+      ...(mode == 'group' ? [{name: 'CSVファイル', extensions: ['csv']}] : []),
     ],
     properties: ["openFile"]
   })?.[0]
@@ -31,6 +31,7 @@ export function importSubGroup(e, importPath: string, method: string, workId: st
 
 function importFile(importPath: string, dir: string, workId: string | null, method: string = 'default') {
   switch (path.extname(importPath)) {
+    case '.csv': importCsvData(fs.readFileSync(importPath).toString().split('\n').map(i => i.split(',')), dir); break;
     default: importData(JSON.parse(fs.readFileSync(importPath).toString()), dir, workId, method); break;
   }
 }
@@ -76,4 +77,11 @@ function importData(data: Data, dir: string, workId: string | null, method: stri
     fs.writeFileSync(questionsFile, JSON.stringify(questions));
   }
   data.groups.forEach(group => importData(group, newDir, newWorkId))
+}
+
+function importCsvData(data: string[][], dir: string) {
+  let questionsFile = path.join(dir, 'questions.json');
+  let questions: string[] = fs.existsSync(questionsFile) ? JSON.parse(fs.readFileSync(questionsFile).toString()) : {};
+  Object.assign(questions, Object.fromEntries(data.map(i => [crypto.randomUUID(), {question: i[0], answer: i[1]}])));
+  fs.writeFileSync(questionsFile, JSON.stringify(questions));
 }
