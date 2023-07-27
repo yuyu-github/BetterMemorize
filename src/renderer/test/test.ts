@@ -81,7 +81,7 @@ export async function test(title: string, questions: QuestionWithId[], options: 
   } else if (options.method === 'auto') {
     sortScores = (await getPriorityScores(questions)).map((item, index) => [index, item]);
   }
-  sortScores.sort((a, b) => a[1] - b[1]);
+  sortScores.sort((a, b) => b[1] - a[1]);
   sortedQuestions = sortScores.map(i => questions[i[0]]);
   
   if (typeof options.amount == 'number') amount = options.amount;
