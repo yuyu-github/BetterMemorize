@@ -19,6 +19,7 @@ export const editQuestionViewOkButton = document.querySelector('#edit-question-v
 export const editQuestionViewCancelButton = document.querySelector('#edit-question-view .cancel') as HTMLButtonElement;
 export const startTestViewDiv = document.querySelector('#start-test-view') as HTMLElement;
 export const startTestViewSettingDiv = document.querySelector('#start-test-view .setting') as HTMLElement;
+export const startTestViewCustomAmountInput = document.querySelector('#start-test-view .custom-amount') as HTMLInputElement;
 export const startTestViewStartButton = document.querySelector('#start-test-view .start') as HTMLButtonElement;
 export const testQuestionViewDiv = document.querySelector('#test-question-view') as HTMLElement;
 export const testQuestionViewContentP = document.querySelector('#test-question-view .content') as HTMLElement;

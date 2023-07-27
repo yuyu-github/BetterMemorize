@@ -310,9 +310,34 @@ main {
         display: flex;
         align-items: center;
 
-        > p {
+        > p:first-child {
           margin: 5px;
           width: 70px;
+        }
+
+        > div:first-of-type + * {
+          margin-left: 10px;
+        }
+
+        > input {
+          @include input();
+          height: 20px;
+          
+          &[type=number] {
+            width: 40px;
+            
+            &::-webkit-outer-spin-button, &::-webkit-inner-spin-button {
+              appearance: none;
+            }
+          }
+
+          & + p {
+            margin: 3px;
+          }
+        }
+
+        > div:not(:has(label:last-child > input:checked)) + input {
+          color: #909090;
         }
       }
     }

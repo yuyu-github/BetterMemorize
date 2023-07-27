@@ -1,4 +1,4 @@
-import { listViewListDiv, menuStartButton, questionViewAnswerTextarea, startTestViewSettingDiv, startTestViewStartButton } from "../elements.js";
+import { listViewListDiv, menuStartButton, questionViewAnswerTextarea, startTestViewCustomAmountInput, startTestViewSettingDiv, startTestViewStartButton } from "../elements.js";
 import { currentGroup, groups } from "../group/group.js";
 import { currentMode, setMode } from "../mode.js";
 import { Question, QuestionWithId } from "../question/question.js";
@@ -32,6 +32,16 @@ export function init() {
       setMode('start-test');
       e.stopImmediatePropagation();
     }
+  })
+
+  startTestViewCustomAmountInput.addEventListener('focus', () => {
+    startTestViewSettingDiv.querySelector<HTMLInputElement>('input[name=amount][value=custom]')!.checked = true;
+  })
+  startTestViewCustomAmountInput.addEventListener('keydown', e => {
+    if (e.key.length == 1 && !'0123456789'.includes(e.key)) e.preventDefault();
+  })
+  startTestViewCustomAmountInput.addEventListener('input', () => {
+    if (Number(startTestViewCustomAmountInput.value) > 1000) startTestViewCustomAmountInput.value = '1000';
   })
 
   startTestViewStartButton.addEventListener('click', () => {
@@ -68,9 +78,12 @@ export async function getAllQuestion() {
 
 export async function start() {
   let questions = await getAllQuestion();
+
+  let amount: number | string = startTestViewSettingDiv.querySelector<HTMLInputElement>('input[name=amount]:checked')!.value;
+  if (amount == 'custom') amount = Number(startTestViewCustomAmountInput.value);
   let options: TestOptions = {
     method: startTestViewSettingDiv.querySelector<HTMLInputElement>('input[name=method]:checked')!.value as any,
-    amount: toNumberOrString(startTestViewSettingDiv.querySelector<HTMLInputElement>('input[name=amount]:checked')!.value) as any,
+    amount: amount as any,
   };
   test(getTitleName(), questions, options);
 }
