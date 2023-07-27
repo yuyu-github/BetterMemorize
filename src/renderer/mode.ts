@@ -42,68 +42,70 @@ export function setMode(mode: ModeType, updateHistory = true) {
   ].forEach(i => i.style.display = 'none');
   listViewListDiv.innerHTML = '';
 
-  let viewElems: HTMLElement[] = [];
+  const view = (elems) => elems.forEach(i => i.style.display = '');
   switch (mode) {
     case 'all-work': {
       titleH1.innerText = 'すべてのワーク';
       backSpan.style.display = 'none'
-      viewElems = [listViewDiv, listViewAddButton, listViewImportButton];
+      view([listViewDiv, listViewAddButton, listViewImportButton]);
       updateWorks();
     }
     break;
     case 'work': {
       titleH1.innerText = works[currentWork].name;
-      viewElems = [menuDiv, menuStartButton, menuExportButton, listViewDiv, listViewAddButton, listViewImportButton];
+      view([menuDiv, menuStartButton, menuExportButton, listViewDiv, listViewAddButton, listViewImportButton]);
       updateGroups();
     }
     break;
     case 'group': {
       titleH1.innerText = groups[currentGroup].name;
-      viewElems = [menuDiv, menuStartButton, menuExportButton, listViewDiv, listViewGroupAddButton, listViewQuestionAddButton, listViewImportButton];
+      view([menuDiv, menuStartButton, menuExportButton, listViewDiv, listViewGroupAddButton, listViewQuestionAddButton, listViewImportButton]);
       updateGroupChildren();
     }
     break;
     case 'question': {
       titleH1.innerText = questions[currentQuestion].question.replace('\n', ' ');
-      viewElems = [menuDiv, questionViewDiv];
       questionViewQuestionTextarea.value = questions[currentQuestion].question;
       questionViewAnswerTextarea.value = questions[currentQuestion].answer;
+      view([menuDiv, questionViewDiv]);
     }
     break;
     case 'add-question': {
       titleH1.innerText = '';
       editQuestionViewQuestionTextarea.value = '';
       editQuestionViewAnswerTextarea.value = '';
-      viewElems = [editQuestionViewDiv];
+      view([editQuestionViewDiv]);
+      editQuestionViewQuestionTextarea.focus();
     }
     break;
     case 'edit-question': {
       titleH1.innerText = questions[currentQuestion].question.replace('\n', ' ');
       editQuestionViewQuestionTextarea.value = questions[currentQuestion].question;
       editQuestionViewAnswerTextarea.value = questions[currentQuestion].answer;
-      viewElems = [editQuestionViewDiv];
+      view([editQuestionViewDiv]);
+      editQuestionViewQuestionTextarea.focus();
     }
     break;
     case 'start-test': {
       titleH1.innerText = getTestTitleName();
-      viewElems = [startTestViewDiv];
+      view([startTestViewDiv]);
+      editQuestionViewQuestionTextarea.focus();
       loadPreviousOptions();
     }
     break;
     case 'test-question': {
-      viewElems = [testQuestionViewDiv];
+      view([testQuestionViewDiv]);
     }
     break;
     case 'test-answer': {
-      viewElems = [testAnswerViewDiv];
+      view([testAnswerViewDiv]);
     }
     break;
     case 'test-result': {
-      viewElems = [testResultViewDiv];
+      view([testResultViewDiv]);
     }
     break;
   }
-  viewElems.forEach(i => i.style.display = '');
 }
 
 export function reload() {

@@ -112,7 +112,7 @@ export function showDialog<T extends InputListType>(title: string, message: stri
     }
 
     function onKeydown(e: KeyboardEvent) {
-      if (e.key == 'Enter') {
+      if (e.code == 'Enter') {
         let index = inputElems.indexOf(document.activeElement as HTMLElement)
         if (index == -1 || index == inputElems.length - 1) {
           let defaultButton = buttons.reduce((p, c, i) => p.max < c[1] ? {index: i, max: c[1]} : p, {index: 0, max: -1}).index;
@@ -120,7 +120,7 @@ export function showDialog<T extends InputListType>(title: string, message: stri
         } else {
           inputElems[index + 1].focus();
         }
-      } else if (e.key == 'Tab') {
+      } else if (e.code == 'Tab') {
         e.preventDefault();
 
         let index = inputElems.indexOf(document.activeElement as HTMLElement)
@@ -132,7 +132,7 @@ export function showDialog<T extends InputListType>(title: string, message: stri
           if (index == focusable.length - 1) index = -1;
           focusable[index + 1].focus();
         }
-      } else if (e.key == 'Escape') {
+      } else if (e.code == 'Escape') {
         let defaultButton = buttons.reduce((p, c, i) => p.min >= c[1] || p.min == -1 ? {index: i, min: c[1]} : p, {index: 0, min: -1}).index;
         returnResult(buttonElems[defaultButton]);
       }

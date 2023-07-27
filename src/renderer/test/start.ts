@@ -1,4 +1,4 @@
-import { listViewListDiv, menuStartButton, questionViewAnswerTextarea, startTestViewCustomAmountInput, startTestViewSettingDiv, startTestViewStartButton } from "../elements.js";
+import { listViewListDiv, menuStartButton, questionViewAnswerTextarea, startTestViewCustomAmountInput, startTestViewDiv, startTestViewSettingDiv, startTestViewStartButton } from "../elements.js";
 import { currentGroup, groups } from "../group/group.js";
 import { currentMode, setMode } from "../mode.js";
 import { Question, QuestionWithId } from "../question/question.js";
@@ -52,6 +52,15 @@ export function init() {
 
   startTestViewStartButton.addEventListener('click', () => {
     start();
+  })
+
+  addEventListener('keydown', e => {
+    if (currentMode == 'start-test') {
+      if (e.code == 'Enter' || e.code == 'Space') {
+        startTestViewStartButton.click();
+        e.preventDefault();
+      }
+    }
   })
 }  
 
