@@ -15,4 +15,6 @@ contextBridge.exposeInMainWorld('api', {
   getQuestions: (workId, groupId) => ipcRenderer.invoke('getQuestions', workId, groupId),
   getPriorityData: (workId, groupId) => ipcRenderer.invoke('getPriorityData', workId, groupId),
   setPriorityData: (workId, groupId, data) => ipcRenderer.invoke('setPriorityData', workId, groupId, data),
+  exportWork: (workId) => ipcRenderer.invoke('exportWork', workId),
+  exportGroup: (workId, groupId) => ipcRenderer.invoke('exportGroup', workId, groupId),
 })

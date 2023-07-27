@@ -3,6 +3,7 @@ export const backSpan = document.querySelector('#back') as HTMLElement;
 export const menuDiv = document.querySelector('#menu') as HTMLElement;
 export const menuStartButton = document.querySelector('#menu .start') as HTMLElement;
 export const menuEditButton = document.querySelector('#menu .edit') as HTMLElement;
+export const menuExportButton = document.querySelector('#menu .export') as HTMLElement;
 export const menuDeleteButton = document.querySelector('#menu .delete') as HTMLElement;
 export const listViewDiv = document.querySelector('#list-view') as HTMLElement;
 export const listViewAddButton = document.querySelector('#list-view .add') as HTMLButtonElement;

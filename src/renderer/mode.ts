@@ -1,4 +1,4 @@
-import { listViewAddButton, backSpan, titleH1, menuDiv, listViewDiv, editQuestionViewDiv, editQuestionViewQuestionTextarea, editQuestionViewAnswerTextarea, questionViewDiv, questionViewQuestionTextarea, questionViewAnswerTextarea, listViewListDiv, menuStartButton, startTestViewDiv, testQuestionViewDiv, testAnswerViewDiv, listViewGroupAddButton, listViewQuestionAddButton, startTestViewSettingDiv, startTestViewCustomAmountInput, testResultViewDiv } from "./elements.js";
+import { listViewAddButton, backSpan, titleH1, menuDiv, listViewDiv, editQuestionViewDiv, editQuestionViewQuestionTextarea, editQuestionViewAnswerTextarea, questionViewDiv, questionViewQuestionTextarea, questionViewAnswerTextarea, listViewListDiv, menuStartButton, startTestViewDiv, testQuestionViewDiv, testAnswerViewDiv, listViewGroupAddButton, listViewQuestionAddButton, startTestViewSettingDiv, startTestViewCustomAmountInput, testResultViewDiv, menuExportButton } from "./elements.js";
 import { backGroup, currentGroup, groups, updateGroups } from "./group/group.js";
 import { currentQuestion, questions, updateGroupChildren } from "./question/question.js";
 import { getTitleName as getTestTitleName, loadPreviousOptions } from "./test/start.js";
@@ -35,7 +35,11 @@ export function setMode(mode: ModeType, updateHistory = true) {
   if (rewriteHistory > 0) modeHistory.splice(-rewriteHistory, rewriteHistory, mode);
 
   backSpan.style.display = 'block';
-  [menuDiv, menuStartButton, listViewDiv, listViewAddButton, listViewGroupAddButton, listViewQuestionAddButton, editQuestionViewDiv, questionViewDiv, startTestViewDiv, testQuestionViewDiv, testAnswerViewDiv, testResultViewDiv].forEach(i => i.style.display = 'none');
+  [
+    menuDiv, menuStartButton, menuExportButton,
+    listViewDiv, listViewAddButton, listViewGroupAddButton, listViewQuestionAddButton, 
+    editQuestionViewDiv, questionViewDiv, startTestViewDiv, testQuestionViewDiv, testAnswerViewDiv, testResultViewDiv
+  ].forEach(i => i.style.display = 'none');
   listViewListDiv.innerHTML = '';
 
   let viewElems: HTMLElement[] = [];
@@ -49,13 +53,13 @@ export function setMode(mode: ModeType, updateHistory = true) {
     break;
     case 'work': {
       titleH1.innerText = works[currentWork].name;
-      viewElems = [menuDiv, menuStartButton, listViewDiv, listViewAddButton];
+      viewElems = [menuDiv, menuStartButton, menuExportButton, listViewDiv, listViewAddButton];
       updateGroups();
     }
     break;
     case 'group': {
       titleH1.innerText = groups[currentGroup].name;
-      viewElems = [menuDiv, menuStartButton, listViewDiv, listViewGroupAddButton, listViewQuestionAddButton];
+      viewElems = [menuDiv, menuStartButton, menuExportButton, listViewDiv, listViewGroupAddButton, listViewQuestionAddButton];
       updateGroupChildren();
     }
     break;

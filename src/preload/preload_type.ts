@@ -18,6 +18,8 @@ export interface IApi {
   getQuestions: (workId: string, groupId: string) => Promise<{[id: string]: Question}>;
   getPriorityData: (workId: string, groupId: string) => Promise<{[id: string]: PriorityData}>;
   setPriorityData: (workId: string, groupId: string, data: {[id: string]: PriorityData}) => Promise<void>;
+  exportWork: (workId: string) => Promise<void>;
+  exportGroup: (workId: string, groupId: string) => Promise<void>;
 }
 
 declare global {

@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import { dataFolder } from '../utils.js';
+import { exportGroup, exportWork } from './file.js';
 
 export default () => {
   ipcMain.handle('addWork', (e, data: object) => {
@@ -120,4 +121,7 @@ export default () => {
     let dataFile = path.join(dataFolder, 'works', workId, 'groups', groupId, 'priority.json');
     return fs.writeFileSync(dataFile, JSON.stringify(data));
   })
+
+  ipcMain.handle('exportWork', exportWork);
+  ipcMain.handle('exportGroup', exportGroup);
 }
