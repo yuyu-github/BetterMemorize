@@ -108,7 +108,7 @@ async function deleteQuestion(workId: string, groupId: string, id: string) {
 }
 
 export function cacheQuestions(data: {[key: string]: Question}) {
-  questions = {...questions, ...data};
+  Object.assign(questions, data);
 }
 
 export async function updateGroupChildren() {

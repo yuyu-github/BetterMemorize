@@ -8,6 +8,9 @@ import { currentWork } from "../work/work.js";
 export type Group = {
   name: string
 }
+export type GroupWithLastAccessTime = Group & {
+  lastAccessTime: number
+}
 
 export let groups: {[id: string]: Group} = {};
 export let currentGroup = '';
@@ -88,7 +91,7 @@ async function deleteGroup(workId: string, groupId: string | null, id: string) {
 }
 
 export function cacheGroups(data: {[key: string]: Group}) {
-  groups = {...groups, ...data};
+  Object.assign(groups, data);
 }
 
 export async function updateGroups() {
@@ -96,9 +99,9 @@ export async function updateGroups() {
   cacheGroups(groups);
 
   let newelem = createElement('div');
-  for (let id in groups) {
+  for (let [id, group] of Object.entries(groups).sort((a, b) => b[1].lastAccessTime - a[1].lastAccessTime)) {
     newelem.appendChild(createElement('div', {data: {id: id}}, [
-      createElement('p', {}, [groups[id].name]),
+      createElement('p', {}, [group.name]),
       createElement('button', {class: 'start color-green'}, ['スタート'])
     ]));
   }

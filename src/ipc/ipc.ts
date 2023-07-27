@@ -10,13 +10,16 @@ export default () => {
   ipcMain.handle('addWork', (e, data: object) => {
     let worksdir = path.join(dataFolder, 'works');
     if (!fs.existsSync(worksdir)) fs.mkdirSync(worksdir);
-    let dir = path.join(worksdir, crypto.randomUUID());
+    let id = crypto.randomUUID();
+    let dir = path.join(worksdir, id);
     fs.mkdirSync(dir);
     fs.writeFileSync(path.join(dir, 'info.json'), JSON.stringify(data));
+    updateLastAccessTime(id);
   })
 
   ipcMain.handle('editWork', (e, id: string, data: object) => {
     fs.writeFileSync(path.join(dataFolder, 'works', id, 'info.json'), JSON.stringify(data));
+    updateLastAccessTime(id);
   })
 
   ipcMain.handle('deleteWork', (e, id: string) => {
@@ -49,10 +52,12 @@ export default () => {
     let groupsFileData: string[] = fs.existsSync(groupsFile) ? JSON.parse(fs.readFileSync(groupsFile).toString()) : [];
     groupsFileData.push(id)
     fs.writeFileSync(groupsFile, JSON.stringify(groupsFileData));
+    updateLastAccessTime(workId, id);
   })
 
   ipcMain.handle('editGroup', (e, workId: string, id: string, data: object) => {
     fs.writeFileSync(path.join(dataFolder, 'works', workId, 'groups', id, 'info.json'), JSON.stringify(data));
+    updateLastAccessTime(workId, id);
   })
 
   ipcMain.handle('deleteGroup', (e, workId: string, groupId: string | null, id: string) => {
@@ -62,6 +67,7 @@ export default () => {
     let groupsFileData = JSON.parse(fs.readFileSync(groupsFile).toString());
     groupsFileData.splice(groupsFileData.indexOf(id), 1);
     fs.writeFileSync(groupsFile, JSON.stringify(groupsFileData));
+    updateLastAccessTime(workId);
   })
 
   ipcMain.handle('getGroups', (e, workId: string, groupId: string | null) => {
@@ -85,6 +91,7 @@ export default () => {
     let currentData = fs.existsSync(filename) ? JSON.parse(fs.readFileSync(filename).toString()) : {};
     currentData[crypto.randomUUID()] = data;
     fs.writeFileSync(filename, JSON.stringify(currentData));
+    updateLastAccessTime(workId, groupId);
   })
 
   ipcMain.handle('editQuestion', (e, workId: string, groupId: string, id: string, data: object) => {
@@ -92,6 +99,7 @@ export default () => {
     let currentData = fs.existsSync(filename) ? JSON.parse(fs.readFileSync(filename).toString()) : {};
     currentData[id] = data;
     fs.writeFileSync(filename, JSON.stringify(currentData));
+    updateLastAccessTime(workId, groupId);
   })
 
   ipcMain.handle('deleteQuestion', (e, workId: string, groupId: string, id: string) => {
@@ -99,6 +107,7 @@ export default () => {
     let currentData = fs.existsSync(filename) ? JSON.parse(fs.readFileSync(filename).toString()) : {};
     delete currentData[id];
     fs.writeFileSync(filename, JSON.stringify(currentData));
+    updateLastAccessTime(workId, groupId);
   })
   
   ipcMain.handle('getQuestions', (e, workId: string, groupId: string) => {
@@ -120,7 +129,8 @@ export default () => {
 
   ipcMain.handle('setPriorityData', (e, workId: string, groupId: string, data: object) => {
     let dataFile = path.join(dataFolder, 'works', workId, 'groups', groupId, 'priority.json');
-    return fs.writeFileSync(dataFile, JSON.stringify(data));
+    fs.writeFileSync(dataFile, JSON.stringify(data));
+    updateLastAccessTime(workId, groupId);
   })
 
   ipcMain.handle('getImportSourceFile', getImportSourceFile);
@@ -130,4 +140,18 @@ export default () => {
 
   ipcMain.handle('exportWork', exportWork);
   ipcMain.handle('exportGroup', exportGroup);
+
+  ipcMain.handle('updateLastAccessTime', (e, workId, groupId) => updateLastAccessTime(workId, groupId))
+  function updateLastAccessTime(workId: string, groupId: string | null = null) {
+    let infoFile = path.join(dataFolder, 'works', workId, 'info.json');
+    let info = JSON.parse(fs.readFileSync(infoFile).toString());
+    info.lastAccessTime = Date.now();
+    fs.writeFileSync(infoFile, JSON.stringify(info));
+    if (groupId != null) {
+      infoFile = path.join(dataFolder, 'works', workId, 'groups', groupId, 'info.json');
+      info = JSON.parse(fs.readFileSync(infoFile).toString());
+      info.lastAccessTime = Date.now();
+      fs.writeFileSync(infoFile, JSON.stringify(info));
+    }
+  }
 }

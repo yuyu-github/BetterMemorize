@@ -6,6 +6,9 @@ import { back, currentMode, reload, setMode } from "../mode.js";
 export type Work = {
   name: string,
 }
+export type WorkWithLastAccessTime = Work & {
+  lastAccessTime: number
+}
 
 export let works: {[id: string]: Work} = {};
 export let currentWork = '';
@@ -66,12 +69,18 @@ async function deleteWork(id: string) {
   await api.deleteWork(id);
 }
 
+export function cacheWorks(data: {[key: string]: Work}) {
+  Object.assign(works, data);
+}
+
+
 export async function updateWorks() {
-  works = await api.getWorks();
+  let works = await api.getWorks();
+  cacheWorks(works);
   let newelem = createElement('div');
-  for (let id in works) {
+  for (let [id, work] of Object.entries(works).sort((a, b) => b[1].lastAccessTime - a[1].lastAccessTime)) {
     newelem.appendChild(createElement('div', {data: {id: id}}, [
-      createElement('p', {}, [works[id].name]),
+      createElement('p', {}, [work.name]),
       createElement('button', {class: 'start color-green'}, ['スタート'])
     ]));
   }

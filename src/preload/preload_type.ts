@@ -1,17 +1,17 @@
-import { Group } from "../renderer/group/group.js";
+import { Group, GroupWithLastAccessTime } from "../renderer/group/group.js";
 import { Question } from "../renderer/question/question.js";
 import { PriorityData } from "../renderer/test/priority.js";
-import { Work } from "../renderer/work/work.js";
+import { Work, WorkWithLastAccessTime } from "../renderer/work/work.js";
 
 export interface IApi {
   addWork: (data: Work) => Promise<void>;
   editWork: (id: string, data: Work) => Promise<void>;
   deleteWork: (id: string) => Promise<void>;
-  getWorks: () => Promise<{[id: string]: Work}>;
+  getWorks: () => Promise<{[id: string]: WorkWithLastAccessTime}>;
   addGroup: (workId: string, groupId: string | null, data: Group) => Promise<void>;
   editGroup: (workId: string, id: string, data: Group) => Promise<void>;
   deleteGroup: (workId: string, groupId: string | null, id: string) => Promise<void>;
-  getGroups: (workId: string, groupId?: string | null) => Promise<{[id: string]: Group}>;
+  getGroups: (workId: string, groupId?: string | null) => Promise<{[id: string]: GroupWithLastAccessTime}>;
   addQuestion: (workId: string, groupId: string, data: Question) => Promise<void>;
   editQuestion: (workId: string, groupId: string, id: string, data: Question) => Promise<void>;
   deleteQuestion: (workId: string, groupId: string, id: string) => Promise<void>;
@@ -24,6 +24,7 @@ export interface IApi {
   importSubGroup: (path: string, method: string, workId: string, groupId: string) => Promise<void>;
   exportWork: (workId: string) => Promise<void>;
   exportGroup: (workId: string, groupId: string) => Promise<void>;
+  updateLastAccessTime: (workId: string, groupId?: string | null) => Promise<void>;
 }
 
 declare global {
