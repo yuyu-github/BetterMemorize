@@ -45,8 +45,9 @@ export function init() {
   startTestViewCustomAmountInput.addEventListener('keydown', e => {
     if (e.key.length == 1 && !'0123456789'.includes(e.key)) e.preventDefault();
   })
-  startTestViewCustomAmountInput.addEventListener('input', () => {
+  startTestViewCustomAmountInput.addEventListener('focusout', () => {
     if (Number(startTestViewCustomAmountInput.value) > 1000) startTestViewCustomAmountInput.value = '1000';
+    if (Number(startTestViewCustomAmountInput.value) <= 0) startTestViewCustomAmountInput.value = '1';
   })
 
   startTestViewStartButton.addEventListener('click', () => {
