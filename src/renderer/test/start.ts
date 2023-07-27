@@ -93,6 +93,7 @@ export async function getAllQuestion() {
 
 export async function start() {
   let questions = await getAllQuestion();
+  if (questions.length == 0) return;
 
   let amount: number | string = startTestViewSettingDiv.querySelector<HTMLInputElement>('input[name=amount]:checked')!.value;
   if (amount == 'custom') amount = Number(startTestViewCustomAmountInput.value);

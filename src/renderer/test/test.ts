@@ -73,6 +73,7 @@ export async function test(title: string, questions: QuestionWithId[], options: 
   index = 0;
   correctCount = 0;
   resetPriorityCache();
+
   showQuestion();
 }
 
