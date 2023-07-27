@@ -18,21 +18,21 @@ export function getImportSourceFile(e, mode) {
 }
 
 export function importWork(e, importPath: string) {
-  importFile(importPath, path.join(dataFolder, 'works'), null, 'default');
+  importFile('work', importPath, path.join(dataFolder, 'works'), null, 'default');
 }
 
 export function importGroup(e, importPath: string, method: string, workId: string) {
-  importFile(importPath, path.join(dataFolder, 'works', workId), workId, method);
+  importFile('group', importPath, path.join(dataFolder, 'works', workId), workId, method);
 }
 
 export function importSubGroup(e, importPath: string, method: string, workId: string, groupId: string) {
-  importFile(importPath, path.join(dataFolder, 'works', workId, 'groups', groupId), workId, method);
+  importFile('subGroup', importPath, path.join(dataFolder, 'works', workId, 'groups', groupId), workId, method);
 }
 
-function importFile(importPath: string, dir: string, workId: string | null, method: string = 'default') {
+function importFile(mode: string, importPath: string, dir: string, workId: string | null, method: string = 'default') {
   switch (path.extname(importPath)) {
     case '.csv': importCsvData(fs.readFileSync(importPath).toString().split('\n').map(i => i.split(',')), dir); break;
-    default: importData(JSON.parse(fs.readFileSync(importPath).toString()), dir, workId, method); break;
+    default: importData(mode, JSON.parse(fs.readFileSync(importPath).toString()), dir, workId, method); break;
   }
 }
 
@@ -41,7 +41,7 @@ type Data = {
   questions: {}[],
   groups: Data[]
 };
-function importData(data: Data, dir: string, workId: string | null, method: string = 'default') {
+function importData(mode: string, data: Data, dir: string, workId: string | null, method: string = 'default') {
   let newDir = dir;
   let newWorkId = workId;
   if (method != 'extract') {
@@ -60,23 +60,23 @@ function importData(data: Data, dir: string, workId: string | null, method: stri
     fs.mkdirSync(newDir, {recursive: true});
 
     fs.writeFileSync(path.join(newDir, 'info.json'), JSON.stringify(data.info));
-    if (workId != null) {
-      fs.writeFileSync(path.join(newDir, 'questions.json'), JSON.stringify(Object.fromEntries(data.questions.map(i => [crypto.randomUUID(), i]))));
-    } else if (data.questions.length > 0) {
-      data.groups.push({
-        info: data.info,
-        groups: [],
-        questions: data.questions,
-      })
-      data.questions = [];
-    }
+  }
+
+  if ((mode == 'work' || (mode == 'group' && method == 'extract')) && data.questions.length > 0) {
+    data.groups.push({
+      info: data.info,
+      groups: [],
+      questions: data.questions,
+    })
+    data.questions = [];
   } else {
-    let questionsFile = path.join(dir, 'questions.json');
+    let questionsFile = path.join(newDir, 'questions.json');
     let questions: string[] = fs.existsSync(questionsFile) ? JSON.parse(fs.readFileSync(questionsFile).toString()) : {};
-    Object.assign(questions, data.questions);
+    Object.assign(questions, Object.fromEntries(data.questions.map(i => [crypto.randomUUID(), i])));
     fs.writeFileSync(questionsFile, JSON.stringify(questions));
   }
-  data.groups.forEach(group => importData(group, newDir, newWorkId))
+
+  data.groups.forEach(group => importData('', group, newDir, newWorkId))
 }
 
 function importCsvData(data: string[][], dir: string) {
