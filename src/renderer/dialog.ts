@@ -1,12 +1,14 @@
 import { dialogDiv, dialogViewDiv } from "./elements.js";
+import { createElement } from "./utils.js";
 
-type InputType = 'text';
+type InputType = 'text' | 'select';
 type ButtonType = 'ok-cancel' | 'yes-no' | 'yes-no-danger';
 type InputListType = {
   [id: string]: {
     name: string,
     type: InputType,
-    init?: any
+    init?: any,
+    choices?: [string, string][]
   }
 }
 
@@ -29,7 +31,7 @@ export function showDialog<T extends InputListType>(title: string, message: stri
   }
 
   let inputElems: HTMLElement[] = [];
-  for (let [id, {name, type, init}] of Object.entries(inputList ?? {})) {
+  for (let [id, {name, type, init, choices}] of Object.entries(inputList ?? {})) {
     let nameElem = document.createElement('p');
     nameElem.innerText = name;
     dialogViewDiv.appendChild(nameElem);
@@ -37,11 +39,12 @@ export function showDialog<T extends InputListType>(title: string, message: stri
     let inputElem: HTMLElement | null = null;
     switch (type) {
       case 'text': {
-        let elem = document.createElement('input');
-        elem.type = 'text';
-        inputElem = elem;
+        inputElem = createElement('input', {type: 'text'});
       }
       break;
+      case 'select': {
+        inputElem = createElement('select', {}, (choices ?? []).map(i => createElement('option', {value: i[0]}, [i[1]])));
+      }
     }
     if (inputElem != null) {
       if (init != null) {

@@ -18,6 +18,10 @@ export interface IApi {
   getQuestions: (workId: string, groupId: string) => Promise<{[id: string]: Question}>;
   getPriorityData: (workId: string, groupId: string) => Promise<{[id: string]: PriorityData}>;
   setPriorityData: (workId: string, groupId: string, data: {[id: string]: PriorityData}) => Promise<void>;
+  getImportSourceFile: () => Promise<string>;
+  importWork: (path: string) => Promise<void>;
+  importGroup: (path: string, method: string, workId: string) => Promise<void>;
+  importSubGroup: (path: string, method: string, workId: string, groupId: string) => Promise<void>;
   exportWork: (workId: string) => Promise<void>;
   exportGroup: (workId: string, groupId: string) => Promise<void>;
 }

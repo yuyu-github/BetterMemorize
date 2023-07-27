@@ -9,7 +9,6 @@ export function exportWork(e, workId: string) {
 }
 
 export function exportGroup(e, workId: string, groupId: string) {
-  
   exportData(workId, path.join(dataFolder, 'works', workId, 'groups', groupId));
 }
 

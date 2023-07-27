@@ -9,6 +9,7 @@ export const listViewDiv = document.querySelector('#list-view') as HTMLElement;
 export const listViewAddButton = document.querySelector('#list-view .add') as HTMLButtonElement;
 export const listViewGroupAddButton = document.querySelector('#list-view .group-add') as HTMLButtonElement;
 export const listViewQuestionAddButton = document.querySelector('#list-view .question-add') as HTMLButtonElement;
+export const listViewImportButton = document.querySelector('#list-view .import') as HTMLButtonElement;
 export const listViewListDiv = document.querySelector('#list-view .list') as HTMLElement;
 export const questionViewDiv = document.querySelector('#question-view') as HTMLElement;
 export const questionViewQuestionTextarea = document.querySelector('#question-view .question') as HTMLTextAreaElement;

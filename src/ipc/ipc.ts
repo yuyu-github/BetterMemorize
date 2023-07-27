@@ -3,7 +3,8 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import { dataFolder } from '../utils.js';
-import { exportGroup, exportWork } from './file.js';
+import { exportGroup, exportWork } from './export.js';
+import { getImportSourceFile, importGroup, importSubGroup, importWork } from './import.js';
 
 export default () => {
   ipcMain.handle('addWork', (e, data: object) => {
@@ -19,7 +20,7 @@ export default () => {
   })
 
   ipcMain.handle('deleteWork', (e, id: string) => {
-    fs.rmdirSync(path.join(dataFolder, 'works', id), {recursive: true});
+    fs.rmSync(path.join(dataFolder, 'works', id), {recursive: true});
   })
 
   ipcMain.handle('getWorks', (e) => {
@@ -55,7 +56,7 @@ export default () => {
   })
 
   ipcMain.handle('deleteGroup', (e, workId: string, groupId: string | null, id: string) => {
-    fs.rmdirSync(path.join(dataFolder, 'works', workId, 'groups', id), {recursive: true});
+    fs.rmSync(path.join(dataFolder, 'works', workId, 'groups', id), {recursive: true});
 
     let groupsFile = groupId == null ? path.join(dataFolder, 'works', workId, 'groups.json') : path.join(dataFolder, 'works', workId, 'groups', groupId, 'groups.json');
     let groupsFileData = JSON.parse(fs.readFileSync(groupsFile).toString());
@@ -121,6 +122,11 @@ export default () => {
     let dataFile = path.join(dataFolder, 'works', workId, 'groups', groupId, 'priority.json');
     return fs.writeFileSync(dataFile, JSON.stringify(data));
   })
+
+  ipcMain.handle('getImportSourceFile', getImportSourceFile);
+  ipcMain.handle('importWork', importWork);
+  ipcMain.handle('importGroup', importGroup);
+  ipcMain.handle('importSubGroup', importSubGroup);
 
   ipcMain.handle('exportWork', exportWork);
   ipcMain.handle('exportGroup', exportGroup);
