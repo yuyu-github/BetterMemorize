@@ -99,7 +99,7 @@ export function init() {
     }
   })
   editQuestionViewAnswerTextarea.addEventListener('keydown', e => {
-    if (e.code == 'Enter' && e.shiftKey) {
+    if (e.key == 'Enter' && e.shiftKey) {
       editQuestionViewOkButton.click();
       e.preventDefault();
     }
