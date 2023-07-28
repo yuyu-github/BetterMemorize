@@ -30,6 +30,7 @@ export function setMode(mode: ModeType, updateHistory = true) {
   let rewriteHistory = 0;
   if (['test-question', 'test-answer'].includes(modeHistory.at(-1)!) && ['test-question', 'test-answer'].includes(mode)) rewriteHistory = 1;
   if (mode == 'test-result') rewriteHistory = 2;
+  if (modeHistory.at(-1) == 'test-result' && mode == 'start-test') rewriteHistory = 1;
 
   if (updateHistory && rewriteHistory == 0) modeHistory.push(mode);
   if (rewriteHistory > 0) modeHistory.splice(-rewriteHistory, rewriteHistory, mode);
