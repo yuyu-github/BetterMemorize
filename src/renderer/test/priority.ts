@@ -68,7 +68,7 @@ export async function getPriorityScores(questions: QuestionWithId[]) {
 
     let score = (1 - priorityData.memorizationRate) * 2 + priorityData.wrongAnswerRate;
     let forgettingRate = Math.sqrt(Math.max(0, Math.log(Date.now() - priorityData.lastAnswerTime) - 11.2)) / 4;
-    score *= forgettingRate + 0.5;
+    score *= Math.min(0.35, forgettingRate) + 0.6;
     score *= Math.random() / 5 + 0.9;
     scores.push(score);
   }
