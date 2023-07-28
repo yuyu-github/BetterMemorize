@@ -5,6 +5,11 @@ export type PriorityData = {
   memorizationRate: number;
   lastAnswerTime: number;
 }
+const defaultPriority = {
+  memorizationRate: 0,
+  wrongAnswerRate: 0,
+  lastAnswerTime: 0,
+};
 
 export enum AnswerResult {
   Correct = 0,
@@ -38,9 +43,10 @@ export async function updatePriority() {
       let priorityData = await api.getPriorityData(workId, groupId);
       for (let [id, data] of Object.entries(cache[workId][groupId])) {
         let scale = Math.max(0.5, Math.min(Math.sqrt(Date.now() - (priorityData[id]?.lastAnswerTime ?? 0)) / 6000, 2))
+        priorityData[id] ??= defaultPriority;
         priorityData[id] = {
-          wrongAnswerRate: ((priorityData[id]?.wrongAnswerRate ?? 0) + data.wrongAnswerRate * scale) / (scale + 1),
-          memorizationRate: ((priorityData[id]?.memorizationRate ?? 0) + data.memorizationRate * scale) / (scale + 1),
+          wrongAnswerRate: (priorityData[id].wrongAnswerRate + data.wrongAnswerRate * scale) / (scale + 1),
+          memorizationRate: (priorityData[id].memorizationRate + data.memorizationRate * scale) / (scale + 1),
           lastAnswerTime: Date.now()
         }
       }
@@ -58,7 +64,7 @@ export async function getPriorityScores(questions: QuestionWithId[]) {
       priorityGroupData = await api.getPriorityData(question.workId, question.groupId);
       priorityDataCache[question.groupId] = priorityGroupData;
     }
-    let priorityData = priorityGroupData[question.id];
+    let priorityData = priorityGroupData[question.id] ?? defaultPriority;
 
     let score = (1 - priorityData.memorizationRate) * 2 + priorityData.wrongAnswerRate;
     let forgettingRate = Math.sqrt(Math.max(0, Math.log(Date.now() - priorityData.lastAnswerTime) - 11.2)) / 4;
