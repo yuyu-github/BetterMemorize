@@ -49,27 +49,6 @@ export function init() {
   testResultViewBackButton.addEventListener('click', () => {
     back();
   })
-
-  addEventListener('keydown', e => {
-    if (currentMode == 'test-question') {
-      if (e.code == 'Enter' || e.code == 'Space') {
-        testQuestionViewCheckButton.click();
-        e.preventDefault();
-      }
-    } else if (currentMode == 'test-answer') {
-      if (['KeyS', 'KeyD', 'KeyF'].includes(e.code)) {
-        if (e.code == 'KeyS') testAnswerViewButtonOuterDiv.querySelector<HTMLElement>('button[value="0"]')!.click();
-        if (e.code == 'KeyD') testAnswerViewButtonOuterDiv.querySelector<HTMLElement>('button[value="1"]')!.click();
-        if (e.code == 'KeyF') testAnswerViewButtonOuterDiv.querySelector<HTMLElement>('button[value="2"]')!.click();
-        e.preventDefault();
-      }
-    } else if (currentMode == 'test-result') {
-      if (e.code == 'Enter' || e.code == 'Space') {
-        testResultViewBackButton.click();
-        e.preventDefault();
-      }
-    }
-  })
 }
 
 export async function test(title: string, questions: QuestionWithId[], options: TestOptions) {

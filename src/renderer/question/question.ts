@@ -91,19 +91,6 @@ export function init() {
   editQuestionViewCancelButton.addEventListener('click', () => {
     back();
   })
-
-  editQuestionViewQuestionTextarea.addEventListener('keydown', e => {
-    if (e.key == 'Enter' && e.shiftKey) {
-      editQuestionViewAnswerTextarea.focus();
-      e.preventDefault();
-    }
-  })
-  editQuestionViewAnswerTextarea.addEventListener('keydown', e => {
-    if (e.key == 'Enter' && e.shiftKey) {
-      editQuestionViewOkButton.click();
-      e.preventDefault();
-    }
-  })
 }
 
 async function addQuestion(question: string, answer: string) {
