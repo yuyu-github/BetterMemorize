@@ -1,4 +1,4 @@
-import { backSpan, testAnswerViewButtonOuterDiv, testAnswerViewContentP, testQuestionViewCheckButton, testQuestionViewContentP, testResultViewAgainButton, testResultViewBackButton, testResultViewCorrectAnswerRateSpan, titleH1 } from "../elements.js";
+import { backSpan, testAnswerViewButtonOuterDiv, testAnswerViewContentP, testQuestionViewCheckButton, testQuestionViewContentP, testResultViewAgainButton, testResultViewBackButton, testResultViewCorrectAnswerRateSpan, testViewCurrentQuestionP, titleH1 } from "../elements.js";
 import { back, currentMode, setMode } from "../mode.js";
 import { Question, QuestionWithId } from "../question/question.js";
 import { createElement } from "../utils.js";
@@ -88,6 +88,7 @@ function showQuestion() {
   setMode('test-question');
   testQuestionViewContentP.style.fontSize = calcFontSize(sortedQuestions[index].question) + 'px';
   testQuestionViewContentP.innerText = sortedQuestions[index].question;
+  testViewCurrentQuestionP.innerText = `${index + 1}/${amount}`;
 }
 
 function showAnswer() {

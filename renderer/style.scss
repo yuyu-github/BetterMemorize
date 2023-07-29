@@ -363,6 +363,20 @@ main {
     }
   }
 
+  #test-view {
+    * {
+      position: absolute;
+    }
+
+    .current-question {
+      top: 0;
+      right: 0;
+      margin: 10px 20px;
+      font-size: 28px;
+      color: #606060;
+    }
+  }
+
   #test-question-view {
     .check {
       @include button();
