@@ -79,7 +79,7 @@ export async function updateWorks() {
   cacheWorks(works);
   let newelem = createElement('div');
   for (let [id, work] of Object.entries(works).sort((a, b) => b[1].lastAccessTime - a[1].lastAccessTime)) {
-    newelem.appendChild(createElement('div', {data: {id: id}}, [
+    newelem.appendChild(createElement('div', {tabIndex: '0', data: {id: id}}, [
       createElement('p', {}, [work.name]),
       createElement('button', {class: 'start color-green'}, ['スタート'])
     ]));

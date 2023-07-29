@@ -1,4 +1,4 @@
-import { backSpan, editQuestionViewAnswerTextarea, editQuestionViewOkButton, editQuestionViewQuestionTextarea, listViewAddButton, listViewGroupAddButton, listViewImportButton, listViewQuestionAddButton, menuDeleteButton, menuEditButton, menuExportButton, menuStartButton, testAnswerViewButtonOuterDiv, testQuestionViewCheckButton, testResultViewBackButton, testResultViewDiv } from "./elements.js";
+import { backSpan, editQuestionViewAnswerTextarea, editQuestionViewOkButton, editQuestionViewQuestionTextarea, listViewAddButton, listViewGroupAddButton, listViewImportButton, listViewListDiv, listViewQuestionAddButton, menuDeleteButton, menuEditButton, menuExportButton, menuStartButton, testAnswerViewButtonOuterDiv, testQuestionViewCheckButton, testResultViewBackButton, testResultViewDiv } from "./elements.js";
 import { currentMode } from "./mode.js";
 
 function clickShortcut(elem: HTMLElement | null, cond: boolean, e: KeyboardEvent) {
@@ -24,6 +24,53 @@ export function init() {
     clickShortcut(testAnswerViewButtonOuterDiv.querySelector<HTMLElement>('button[value="0"]'), e.code == 'KeyS', e);
     clickShortcut(testAnswerViewButtonOuterDiv.querySelector<HTMLElement>('button[value="1"]'), e.code == 'KeyD', e);
     clickShortcut(testAnswerViewButtonOuterDiv.querySelector<HTMLElement>('button[value="2"]'), e.code == 'KeyF', e);
+
+    if (listViewListDiv.checkVisibility()) {
+      if (e.code == 'ArrowUp' && !e.ctrlKey) {
+        let elem = (listViewListDiv.querySelector('& > div:has(+ div:focus)') ?? listViewListDiv.querySelector('& > div:first-of-type')) as HTMLElement | null;
+        elem?.focus();
+        elem?.scrollIntoView({block: 'start'})
+        e.preventDefault();
+      }
+      if (e.code == 'ArrowDown' && !e.ctrlKey) {
+        let elem = (listViewListDiv.querySelector('& > div:focus + div, & > div:focus:last-of-type') ?? listViewListDiv.querySelector('& > div:first-of-type')) as HTMLElement | null;
+        elem?.focus();
+        elem?.scrollIntoView({block: 'end'});
+        e.preventDefault();
+      }
+      if (e.code == 'ArrowUp' && e.ctrlKey && !e.repeat) {
+        let timer = setInterval(() => listViewListDiv.scrollBy({top: -Math.max(3, listViewListDiv.scrollHeight / 1000)}), 5)
+        let stop = () => {
+          clearInterval(timer);
+          removeEventListener('keyup', onKeyup);
+          removeEventListener('keydown', onKeydown);
+        };
+        let onKeyup = (e: KeyboardEvent) => {if (e.code == 'ArrowUp' || !e.ctrlKey) stop()};
+        let onKeydown = (e: KeyboardEvent) => {if (e.code == 'ArrowDown' || !e.ctrlKey) stop()};
+        addEventListener('keyup', onKeyup)
+        addEventListener('keydown', onKeydown);
+        e.preventDefault();
+      }
+      if (e.code == 'ArrowDown' && e.ctrlKey && !e.repeat) {
+        let timer = setInterval(() => listViewListDiv.scrollBy({top: Math.max(3, listViewListDiv.scrollHeight / 1000)}), 5)
+        let stop = () => {
+          clearInterval(timer);
+          removeEventListener('keyup', onKeyup);
+          removeEventListener('keyup', onKeydown);
+        };
+        let onKeyup = (e: KeyboardEvent) => {if (e.code == 'ArrowDown' || !e.ctrlKey) stop()};
+        let onKeydown = (e: KeyboardEvent) => {if (e.code == 'ArrowUp' || !e.ctrlKey) stop()};
+        addEventListener('keyup', onKeyup)
+        addEventListener('keydown', onKeydown);
+        e.preventDefault();
+      }
+    }
+  })
+
+  listViewListDiv.addEventListener('keydown', e => {
+    if (e.key == 'Enter') {
+      (e.target as HTMLElement).click();
+    }
   })
 
   editQuestionViewQuestionTextarea.addEventListener('keydown', e => {

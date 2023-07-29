@@ -211,7 +211,7 @@ main {
         cursor: pointer;
         gap: 8px;
 
-        &:hover {
+        &:hover, &:focus {
           background-color: #fafafa;
           box-shadow: 0px 0px 4px #e0e0e0;
         }

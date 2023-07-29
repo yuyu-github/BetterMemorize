@@ -100,7 +100,7 @@ export async function updateGroups() {
 
   let newelem = createElement('div');
   for (let [id, group] of Object.entries(groups).sort((a, b) => b[1].lastAccessTime - a[1].lastAccessTime)) {
-    newelem.appendChild(createElement('div', {data: {id: id}}, [
+    newelem.appendChild(createElement('div', {tabIndex: 0, data: {id: id}}, [
       createElement('p', {}, [group.name]),
       createElement('button', {class: 'start color-green'}, ['スタート'])
     ]));

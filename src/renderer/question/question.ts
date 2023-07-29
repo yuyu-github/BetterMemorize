@@ -119,14 +119,14 @@ export async function updateGroupChildren() {
 
   let newElem = createElement('div');
   for (let id in groups) {
-    newElem.appendChild(createElement('div', {data: {id: id, type: 'group'}}, [
+    newElem.appendChild(createElement('div', {tabIndex: 0, data: {id: id, type: 'group'}}, [
       createElement('p', {}, [groups[id].name]),
       createElement('button', {class: 'start color-green'}, ['スタート'])
     ]));
   }
   if (Object.keys(groups).length > 0 && Object.keys(questions).length > 0) newElem.appendChild(createElement('hr'));
   for (let id in questions) {
-    newElem.appendChild(createElement('div', {data: {id: id, type: 'question'}}, [
+    newElem.appendChild(createElement('div', {tabIndex: 0, data: {id: id, type: 'question'}}, [
       createElement('p', {}, [questions[id].question]),
       createElement('button', {class: 'edit'}, ['編集']),
       createElement('button', {class: 'delete'}, ['削除'])
