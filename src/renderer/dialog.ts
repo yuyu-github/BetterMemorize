@@ -104,7 +104,7 @@ export function showDialog<T extends InputListType>(title: string, message: stri
 
       dialogViewDiv.innerHTML = '';
       dialogDiv.style.display = 'none';
-      dialogViewDiv.removeEventListener('keydown', onKeydown);
+      dialogViewDiv.removeEventListener('keydown', onKeydown, {capture: true});
     }
 
     for (let button of buttonsOuterElem.children) {
@@ -136,6 +136,7 @@ export function showDialog<T extends InputListType>(title: string, message: stri
         let defaultButton = buttons.reduce((p, c, i) => p.min >= c[1] || p.min == -1 ? {index: i, min: c[1]} : p, {index: 0, min: -1}).index;
         returnResult(buttonElems[defaultButton]);
       }
+      e.stopPropagation();
     }
     dialogViewDiv.addEventListener('keydown', onKeydown);
   })

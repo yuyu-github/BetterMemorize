@@ -1,4 +1,4 @@
-import { backSpan, editQuestionViewAnswerTextarea, editQuestionViewOkButton, editQuestionViewQuestionTextarea, listViewAddButton, listViewGroupAddButton, listViewImportButton, listViewListDiv, listViewQuestionAddButton, menuDeleteButton, menuEditButton, menuExportButton, menuStartButton, testAnswerViewButtonOuterDiv, testQuestionViewCheckButton, testResultViewAgainButton, testResultViewBackButton, testResultViewDiv, testViewBackButton } from "./elements.js";
+import { backSpan, dialogDiv, editQuestionViewAnswerTextarea, editQuestionViewOkButton, editQuestionViewQuestionTextarea, listViewAddButton, listViewGroupAddButton, listViewImportButton, listViewListDiv, listViewQuestionAddButton, menuDeleteButton, menuEditButton, menuExportButton, menuStartButton, testAnswerViewButtonOuterDiv, testQuestionViewCheckButton, testResultViewAgainButton, testResultViewBackButton, testResultViewDiv, testViewBackButton } from "./elements.js";
 import { currentMode } from "./mode.js";
 
 function clickShortcut(elem: HTMLElement | null, cond: boolean, e: KeyboardEvent) {
@@ -19,7 +19,7 @@ export function init() {
     clickShortcut(listViewAddButton, e.code == 'KeyA' && e.ctrlKey, e);
     clickShortcut(listViewQuestionAddButton, e.code == 'KeyA' && e.ctrlKey && !e.shiftKey, e);
     clickShortcut(listViewGroupAddButton, e.code == 'KeyA' && e.ctrlKey && e.shiftKey, e);
-    clickShortcut(listViewImportButton, e.code == 'KeyI' && e.ctrlKey, e);
+    clickShortcut(listViewImportButton, e.code == 'KeyI' && e.ctrlKey && !e.shiftKey, e);
     clickShortcut(testViewBackButton, e.code == 'KeyR' && !e.ctrlKey, e);
     clickShortcut(testQuestionViewCheckButton, e.key == 'Enter' || e.code == 'Space', e);
     clickShortcut(testAnswerViewButtonOuterDiv.querySelector<HTMLElement>('button[value="0"]'), e.code == 'KeyS', e);
