@@ -26,18 +26,16 @@ export function init() {
     clickShortcut(testAnswerViewButtonOuterDiv.querySelector<HTMLElement>('button[value="2"]'), e.code == 'KeyF', e);
 
     if (listViewListDiv.checkVisibility()) {
-      if (e.code == 'ArrowUp' && !e.ctrlKey) {
-        let elem = (listViewListDiv.querySelector('& > div:has(+ div:focus)') ?? listViewListDiv.querySelector('& > div:first-of-type')) as HTMLElement | null;
+      let elem: HTMLElement | null = null;
+      if (e.code == 'ArrowUp' && !e.ctrlKey) elem = (listViewListDiv.querySelector('& > div:has(+ div:focus)') ?? listViewListDiv.querySelector('& > div:first-of-type')) as HTMLElement | null;
+      if (e.code == 'ArrowDown' && !e.ctrlKey) elem = (listViewListDiv.querySelector('& > div:focus + div, & > div:focus:last-of-type') ?? listViewListDiv.querySelector('& > div:first-of-type')) as HTMLElement | null;
+      if (elem != null) {
+        if (elem.getBoundingClientRect().top < listViewListDiv.getBoundingClientRect().top) elem?.scrollIntoView({block: 'start'});
+        if (elem.getBoundingClientRect().bottom > listViewListDiv.getBoundingClientRect().bottom) elem?.scrollIntoView({block: 'end'});
         elem?.focus();
-        elem?.scrollIntoView({block: 'start'})
         e.preventDefault();
       }
-      if (e.code == 'ArrowDown' && !e.ctrlKey) {
-        let elem = (listViewListDiv.querySelector('& > div:focus + div, & > div:focus:last-of-type') ?? listViewListDiv.querySelector('& > div:first-of-type')) as HTMLElement | null;
-        elem?.focus();
-        elem?.scrollIntoView({block: 'end'});
-        e.preventDefault();
-      }
+
       if (e.code == 'ArrowUp' && e.ctrlKey && !e.repeat) {
         let timer = setInterval(() => listViewListDiv.scrollBy({top: -Math.max(3, listViewListDiv.scrollHeight / 1000)}), 5)
         let stop = () => {
