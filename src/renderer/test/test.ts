@@ -1,9 +1,9 @@
-import { backSpan, testAnswerViewButtonOuterDiv, testAnswerViewContentP, testQuestionViewCheckButton, testQuestionViewContentP, testResultViewAgainButton, testResultViewBackButton, testResultViewCorrectAnswerRateSpan, testViewCurrentQuestionP, titleH1 } from "../elements.js";
+import { backSpan, testAnswerViewButtonOuterDiv, testAnswerViewContentP, testQuestionViewCheckButton, testQuestionViewContentP, testResultViewAgainButton, testResultViewBackButton, testResultViewCorrectAnswerRateSpan, testViewBackButton, testViewCurrentQuestionP, titleH1 } from "../elements.js";
 import { back, currentMode, setMode } from "../mode.js";
 import { Question, QuestionWithId } from "../question/question.js";
 import { createElement } from "../utils.js";
 import { currentWork } from "../work/work.js";
-import { cachePriority, calcPriority, getPriorityScores, resetPriorityCache, updatePriority } from "./priority.js";
+import { AnswerResult, cachePriority, calcPriority, getPriorityScores, resetPriorityCache, updatePriority } from "./priority.js";
 
 export type TestOptions = {
   method: 'auto' | 'random',
@@ -13,7 +13,7 @@ export type TestOptions = {
 let sortedQuestions: QuestionWithId[] = [];
 let amount = 0;
 let index = 0;
-let correctCount = 0;
+let results: AnswerResult[] = [];
 
 export function init() {
   backSpan.addEventListener('click', () => {
@@ -21,6 +21,19 @@ export function init() {
       updatePriority();
     }
   }, {capture: true})
+
+  testViewBackButton.addEventListener('click', () => {
+    if (currentMode == 'test-question') {
+      index--;
+      if (index == -1) back();
+      else {
+        results.pop();
+        showAnswer();
+      }
+    } else if (currentMode == 'test-answer') {
+      showQuestion();
+    }
+  })
 
   testQuestionViewCheckButton.addEventListener('click', () => {
     showAnswer();
@@ -30,14 +43,14 @@ export function init() {
     let target = e.target as HTMLElement;
     if (target.tagName == 'BUTTON') {
       cachePriority(sortedQuestions[index].workId, sortedQuestions[index].groupId, sortedQuestions[index].id, calcPriority(Number((target as HTMLButtonElement).value)));
-      if ((target as HTMLButtonElement).value == '0') correctCount++;
+      results.push(Number((target as HTMLButtonElement).value))
       index++;
       if (index < amount) showQuestion();
       else {
         updatePriority();
 
         setMode('test-result');
-        testResultViewCorrectAnswerRateSpan.innerText = (Math.floor(correctCount / amount * 10) * 10) + '%';
+        testResultViewCorrectAnswerRateSpan.innerText = (Math.floor(results.filter(i => i == AnswerResult.Correct).length / amount * 10) * 10) + '%';
       }
     }
   })
@@ -71,7 +84,7 @@ export async function test(title: string, questions: QuestionWithId[], options: 
   amount = Math.min(sortedQuestions.length, amount);
 
   index = 0;
-  correctCount = 0;
+  results = [];
   resetPriorityCache();
 
   showQuestion();
@@ -95,4 +108,5 @@ function showAnswer() {
   setMode('test-answer');
   testAnswerViewContentP.style.fontSize = calcFontSize(sortedQuestions[index].answer) + 'px';
   testAnswerViewContentP.innerText = sortedQuestions[index].answer;
+  testViewCurrentQuestionP.innerText = `${index + 1}/${amount}`;
 }

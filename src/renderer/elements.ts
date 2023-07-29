@@ -25,6 +25,7 @@ export const startTestViewCustomAmountInput = document.querySelector('#start-tes
 export const startTestViewStartButton = document.querySelector('#start-test-view .start') as HTMLButtonElement;
 export const testViewDiv = document.querySelector('#test-view') as HTMLElement;
 export const testViewCurrentQuestionP = document.querySelector('#test-view .current-question') as HTMLElement;
+export const testViewBackButton = document.querySelector('#test-view .back') as HTMLButtonElement;
 export const testQuestionViewDiv = document.querySelector('#test-question-view') as HTMLElement;
 export const testQuestionViewContentP = document.querySelector('#test-question-view .content') as HTMLElement;
 export const testQuestionViewCheckButton = document.querySelector('#test-question-view .check') as HTMLButtonElement;

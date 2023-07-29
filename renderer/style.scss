@@ -15,6 +15,15 @@
   }
 }
 
+@mixin bigButton() {
+  @include button();
+  height: 100px;
+  width: 150px;
+  font-size: 40px;
+  font-weight: 300;
+  border-radius: 10px;
+}
+
 @mixin input() {
   font-size: 18px;
   padding: 4px 6px;
@@ -375,20 +384,23 @@ main {
       font-size: 28px;
       color: #606060;
     }
+
+    .back {
+      @include bigButton();
+      position: absolute;
+      margin: 20px;
+      left: 0px;
+      bottom: 0px;
+    }
   }
 
   #test-question-view {
     .check {
-      @include button();
+      @include bigButton();
       position: absolute;
       margin: 20px;
       right: 0px;
       bottom: 0px;
-      height: 100px;
-      width: 150px;
-      font-size: 40px;
-      font-weight: 300;
-      border-radius: 10px;
     }
   }
 
@@ -402,12 +414,7 @@ main {
       gap: 15px;
 
       button {
-        @include button();
-        height: 100px;
-        width: 150px;
-        font-size: 40px;
-        font-weight: 300;
-        border-radius: 10px;
+        @include bigButton(); 
       }
     }
   }
