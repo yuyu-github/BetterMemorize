@@ -1,4 +1,4 @@
-import { showDialog } from "../dialog.js";
+import { ButtonResult, showDialog } from "../dialog.js";
 import { listViewImportButton } from "../elements.js";
 import { currentGroup } from "../group/group.js";
 import { currentMode, reload } from "../mode.js";
@@ -11,8 +11,11 @@ export function init() {
     if (currentMode == 'all-work') await api.importWork(path);
     else {
       let method: string;
-      if (path.endsWith('.bmr'))
-        method = (await showDialog('インポート', null, 'ok-cancel', {method: {name: 'インポート方法', type: 'select', choices: [['default', '通常のインポート'], ['extract', '展開してインポート']]}})).input.method;
+      if (path.endsWith('.bmr')) {
+        let dialog = (await showDialog('インポート', null, 'ok-cancel', {method: {name: 'インポート方法', type: 'select', choices: [['default', '通常のインポート'], ['extract', '展開してインポート']]}}));
+        if (dialog.button != ButtonResult.Ok) return;
+        method = dialog.input.method;
+      }
       else method = 'default';
 
       if (currentMode == 'work') await api.importGroup(path, method, currentWork);
