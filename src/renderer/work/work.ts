@@ -6,9 +6,6 @@ import { back, currentMode, reload, setMode } from "../mode.js";
 export type Work = {
   name: string,
 }
-export type WorkWithLastAccessTime = Work & {
-  lastAccessTime: number
-}
 
 export let works: {[id: string]: Work} = {};
 export let currentWork = '';

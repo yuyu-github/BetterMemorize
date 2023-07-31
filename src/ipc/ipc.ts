@@ -13,8 +13,7 @@ export default () => {
     let id = crypto.randomUUID();
     let dir = path.join(worksdir, id);
     fs.mkdirSync(dir);
-    fs.writeFileSync(path.join(dir, 'info.json'), JSON.stringify(data));
-    updateLastAccessTime(id);
+    fs.writeFileSync(path.join(dir, 'info.json'), JSON.stringify({...data, lastAccessTime: Date.now()}));
   })
 
   ipcMain.handle('editWork', (e, id: string, data: object) => {
@@ -46,13 +45,13 @@ export default () => {
     let id = crypto.randomUUID();
     let dir = path.join(groupsdir, id);
     fs.mkdirSync(dir);
-    fs.writeFileSync(path.join(dir, 'info.json'), JSON.stringify(data));
+    fs.writeFileSync(path.join(dir, 'info.json'), JSON.stringify({...data, lastAccessTime: Date.now()}));
 
     let groupsFile = groupId == null ? path.join(dataFolder, 'works', workId, 'groups.json') : path.join(dataFolder, 'works', workId, 'groups', groupId, 'groups.json');
     let groupsFileData: string[] = fs.existsSync(groupsFile) ? JSON.parse(fs.readFileSync(groupsFile).toString()) : [];
     groupsFileData.push(id)
     fs.writeFileSync(groupsFile, JSON.stringify(groupsFileData));
-    updateLastAccessTime(workId, id);
+    updateLastAccessTime(workId);
   })
 
   ipcMain.handle('editGroup', (e, workId: string, id: string, data: object) => {
@@ -89,7 +88,7 @@ export default () => {
   ipcMain.handle('addQuestion', (e, workId: string, groupId: string, data: object) => {
     let filename = path.join(dataFolder, 'works', workId, 'groups', groupId, 'questions.json');
     let currentData = fs.existsSync(filename) ? JSON.parse(fs.readFileSync(filename).toString()) : {};
-    currentData[crypto.randomUUID()] = data;
+    currentData[crypto.randomUUID()] = {...data, lastAccessTime: Date.now()};
     fs.writeFileSync(filename, JSON.stringify(currentData));
     updateLastAccessTime(workId, groupId);
   })
@@ -97,7 +96,7 @@ export default () => {
   ipcMain.handle('editQuestion', (e, workId: string, groupId: string, id: string, data: object) => {
     let filename = path.join(dataFolder, 'works', workId, 'groups', groupId, 'questions.json');
     let currentData = fs.existsSync(filename) ? JSON.parse(fs.readFileSync(filename).toString()) : {};
-    currentData[id] = data;
+    currentData[id] = {...data, lastAccessTime: Date.now()};
     fs.writeFileSync(filename, JSON.stringify(currentData));
     updateLastAccessTime(workId, groupId);
   })

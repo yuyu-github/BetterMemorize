@@ -1,3 +1,7 @@
+export type WithLastAccessTime<T> = T & {
+  lastAccessTime: number
+}
+
 export function createElement<T extends HTMLElement>(tag: string, attrs: {[key: string]: any} = {}, children: (string | HTMLElement)[] = []): T {
   let elem = document.createElement(tag);
   for (let attr in attrs) {

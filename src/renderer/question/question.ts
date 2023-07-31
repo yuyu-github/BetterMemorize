@@ -118,16 +118,16 @@ export async function updateGroupChildren() {
   cacheQuestions(questions);
 
   let newElem = createElement('div');
-  for (let id in groups) {
+  for (let [id, group] of Object.entries(groups).sort((a, b) => b[1].lastAccessTime - a[1].lastAccessTime)) {
     newElem.appendChild(createElement('div', {tabIndex: 0, data: {id: id, type: 'group'}}, [
-      createElement('p', {}, [groups[id].name]),
+      createElement('p', {}, [group.name]),
       createElement('button', {class: 'start color-green'}, ['スタート'])
     ]));
   }
   if (Object.keys(groups).length > 0 && Object.keys(questions).length > 0) newElem.appendChild(createElement('hr'));
-  for (let id in questions) {
+  for (let [id, question] of Object.entries(questions).sort((a, b) => b[1].lastAccessTime - a[1].lastAccessTime)) {
     newElem.appendChild(createElement('div', {tabIndex: 0, data: {id: id, type: 'question'}}, [
-      createElement('p', {}, [questions[id].question]),
+      createElement('p', {}, [question.question]),
       createElement('button', {class: 'edit'}, ['編集']),
       createElement('button', {class: 'delete'}, ['削除'])
     ]));

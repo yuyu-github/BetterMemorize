@@ -8,9 +8,6 @@ import { currentWork } from "../work/work.js";
 export type Group = {
   name: string
 }
-export type GroupWithLastAccessTime = Group & {
-  lastAccessTime: number
-}
 
 export let groups: {[id: string]: Group} = {};
 export let currentGroup = '';
