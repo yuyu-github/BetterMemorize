@@ -17,34 +17,37 @@ export function getImportSourceFile(e, mode) {
   })?.[0]
 }
 
-export function importWork(e, importPath: string) {
-  importFile('work', importPath, path.join(dataFolder, 'works'), null, 'default');
+export function importWork(e, importPath: string, options: any) {
+  importFile('work', importPath, path.join(dataFolder, 'works'), null, options);
 }
 
-export function importGroup(e, importPath: string, method: string, workId: string) {
-  importFile('group', importPath, path.join(dataFolder, 'works', workId), workId, method);
+export function importGroup(e, importPath: string, workId: string, options: any) {
+  importFile('group', importPath, path.join(dataFolder, 'works', workId), workId, options);
 }
 
-export function importSubGroup(e, importPath: string, method: string, workId: string, groupId: string) {
-  importFile('subGroup', importPath, path.join(dataFolder, 'works', workId, 'groups', groupId), workId, method);
+export function importSubGroup(e, importPath: string, workId: string, groupId: string, options: any) {
+  importFile('subGroup', importPath, path.join(dataFolder, 'works', workId, 'groups', groupId), workId, options);
 }
 
-function importFile(mode: string, importPath: string, dir: string, workId: string | null, method: string = 'default') {
+function importFile(mode: string, importPath: string, dir: string, workId: string | null, options: any) {
   switch (path.extname(importPath)) {
     case '.csv': importCsvData(fs.readFileSync(importPath).toString().split('\n').map(i => i.split(',')), dir); break;
-    default: importData(mode, JSON.parse(fs.readFileSync(importPath).toString()), dir, workId, method); break;
+    default: importData(mode, JSON.parse(fs.readFileSync(importPath).toString()), dir, workId, options); break;
   }
 }
 
 type Data = {
   info: {},
   questions: {}[],
-  groups: Data[]
+  groups: Data[],
+  priority: {}[],
 };
-function importData(mode: string, data: Data, dir: string, workId: string | null, method: string = 'default') {
+function importData(mode: string, data: Data, dir: string, workId: string | null, options: {extract: boolean}) {
+  data.priority ??= [];
+
   let newDir = dir;
   let newWorkId = workId;
-  if (method != 'extract') {
+  if (!options.extract) {
     if (workId == null) {
       newWorkId = crypto.randomUUID();
       newDir = path.join(dataFolder, 'works', newWorkId);
@@ -62,21 +65,28 @@ function importData(mode: string, data: Data, dir: string, workId: string | null
     fs.writeFileSync(path.join(newDir, 'info.json'), JSON.stringify(data.info));
   }
 
-  if ((mode == 'work' || (mode == 'group' && method == 'extract')) && data.questions.length > 0) {
+  if ((mode == 'work' || (mode == 'group' && options.extract)) && data.questions.length > 0) {
     data.groups.push({
       info: data.info,
       groups: [],
       questions: data.questions,
+      priority: data.priority,
     })
     data.questions = [];
   } else {
     let questionsFile = path.join(newDir, 'questions.json');
     let questions: string[] = fs.existsSync(questionsFile) ? JSON.parse(fs.readFileSync(questionsFile).toString()) : {};
-    Object.assign(questions, Object.fromEntries(data.questions.map(i => [crypto.randomUUID(), i])));
+    let ids = Array.from(Array(data.questions.length), () => crypto.randomUUID());
+    Object.assign(questions, Object.fromEntries(data.questions.map((item, index) => [ids[index], item])));
     fs.writeFileSync(questionsFile, JSON.stringify(questions));
+    let priorityFile = path.join(newDir, 'priority.json');
+    let priority: string[] = fs.existsSync(priorityFile) ? JSON.parse(fs.readFileSync(priorityFile).toString()) : {};
+    Object.assign(priority, Object.fromEntries(data.priority.map((item, index) => [ids[index], item]).filter(i => i[1] != null)));
+    fs.writeFileSync(priorityFile, JSON.stringify(priority));
   }
 
-  data.groups.forEach(group => importData('', group, newDir, newWorkId))
+  options.extract = false;
+  data.groups.forEach(group => importData('', group, newDir, newWorkId, options))
 }
 
 function importCsvData(data: string[][], dir: string) {

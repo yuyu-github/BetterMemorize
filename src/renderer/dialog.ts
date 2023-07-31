@@ -1,7 +1,7 @@
 import { dialogDiv, dialogViewDiv } from "./elements.js";
 import { createElement } from "./utils.js";
 
-type InputType = 'text' | 'select';
+type InputType = 'text' | 'select' | 'checkbox';
 type ButtonType = 'ok-cancel' | 'yes-no' | 'yes-no-danger';
 type InputListType = {
   [id: string]: {
@@ -32,23 +32,30 @@ export function showDialog<T extends InputListType>(title: string, message: stri
 
   let inputElems: HTMLElement[] = [];
   for (let [id, {name, type, init, choices}] of Object.entries(inputList ?? {})) {
-    let nameElem = document.createElement('p');
-    nameElem.innerText = name;
-    dialogViewDiv.appendChild(nameElem);
+    if (!['checkbox'].includes(type)) {
+      let nameElem = document.createElement('p');
+      nameElem.innerText = name;
+      dialogViewDiv.appendChild(nameElem);
+    }
 
     let inputElem: HTMLElement | null = null;
     switch (type) {
-      case 'text': {
+      case 'text': 
         inputElem = createElement('input', {type: 'text'});
-      }
-      break;
-      case 'select': {
+        break;
+      case 'select':
         inputElem = createElement('select', {}, (choices ?? []).map(i => createElement('option', {value: i[0]}, [i[1]])));
-      }
+        break;
+      case 'checkbox':
+        inputElem = createElement('label', {}, [createElement('input', {type: 'checkbox'}), name])
+        break;
     }
     if (inputElem != null) {
       if (init != null) {
         switch (type) {
+          case 'checkbox':
+            (inputElem.querySelector('& > input') as HTMLInputElement).checked = init;
+            break;
           default:
             (inputElem as HTMLInputElement).value = init;
             break;
@@ -96,6 +103,9 @@ export function showDialog<T extends InputListType>(title: string, message: stri
             case 'INPUT':
             case 'SELECT':
               inputResult[e.dataset.id] = e.value;
+              break;
+            case 'LABEL':
+              inputResult[e.dataset.id] = (e.querySelector('& > input') as HTMLInputElement).checked;
               break;
           }
         }

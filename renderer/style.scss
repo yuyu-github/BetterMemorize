@@ -484,6 +484,8 @@ main {
     box-shadow: 1px 1px 2px #c0c0c0;
     padding: 20px;
     min-width: 200px;
+    display: flex;
+    flex-direction: column;
 
     h1 {
       font-weight: 500;
@@ -502,14 +504,28 @@ main {
       margin: 4px 2px 0;
     }
 
-    input, select {
+    label {
+      margin: 4px 0 0;
+      font-size: 15px;
+    }
+
+    input:not([type=checkbox]), select {
       @include input();
       width: 300px;
+    }
+
+    input[type=checkbox] {
+      position: relative;
+      top: 1px;
+      margin: 0;
+      margin-right: 7px;
+      transform: scale(1.2);
     }
 
     select {
       width: 312px;
     }
+
 
     .button-outer {
       display: flex;

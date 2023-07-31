@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import { dataFolder } from '../utils.js';
-import { exportGroup, exportWork } from './export.js';
+import { exportGroup, exportWork, getExportTargetFile } from './export.js';
 import { getImportSourceFile, importGroup, importSubGroup, importWork } from './import.js';
 
 export default () => {
@@ -135,7 +135,8 @@ export default () => {
   ipcMain.handle('importWork', importWork);
   ipcMain.handle('importGroup', importGroup);
   ipcMain.handle('importSubGroup', importSubGroup);
-
+  
+  ipcMain.handle('getExportTargetFile', getExportTargetFile);
   ipcMain.handle('exportWork', exportWork);
   ipcMain.handle('exportGroup', exportGroup);
 

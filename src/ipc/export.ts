@@ -4,16 +4,8 @@ import { dataFolder } from "../utils.js";
 import { dialog } from "electron";
 import { mainWindow } from "../main.js";
 
-export function exportWork(e, workId: string) {
-  exportData(workId, path.join(dataFolder, 'works', workId));
-}
-
-export function exportGroup(e, workId: string, groupId: string) {
-  exportData(workId, path.join(dataFolder, 'works', workId, 'groups', groupId));
-}
-
-function exportData(workId: string, dir: string) {
-  let filepath = dialog.showSaveDialogSync(mainWindow!, {
+export function getExportTargetFile() {
+  return dialog.showSaveDialogSync(mainWindow!, {
     title: 'エクスポート',
     buttonLabel: 'エクスポート',
     filters: [
@@ -22,38 +14,54 @@ function exportData(workId: string, dir: string) {
     ],
     properties: ["createDirectory"]
   })
-  if (filepath == null) return;
-  
-  switch (path.extname(filepath)) {
+}
+
+export function exportWork(e, exportPath: string, workId: string, options: any) {
+  exportData(exportPath, workId, path.join(dataFolder, 'works', workId), options);
+}
+
+export function exportGroup(e, exportPath: string, workId: string, groupId: string, options: any) {
+  exportData(exportPath, workId, path.join(dataFolder, 'works', workId, 'groups', groupId), options);
+}
+
+function exportData(exportPath: string, workId: string, dir: string, options: any) {
+  switch (path.extname(exportPath)) {
     case '.csv': {
-      let data = getCsvData(workId, dir);
-      fs.writeFileSync(filepath, data.map(i => i.join(',')).join('\n'));
+      let data = getCsvData(workId, dir, options);
+      fs.writeFileSync(exportPath, data.map(i => i.join(',')).join('\n'));
     }
     break;
     default: {
-      let data = getData(workId, dir);
-      fs.writeFileSync(filepath, JSON.stringify(data));
+      let data = getData(workId, dir, options);
+      fs.writeFileSync(exportPath, JSON.stringify(data));
     }
     break;
   }
 }
 
-function getData(workId: string, dir: string) {
+function getData(workId: string, dir: string, options: {includeStatData: boolean}) {
   let info: object = JSON.parse(fs.readFileSync(path.join(dir, 'info.json')).toString());
   let groupsFile = path.join(dir, 'groups.json');
   let groupIds: string[] = fs.existsSync(groupsFile) ? JSON.parse(fs.readFileSync(groupsFile).toString()) : [];
   let questionsFile = path.join(dir, 'questions.json');
-  let questions: object[] = fs.existsSync(questionsFile) ? Object.values(JSON.parse(fs.readFileSync(questionsFile).toString())) : [];
-  let groups = groupIds.map(id => getData(workId, path.join(dataFolder, 'works', workId, 'groups', id)))
-  return {info, questions, groups}
+  let questionEntries: [string, object][] = Object.entries(JSON.parse(fs.readFileSync(questionsFile).toString()));
+  let questions: object[] = fs.existsSync(questionsFile) ? questionEntries.map(i => i[1]) : [];
+  let priority: object[] = [];
+  if (options.includeStatData) {
+    let priorityFile = path.join(dir, 'priority.json');
+    let priorityRawData = JSON.parse(fs.readFileSync(priorityFile).toString());
+    priority = fs.existsSync(priorityFile) ? questionEntries.map(i => priorityRawData[i[0]]) : [];
+  }
+  let groups = groupIds.map(id => getData(workId, path.join(dataFolder, 'works', workId, 'groups', id), options))
+  return {info, questions, groups, priority};
 }
 
-function getCsvData(workId: string, dir: string) {
+function getCsvData(workId: string, dir: string, options: {}) {
   let groupsFile = path.join(dir, 'groups.json');
   let groupIds: string[] = fs.existsSync(groupsFile) ? JSON.parse(fs.readFileSync(groupsFile).toString()) : [];
   let questionsFile = path.join(dir, 'questions.json');
   let questionObjs: any[] = fs.existsSync(questionsFile) ? Object.values(JSON.parse(fs.readFileSync(questionsFile).toString())) : [];
   let questions: [string, string][] = questionObjs.map(i => [i.question, i.answer])
-  groupIds.forEach(id => questions = questions.concat(getCsvData(workId, path.join(dataFolder, 'works', workId, 'groups', id))))
+  groupIds.forEach(id => questions = questions.concat(getCsvData(workId, path.join(dataFolder, 'works', workId, 'groups', id), options)))
   return questions;
 }

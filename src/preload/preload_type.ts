@@ -20,11 +20,12 @@ export interface IApi {
   getPriorityData: (workId: string, groupId: string) => Promise<{[id: string]: PriorityData}>;
   setPriorityData: (workId: string, groupId: string, data: {[id: string]: PriorityData}) => Promise<void>;
   getImportSourceFile: (mode) => Promise<string>;
-  importWork: (path: string) => Promise<void>;
-  importGroup: (path: string, method: string, workId: string) => Promise<void>;
-  importSubGroup: (path: string, method: string, workId: string, groupId: string) => Promise<void>;
-  exportWork: (workId: string) => Promise<void>;
-  exportGroup: (workId: string, groupId: string) => Promise<void>;
+  importWork: (path: string, options: object) => Promise<void>;
+  importGroup: (path: string, workId: string, options: object) => Promise<void>;
+  importSubGroup: (path: string, workId: string, groupId: string, options: object) => Promise<void>;
+  getExportTargetFile: () => Promise<string>;
+  exportWork: (path: string, workId: string, options: object) => Promise<void>;
+  exportGroup: (path: string, workId: string, groupId: string, options: object) => Promise<void>;
   updateLastAccessTime: (workId: string, groupId?: string | null) => Promise<void>;
 }
 
