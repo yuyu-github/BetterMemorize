@@ -10,6 +10,8 @@ export type TestOptions = {
   amount: number | 'half' | 'all',
 }
 
+let workId: string = '';
+let groupId: string | null = null;
 let sortedQuestions: QuestionWithId[] = [];
 let amount = 0;
 let index = 0;

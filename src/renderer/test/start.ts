@@ -12,16 +12,18 @@ type SavedOptions = TestOptions & {
 };
 
 let type: 'work' | 'group' = 'work';
-let id: string = '';
+let workId: string = '';
+let groupId: string | null = null;
 
 export function init() {
   menuStartButton.addEventListener('click', e => {
     if (currentMode == 'work') {
       type = 'work';
-      id = currentWork;
+      workId = currentWork;
     } else if (currentMode == 'group') {
       type = 'group';
-      id = currentGroup;
+      workId = currentWork;
+      groupId = currentGroup;
     }
     setMode('start-test');
     e.stopImmediatePropagation();
@@ -33,7 +35,8 @@ export function init() {
       if (currentMode == 'all-work') type = 'work';
       else if (currentMode == 'work') type = 'group';
       else if (currentMode == 'group') type = 'group';
-      id = target.parentElement!.dataset.id!;
+      if (type == 'work') workId = target.parentElement!.dataset.id!;
+      else groupId = target.parentElement!.dataset.id!;
       setMode('start-test');
       e.stopImmediatePropagation();
     }
@@ -65,8 +68,8 @@ export function init() {
 }  
 
 export function getTitleName() {
-  if (type == 'work') return works[id].name;
-  else if (type == 'group') return groups[id].name;
+  if (type == 'work') return works[workId].name;
+  else if (type == 'group') return groups[groupId!].name;
   return '';
 }
 
@@ -91,11 +94,11 @@ export async function getAllQuestion() {
 
   let questions: QuestionWithId[] = [];
   if (type == 'work') {
-    for(let i of Object.keys(await api.getGroups(id))) {
-      questions = [...questions, ...(await getGroupQuestions(id, i))]
+    for(let i of Object.keys(await api.getGroups(workId))) {
+      questions = [...questions, ...(await getGroupQuestions(workId, i))]
     }
   } else if (type == 'group') {
-    questions = await getGroupQuestions(currentWork, id);
+    questions = await getGroupQuestions(workId, groupId!);
   }
   return questions;
 }
@@ -116,5 +119,6 @@ export async function start() {
     customAmount: startTestViewCustomAmountInput.value,
   } as SavedOptions));
 
+  api.updateLastAccessTime(workId, groupId)
   test(getTitleName(), questions, options);
 }

@@ -130,7 +130,6 @@ export default () => {
   ipcMain.handle('setPriorityData', (e, workId: string, groupId: string, data: object) => {
     let dataFile = path.join(dataFolder, 'works', workId, 'groups', groupId, 'priority.json');
     fs.writeFileSync(dataFile, JSON.stringify(data));
-    updateLastAccessTime(workId, groupId);
   })
 
   ipcMain.handle('getImportSourceFile', getImportSourceFile);
