@@ -496,7 +496,11 @@ main {
 
     p.message {
       font-size: 15px;
-      margin: 4px 2px 6px;
+      margin: 4px 2px 0;
+
+      &:not(:has(+ .button-outer)) {
+        margin-bottom: 6px;
+      }
     }
 
     p {
@@ -525,7 +529,6 @@ main {
     select {
       width: 312px;
     }
-
 
     .button-outer {
       display: flex;
