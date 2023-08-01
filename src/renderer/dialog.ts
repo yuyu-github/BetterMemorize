@@ -114,7 +114,7 @@ export function showDialog<T extends InputListType>(title: string, message: stri
 
       dialogViewDiv.innerHTML = '';
       dialogDiv.style.display = 'none';
-      dialogViewDiv.removeEventListener('keydown', onKeydown, {capture: true});
+      dialogViewDiv.removeEventListener('keydown', onKeydown);
     }
 
     for (let button of buttonsOuterElem.children) {
