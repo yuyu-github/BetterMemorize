@@ -1,6 +1,7 @@
 import { ButtonResult, showDialog } from "../dialog.js";
 import { listViewAddButton, listViewGroupAddButton, listViewListDiv, menuDeleteButton, menuEditButton } from "../elements.js";
 import { back, currentMode, reload, setMode } from "../mode.js";
+import { isMoving } from "../move.js";
 import { updateGroupChildren } from "../question/question.js";
 import { createElement } from "../utils.js";
 import { currentWork } from "../work/work.js";
@@ -97,6 +98,7 @@ export async function updateGroups() {
 
   let newelem = createElement('div');
   for (let [id, group] of Object.entries(groups).sort((a, b) => b[1].lastAccessTime - a[1].lastAccessTime)) {
+    if (isMoving('group', id)) continue;
     newelem.appendChild(createElement('div', {tabIndex: 0, data: {id: id}}, [
       createElement('p', {}, [group.name]),
       createElement('button', {class: 'start color-green'}, ['スタート'])

@@ -153,4 +153,29 @@ export default () => {
       fs.writeFileSync(infoFile, JSON.stringify(info));
     }
   }
+
+  ipcMain.handle('moveGroup', (e, workId: string, id: string, source: string | null, target: string | null) => {
+    let sourceGroupsFile = source == null ? path.join(dataFolder, 'works', workId, 'groups.json') : path.join(dataFolder, 'works', workId, 'groups', source, 'groups.json');
+    let sourceGroupsData = JSON.parse(fs.readFileSync(sourceGroupsFile).toString());
+    sourceGroupsData.splice(sourceGroupsData.indexOf(id), 1);
+    fs.writeFileSync(sourceGroupsFile, JSON.stringify(sourceGroupsData));
+    let targetGroupsFile = target == null ? path.join(dataFolder, 'works', workId, 'groups.json') : path.join(dataFolder, 'works', workId, 'groups', target, 'groups.json');
+    let targetGroupsData = fs.existsSync(targetGroupsFile) ? JSON.parse(fs.readFileSync(targetGroupsFile).toString()) : [];
+    targetGroupsData.push(id);
+    fs.writeFileSync(targetGroupsFile, JSON.stringify(targetGroupsData));
+    updateLastAccessTime(workId, id);
+  })
+
+  ipcMain.handle('moveQuestion', (e, workId, id, source, target) => {
+    let sourceQuestionsFile = path.join(dataFolder, 'works', workId, 'groups', source, 'questions.json');
+    let sourceQuestionsData = JSON.parse(fs.readFileSync(sourceQuestionsFile).toString());
+    let question = sourceQuestionsData[id];
+    delete sourceQuestionsData[id];
+    fs.writeFileSync(sourceQuestionsFile, JSON.stringify(sourceQuestionsData));
+    let targetQuestionsFile = path.join(dataFolder, 'works', workId, 'groups', target, 'questions.json');
+    let targetQuestionData = fs.existsSync(targetQuestionsFile) ? JSON.parse(fs.readFileSync(targetQuestionsFile).toString()) : {};
+    targetQuestionData[id] = {...question, lastAccessTime: Date.now()};
+    fs.writeFileSync(targetQuestionsFile, JSON.stringify(targetQuestionData));
+    updateLastAccessTime(workId, target);
+  })
 }

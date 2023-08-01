@@ -23,4 +23,6 @@ contextBridge.exposeInMainWorld('api', {
   exportWork: (path, workId, options) => ipcRenderer.invoke('exportWork', path, workId, options),
   exportGroup: (path, workId, groupId, options) => ipcRenderer.invoke('exportGroup', path, workId, groupId, options),
   updateLastAccessTime: (workId, groupId = null) => ipcRenderer.invoke('updateLastAccessTime', workId, groupId),
+  moveGroup: (workId, id, source, target) => ipcRenderer.invoke('moveGroup', workId, id, source, target),
+  moveQuestion: (workId, id, source, target) => ipcRenderer.invoke('moveQuestion', workId, id, source, target),
 })

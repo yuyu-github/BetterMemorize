@@ -7,6 +7,7 @@ import { init as initTest } from "./test/test.js";
 import { init as initImport } from "./file/import.js";
 import { init as initExport } from "./file/export.js";
 import { init as initShortcut } from "./shortcut.js";
+import { init as initMove } from "./move.js";
 
 initMode();
 initWork();
@@ -17,6 +18,7 @@ initTest();
 initImport();
 initExport();
 initShortcut();
+initMove();
 
 setMode('all-work');
 document.documentElement.style.display = 'block';

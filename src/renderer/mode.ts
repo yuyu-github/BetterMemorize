@@ -1,5 +1,6 @@
-import { listViewAddButton, backSpan, titleH1, menuDiv, listViewDiv, editQuestionViewDiv, editQuestionViewQuestionTextarea, editQuestionViewAnswerTextarea, questionViewDiv, questionViewQuestionTextarea, questionViewAnswerTextarea, listViewListDiv, menuStartButton, startTestViewDiv, testQuestionViewDiv, testAnswerViewDiv, listViewGroupAddButton, listViewQuestionAddButton, startTestViewSettingDiv, startTestViewCustomAmountInput, testResultViewDiv, menuExportButton, listViewImportButton, testViewDiv } from "./elements.js";
+import { listViewAddButton, backSpan, titleH1, menuDiv, listViewDiv, editQuestionViewDiv, editQuestionViewQuestionTextarea, editQuestionViewAnswerTextarea, questionViewDiv, questionViewQuestionTextarea, questionViewAnswerTextarea, listViewListDiv, menuStartButton, startTestViewDiv, testQuestionViewDiv, testAnswerViewDiv, listViewGroupAddButton, listViewQuestionAddButton, startTestViewSettingDiv, startTestViewCustomAmountInput, testResultViewDiv, menuExportButton, listViewImportButton, testViewDiv, menuMoveButton, listViewMoveHereButton, listViewCancelMoveButton } from "./elements.js";
 import { backGroup, currentGroup, groups, updateGroups } from "./group/group.js";
+import { inMoving, type as movingType, workId as movingWorkId } from "./move.js";
 import { currentQuestion, questions, updateGroupChildren } from "./question/question.js";
 import { getTitleName as getTestTitleName, loadPreviousOptions } from "./test/start.js";
 import { TestOptions } from "./test/test.js";
@@ -37,8 +38,8 @@ export function setMode(mode: ModeType, updateHistory = true) {
 
   backSpan.style.display = 'block';
   [
-    menuDiv, menuStartButton, menuExportButton,
-    listViewDiv, listViewAddButton, listViewGroupAddButton, listViewQuestionAddButton, listViewImportButton,
+    menuDiv, menuStartButton, menuMoveButton, menuExportButton,
+    listViewDiv, listViewMoveHereButton, listViewCancelMoveButton, listViewAddButton, listViewGroupAddButton, listViewQuestionAddButton, listViewImportButton,
     editQuestionViewDiv, questionViewDiv, startTestViewDiv, testViewDiv, testQuestionViewDiv, testAnswerViewDiv, testResultViewDiv
   ].forEach(i => i.style.display = 'none');
   listViewListDiv.innerHTML = '';
@@ -49,18 +50,23 @@ export function setMode(mode: ModeType, updateHistory = true) {
       titleH1.innerText = 'すべてのワーク';
       backSpan.style.display = 'none'
       view([listViewDiv, listViewAddButton, listViewImportButton]);
+      if (inMoving) view([listViewCancelMoveButton]);
       updateWorks();
     }
     break;
     case 'work': {
       titleH1.innerText = works[currentWork].name;
       view([menuDiv, menuStartButton, menuExportButton, listViewDiv, listViewAddButton, listViewImportButton]);
+      if (inMoving && movingWorkId == currentWork && movingType == 'group') view([listViewMoveHereButton]);
+      if (inMoving) view([listViewCancelMoveButton]);
       updateGroups();
     }
     break;
     case 'group': {
       titleH1.innerText = groups[currentGroup].name;
-      view([menuDiv, menuStartButton, menuExportButton, listViewDiv, listViewGroupAddButton, listViewQuestionAddButton, listViewImportButton]);
+      view([menuDiv, menuStartButton, menuMoveButton, menuExportButton, listViewDiv, listViewGroupAddButton, listViewQuestionAddButton, listViewImportButton]);
+      if (inMoving && movingWorkId == currentWork) view([listViewMoveHereButton]);
+      if (inMoving) view([listViewCancelMoveButton]);
       updateGroupChildren();
     }
     break;
@@ -68,7 +74,7 @@ export function setMode(mode: ModeType, updateHistory = true) {
       titleH1.innerText = questions[currentQuestion].question.replace('\n', ' ');
       questionViewQuestionTextarea.value = questions[currentQuestion].question;
       questionViewAnswerTextarea.value = questions[currentQuestion].answer;
-      view([menuDiv, questionViewDiv]);
+      view([menuDiv, menuMoveButton, questionViewDiv]);
     }
     break;
     case 'add-question': {
