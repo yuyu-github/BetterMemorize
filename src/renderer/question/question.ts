@@ -119,7 +119,7 @@ export async function updateGroupChildren() {
   cacheQuestions(questions);
 
   let newElem = getGroupListElem(groups);
-  if (Object.keys(groups).length > 0 && Object.keys(questions).length > 0) newElem.appendChild(createElement('hr'));
+  newElem.appendChild(createElement('hr'));
   for (let [id, question] of Object.entries(questions).sort((a, b) => b[1].lastAccessTime - a[1].lastAccessTime)) {
     if (isMoving('question', id)) continue;
     newElem.appendChild(createElement('div', {tabIndex: 0, data: {id: id, type: 'question'}}, [
@@ -129,5 +129,6 @@ export async function updateGroupChildren() {
       createElement('button', {class: 'delete'}, ['削除'])
     ]));
   }
+  newElem.querySelector('& > hr:first-child, & > hr:last-child')?.remove();
   listViewListDiv.innerHTML = newElem.innerHTML;
 }
