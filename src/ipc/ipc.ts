@@ -2,7 +2,7 @@ import { ipcMain, BrowserWindow } from 'electron';
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
-import { dataFolder } from '../utils.js';
+import { dataFolder, useFile } from '../utils.js';
 import { exportGroup, exportWork, getExportTargetFile } from './export.js';
 import { getImportSourceFile, importGroup, importSubGroup, importWork } from './import.js';
 
@@ -167,15 +167,24 @@ export default () => {
   })
 
   ipcMain.handle('moveQuestion', (e, workId, id, source, target) => {
-    let sourceQuestionsFile = path.join(dataFolder, 'works', workId, 'groups', source, 'questions.json');
-    let sourceQuestionsData = JSON.parse(fs.readFileSync(sourceQuestionsFile).toString());
-    let question = sourceQuestionsData[id];
-    delete sourceQuestionsData[id];
-    fs.writeFileSync(sourceQuestionsFile, JSON.stringify(sourceQuestionsData));
-    let targetQuestionsFile = path.join(dataFolder, 'works', workId, 'groups', target, 'questions.json');
-    let targetQuestionData = fs.existsSync(targetQuestionsFile) ? JSON.parse(fs.readFileSync(targetQuestionsFile).toString()) : {};
-    targetQuestionData[id] = {...question, lastAccessTime: Date.now()};
-    fs.writeFileSync(targetQuestionsFile, JSON.stringify(targetQuestionData));
+    let question;
+    useFile(path.join(dataFolder, 'works', workId, 'groups', source, 'questions.json'), 'json', data => {
+      question = data[id];
+      delete data[id];
+    });
+    useFile(path.join(dataFolder, 'works', workId, 'groups', target, 'questions.json'), 'json', data => {
+      data[id] = {...question, lastAccessTime: Date.now()};
+    });
+    let priority;
+    useFile(path.join(dataFolder, 'works', workId, 'groups', source, 'priority.json'), 'json', data => {
+      priority = data[id];
+      delete data[id];
+    });
+    if (priority != null) {
+      useFile(path.join(dataFolder, 'works', workId, 'groups', target, 'priority.json'), 'json', data => {
+        data[id] = priority;
+      });
+    }
     updateLastAccessTime(workId, target);
   })
 }

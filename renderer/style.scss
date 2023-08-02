@@ -236,7 +236,11 @@ main {
         button {
           @include button();
           font-size: 15px;
-          padding: 10px 30px;
+          padding: 10px 15px;
+
+          &.start {
+            padding: 10px 20px;
+          }
         }
       }
 

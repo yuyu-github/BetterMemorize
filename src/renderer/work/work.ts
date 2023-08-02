@@ -78,7 +78,8 @@ export async function updateWorks() {
   for (let [id, work] of Object.entries(works).sort((a, b) => b[1].lastAccessTime - a[1].lastAccessTime)) {
     newelem.appendChild(createElement('div', {tabIndex: '0', data: {id: id}}, [
       createElement('p', {}, [work.name]),
-      createElement('button', {class: 'start color-green'}, ['スタート'])
+      createElement('button', {class: 'start color-green'}, ['スタート']),
+      createElement('button', {class: 'edit'}, ['編集']),
     ]));
   }
   listViewListDiv.innerHTML = newelem.innerHTML;
