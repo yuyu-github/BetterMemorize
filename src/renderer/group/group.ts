@@ -35,16 +35,24 @@ export function init() {
     }
   })
 
-  listViewListDiv.addEventListener('click', e => {
+  listViewListDiv.addEventListener('click', async e => {
     if (currentMode == 'work' || currentMode == 'group') {
       let target = e.target as HTMLElement;
-      if (currentMode == 'group' && target.dataset.type != 'group') return;
+      if (currentMode == 'group' && target.dataset.type != 'group' && target.parentElement?.dataset.type != 'group') return;
       let id = target.dataset.id;
-      if (id == null) return;
-      if (currentGroup != '') groupPath.push(currentGroup);
-      currentGroup = id;
-      setMode('group');
-      e.stopImmediatePropagation();
+      if (id != null) {
+        if (currentGroup != '') groupPath.push(currentGroup);
+        currentGroup = id;
+        setMode('group');
+        e.stopImmediatePropagation();
+      } else if (target.nodeName == 'BUTTON' && target.classList.contains('edit')) {
+        let group = target.parentElement!.dataset.id!;
+        let result = await showDialog('グループを編集', null, 'ok-cancel', {name: {name: '名前', type: 'text', init: groups[group].name}});
+        if (result.button == ButtonResult.Ok && result.input.name != '') {
+          editGroup(currentWork, group, result.input.name);
+          reload();
+        }
+      }
     }
   })
 

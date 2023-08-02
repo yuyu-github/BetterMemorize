@@ -41,13 +41,22 @@ export function init() {
     }
   });
 
-  listViewListDiv.addEventListener('click', e => {
+  listViewListDiv.addEventListener('click', async e => {
     if (currentMode == 'all-work') {
-      let id = (e.target as HTMLElement).dataset.id;
-      if (id == null) return;
-      currentWork = id;
-      setMode('work');
-      e.stopImmediatePropagation();
+      let target = e.target as HTMLElement;
+      let id = target.dataset.id;
+      if (id != null) {
+        currentWork = id;
+        setMode('work');
+        e.stopImmediatePropagation();
+      } else if (target.nodeName == 'BUTTON' && target.classList.contains('edit')) {
+        let work = target.parentElement!.dataset.id!;
+        let result = await showDialog('ワークを編集', null, 'ok-cancel', {name: {name: '名前', type: 'text', init: works[work].name}});
+        if (result.button == ButtonResult.Ok && result.input.name != '') {
+          editWork(work, result.input.name);
+          reload();
+        }
+      }
     }
   })
 }

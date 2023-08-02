@@ -1,4 +1,4 @@
-import { listViewCancelMoveButton, listViewMoveHereButton, menuMoveButton } from "./elements.js";
+import { listViewCancelMoveButton, listViewListDiv, listViewMoveHereButton, menuMoveButton } from "./elements.js";
 import { currentGroup, groupPath } from "./group/group.js";
 import { back, currentMode, reload } from "./mode.js";
 import { currentQuestion } from "./question/question.js";
@@ -26,6 +26,22 @@ export function init() {
 
     inMoving = true;
     back();
+  })
+
+  listViewListDiv.addEventListener('click', async e => {
+    let target = e.target as HTMLElement;
+    if (target.nodeName == 'BUTTON' && target.classList.contains('move')) {
+      workId = currentWork;
+      if (currentMode == 'work') type = 'group';
+      else if (currentMode == 'group' && target.parentElement!.dataset.type == 'group') type = 'group';
+      else if (currentMode == 'group' && target.parentElement!.dataset.type == 'question') type = 'question';
+      id = target.parentElement!.dataset.id!;
+      source = currentMode == 'group' ? currentGroup : null;
+
+      inMoving = true;
+      reload();
+      e.stopImmediatePropagation();
+    }
   })
 
   listViewMoveHereButton.addEventListener('click', async () => {

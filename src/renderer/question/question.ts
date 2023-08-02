@@ -51,10 +51,10 @@ export function init() {
         setMode('edit-question');
         e.stopImmediatePropagation();
       } else if (target.nodeName == 'BUTTON' && target.classList.contains('delete')) {
-        currentQuestion = target.parentElement!.dataset.id!;
+        let question = target.parentElement!.dataset.id!;
         let result = await showDialog('問題を削除', '本当に削除しますか？', 'yes-no-danger');
         if (result.button == ButtonResult.Yes) {
-          deleteQuestion(currentWork, currentGroup, currentQuestion);
+          deleteQuestion(currentWork, currentGroup, question);
           reload();
         }
       }
