@@ -162,6 +162,8 @@ header {
     font-size: 20px;
     height: 30px;
     margin: 0 5px;
+    white-space: nowrap;
+    overflow-x: hidden;
   }
 }
 
@@ -231,12 +233,15 @@ main {
           pointer-events: none;
           font-size: 22px;
           margin: 5px;
+          white-space: nowrap;
+          overflow-x: hidden;
         }
 
         button {
           @include button();
           font-size: 15px;
           padding: 10px 15px;
+          white-space: nowrap;
 
           &.start {
             padding: 10px 20px;
