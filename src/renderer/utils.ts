@@ -1,3 +1,5 @@
+import { listViewListDiv } from "./elements.js";
+
 export type WithLastAccessTime<T> = T & {
   lastAccessTime: number
 }
@@ -23,6 +25,15 @@ export function createElement<T extends HTMLElement>(tag: string, attrs: {[key: 
     elem.append(child);
   }
   return elem as T;
+}
+
+export function drawList<T>(list: T[], func: (item: T) => HTMLElement | null | undefined, reset = true) {
+  if (reset) listViewListDiv.innerHTML = '';
+  for (let i of list) {
+    let elem = func(i);
+    if (elem == null) continue;
+    listViewListDiv.insertAdjacentElement('beforeend', elem);
+  }
 }
 
 export function toNumberOrString(str: string) {

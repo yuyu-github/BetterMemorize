@@ -44,37 +44,31 @@ export async function setMode(mode: ModeType, updateHistory = true) {
     listViewScrollHistory.splice(-rewriteHistory, rewriteHistory);
   }
 
-  backSpan.style.display = 'block';
-  [
-    menuDiv, menuStartButton, menuMoveButton, menuExportButton,
-    listViewDiv, listViewMoveHereButton, listViewCancelMoveButton, listViewAddButton, listViewGroupAddButton, listViewQuestionAddButton, listViewImportButton,
-    editQuestionViewDiv, questionViewDiv, startTestViewDiv, testViewDiv, testQuestionViewDiv, testAnswerViewDiv, testResultViewDiv
-  ].forEach(i => i.style.display = 'none');
-  listViewListDiv.innerHTML = '';
+  backSpan.style.display = '';
 
-  const view = (elems) => elems.forEach(i => i.style.display = '');
+  let viewElems: HTMLElement[] = [];
   switch (mode) {
     case 'all-work': {
       titleH1.innerText = 'すべてのワーク';
       backSpan.style.display = 'none'
-      view([listViewDiv, listViewAddButton, listViewImportButton]);
-      if (inMoving) view([listViewCancelMoveButton]);
+      viewElems.push(listViewDiv, listViewAddButton, listViewImportButton);
+      if (inMoving) viewElems.push(listViewCancelMoveButton);
       await updateWorks();
     }
     break;
     case 'work': {
       titleH1.innerText = works[currentWork].name;
-      view([menuDiv, menuStartButton, menuExportButton, listViewDiv, listViewAddButton, listViewImportButton]);
-      if (inMoving && movingWorkId == currentWork && movingType == 'group') view([listViewMoveHereButton]);
-      if (inMoving) view([listViewCancelMoveButton]);
+      viewElems.push(menuDiv, menuStartButton, menuExportButton, listViewDiv, listViewAddButton, listViewImportButton);
+      if (inMoving && movingWorkId == currentWork && movingType == 'group') viewElems.push(listViewMoveHereButton);
+      if (inMoving) viewElems.push(listViewCancelMoveButton);
       await updateGroups();
     }
     break;
     case 'group': {
       titleH1.innerText = groups[currentGroup].name;
-      view([menuDiv, menuStartButton, menuMoveButton, menuExportButton, listViewDiv, listViewGroupAddButton, listViewQuestionAddButton, listViewImportButton]);
-      if (inMoving && movingWorkId == currentWork) view([listViewMoveHereButton]);
-      if (inMoving) view([listViewCancelMoveButton]);
+      viewElems.push(menuDiv, menuStartButton, menuMoveButton, menuExportButton, listViewDiv, listViewGroupAddButton, listViewQuestionAddButton, listViewImportButton);
+      if (inMoving && movingWorkId == currentWork) viewElems.push(listViewMoveHereButton);
+      if (inMoving) viewElems.push(listViewCancelMoveButton);
       await updateGroupChildren();
     }
     break;
@@ -82,14 +76,14 @@ export async function setMode(mode: ModeType, updateHistory = true) {
       titleH1.innerText = questions[currentQuestion].question.replace('\n', ' ');
       questionViewQuestionTextarea.value = questions[currentQuestion].question;
       questionViewAnswerTextarea.value = questions[currentQuestion].answer;
-      view([menuDiv, menuMoveButton, questionViewDiv]);
+      viewElems.push(menuDiv, menuMoveButton, questionViewDiv);
     }
     break;
     case 'add-question': {
       titleH1.innerText = '';
       editQuestionViewQuestionTextarea.value = '';
       editQuestionViewAnswerTextarea.value = '';
-      view([editQuestionViewDiv]);
+      viewElems.push(editQuestionViewDiv);
       editQuestionViewQuestionTextarea.focus();
     }
     break;
@@ -97,30 +91,36 @@ export async function setMode(mode: ModeType, updateHistory = true) {
       titleH1.innerText = questions[currentQuestion].question.replace('\n', ' ');
       editQuestionViewQuestionTextarea.value = questions[currentQuestion].question;
       editQuestionViewAnswerTextarea.value = questions[currentQuestion].answer;
-      view([editQuestionViewDiv]);
+      viewElems.push(editQuestionViewDiv);
       editQuestionViewQuestionTextarea.focus();
     }
     break;
     case 'start-test': {
       titleH1.innerText = getTestTitleName();
-      view([startTestViewDiv]);
+      viewElems.push(startTestViewDiv);
       editQuestionViewQuestionTextarea.focus();
       loadPreviousOptions();
     }
     break;
     case 'test-question': {
-      view([testViewDiv, testQuestionViewDiv]);
+      viewElems.push(testViewDiv, testQuestionViewDiv);
     }
     break;
     case 'test-answer': {
-      view([testViewDiv, testAnswerViewDiv]);
+      viewElems.push(testViewDiv, testAnswerViewDiv);
     }
     break;
     case 'test-result': {
-      view([testResultViewDiv]);
+      viewElems.push(testResultViewDiv);
     }
     break;
   }
+
+  [
+    menuDiv, menuStartButton, menuMoveButton, menuExportButton,
+    listViewDiv, listViewMoveHereButton, listViewCancelMoveButton, listViewAddButton, listViewGroupAddButton, listViewQuestionAddButton, listViewImportButton,
+    editQuestionViewDiv, questionViewDiv, startTestViewDiv, testViewDiv, testQuestionViewDiv, testAnswerViewDiv, testResultViewDiv
+  ].forEach(i => i.style.display = viewElems.includes(i) ? '' : 'none');
 }
 
 export async function reload() {

@@ -20,5 +20,5 @@ initExport();
 initShortcut();
 initMove();
 
-setMode('all-work');
+await setMode('all-work');
 document.documentElement.style.display = 'block';

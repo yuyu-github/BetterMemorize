@@ -1,4 +1,4 @@
-import { createElement } from "../utils.js";
+import { createElement, drawList } from "../utils.js";
 import { ButtonResult, showDialog } from "../dialog.js";
 import { listViewAddButton, listViewListDiv, menuDeleteButton, menuEditButton } from "../elements.js";
 import { back, currentMode, reload, setMode } from "../mode.js";
@@ -83,13 +83,11 @@ export function cacheWorks(data: {[key: string]: Work}) {
 export async function updateWorks() {
   let works = await api.getWorks();
   cacheWorks(works);
-  let newelem = createElement('div');
-  for (let [id, work] of Object.entries(works).sort((a, b) => b[1].lastAccessTime - a[1].lastAccessTime)) {
-    newelem.appendChild(createElement('div', {tabIndex: '0', data: {id: id}}, [
+  drawList(Object.entries(works).sort((a, b) => b[1].lastAccessTime - a[1].lastAccessTime), ([id, work]) => {
+    return createElement('div', {tabIndex: '0', data: {id: id}}, [
       createElement('p', {}, [work.name]),
       createElement('button', {class: 'start color-green'}, ['スタート']),
       createElement('button', {class: 'edit'}, ['編集']),
-    ]));
-  }
-  listViewListDiv.innerHTML = newelem.innerHTML;
+    ]);
+  })
 }

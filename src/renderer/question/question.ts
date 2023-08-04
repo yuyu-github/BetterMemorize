@@ -1,9 +1,9 @@
 import { ButtonResult, showDialog } from "../dialog.js";
 import { backSpan, editQuestionViewAnswerTextarea, editQuestionViewCancelButton, editQuestionViewOkButton, editQuestionViewQuestionTextarea, listViewAddButton, listViewListDiv, listViewQuestionAddButton, menuDeleteButton, menuEditButton, titleH1 } from "../elements.js";
-import { cacheGroups, currentGroup, getGroupListElem } from "../group/group.js";
+import { cacheGroups, currentGroup, drawGroupList } from "../group/group.js";
 import { back, currentMode, reload, setMode } from "../mode.js";
 import { isMoving } from "../move.js";
-import { createElement } from "../utils.js";
+import { createElement, drawList } from "../utils.js";
 import { currentWork } from "../work/work.js";
 
 export type Question = {
@@ -118,17 +118,16 @@ export async function updateGroupChildren() {
   let questions = await api.getQuestions(currentWork, currentGroup);
   cacheQuestions(questions);
 
-  let newElem = getGroupListElem(groups);
-  newElem.appendChild(createElement('hr'));
-  for (let [id, question] of Object.entries(questions).sort((a, b) => b[1].lastAccessTime - a[1].lastAccessTime)) {
-    if (isMoving('question', id)) continue;
-    newElem.appendChild(createElement('div', {tabIndex: 0, data: {id: id, type: 'question'}}, [
+  drawGroupList(groups);
+  listViewListDiv.insertAdjacentHTML('beforeend', '<hr>');
+  drawList(Object.entries(questions).sort((a, b) => b[1].lastAccessTime - a[1].lastAccessTime), ([id, question]) => {
+    if (isMoving('question', id)) return;
+    return createElement('div', {tabIndex: 0, data: {id: id, type: 'question'}}, [
       createElement('p', {}, [question.question]),
       createElement('button', {class: 'edit'}, ['編集']),
       createElement('button', {class: 'move'}, ['移動']),
       createElement('button', {class: 'delete'}, ['削除'])
-    ]));
-  }
-  newElem.querySelector('& > hr:first-child, & > hr:last-child')?.remove();
-  listViewListDiv.innerHTML = newElem.innerHTML;
+    ]);
+  }, false);
+  listViewListDiv.querySelector('& > hr:first-child, & > hr:last-child')?.remove();
 }

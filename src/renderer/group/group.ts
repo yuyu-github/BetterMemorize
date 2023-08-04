@@ -3,7 +3,7 @@ import { listViewAddButton, listViewGroupAddButton, listViewListDiv, menuDeleteB
 import { back, currentMode, reload, setMode } from "../mode.js";
 import { isMoving } from "../move.js";
 import { updateGroupChildren } from "../question/question.js";
-import { WithLastAccessTime, createElement } from "../utils.js";
+import { WithLastAccessTime, createElement, drawList } from "../utils.js";
 import { currentWork } from "../work/work.js";
 
 export type Group = {
@@ -103,18 +103,16 @@ export function cacheGroups(data: {[key: string]: Group}) {
 export async function updateGroups() {
   let groups = await api.getGroups(currentWork);
   cacheGroups(groups);
-  listViewListDiv.innerHTML = getGroupListElem(groups).innerHTML;
+  drawGroupList(groups);
 }
-export function getGroupListElem(groups: {[id: string]: WithLastAccessTime<Group>}) {
-  let elem = createElement('div');
-  for (let [id, group] of Object.entries(groups).sort((a, b) => b[1].lastAccessTime - a[1].lastAccessTime)) {
-    if (isMoving('group', id)) continue;
-    elem.appendChild(createElement('div', {tabIndex: 0, data: {id: id, type: 'group'}}, [
+export function drawGroupList(groups: {[id: string]: WithLastAccessTime<Group>}) {
+  drawList(Object.entries(groups).sort((a, b) => b[1].lastAccessTime - a[1].lastAccessTime), ([id, group]) => {
+    if (isMoving('group', id)) return;
+    return createElement('div', {tabIndex: 0, data: {id: id, type: 'group'}}, [
       createElement('p', {}, [group.name]),
       createElement('button', {class: 'start color-green'}, ['スタート']),
       createElement('button', {class: 'edit'}, ['編集']),
       createElement('button', {class: 'move'}, ['移動']),
-    ]));
-  }
-  return elem;
+    ]);
+  })
 }
