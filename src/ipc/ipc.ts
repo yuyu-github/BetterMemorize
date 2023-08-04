@@ -102,10 +102,12 @@ export default () => {
   })
 
   ipcMain.handle('deleteQuestion', (e, workId: string, groupId: string, id: string) => {
-    let filename = path.join(dataFolder, 'works', workId, 'groups', groupId, 'questions.json');
-    let currentData = fs.existsSync(filename) ? JSON.parse(fs.readFileSync(filename).toString()) : {};
-    delete currentData[id];
-    fs.writeFileSync(filename, JSON.stringify(currentData));
+    useFile(path.join(dataFolder, 'works', workId, 'groups', groupId, 'questions.json'), 'json', data => {
+      delete data[id];
+    });
+    useFile(path.join(dataFolder, 'works', workId, 'groups', groupId, 'priority.json'), 'json', data => {
+      delete data[id];
+    });
     updateLastAccessTime(workId, groupId);
   })
   
