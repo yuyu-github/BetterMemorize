@@ -20,12 +20,13 @@ type ModeType =
 
 export let currentMode: ModeType = 'all-work';
 export let modeHistory: ModeType[] = [];
+let listViewScrollHistory: number[] = [];
 
 export function init() {
   backSpan.addEventListener('click', back);
 }
 
-export function setMode(mode: ModeType, updateHistory = true) {
+export async function setMode(mode: ModeType, updateHistory = true) {
   currentMode = mode;
 
   let rewriteHistory = 0;
@@ -33,8 +34,15 @@ export function setMode(mode: ModeType, updateHistory = true) {
   if (mode == 'test-result') rewriteHistory = 2;
   if (modeHistory.at(-1) == 'test-result' && mode == 'start-test') rewriteHistory = 1;
 
-  if (updateHistory && rewriteHistory == 0) modeHistory.push(mode);
-  if (rewriteHistory > 0) modeHistory.splice(-rewriteHistory, rewriteHistory, mode);
+  if (listViewListDiv.checkVisibility()) listViewScrollHistory.splice(-1, 1, listViewListDiv.scrollTop);
+  if (updateHistory && rewriteHistory == 0) {
+    modeHistory.push(mode);
+    listViewScrollHistory.push(0);
+  }
+  if (rewriteHistory > 0) {
+    modeHistory.splice(-rewriteHistory, rewriteHistory, mode);
+    listViewScrollHistory.splice(-rewriteHistory, rewriteHistory);
+  }
 
   backSpan.style.display = 'block';
   [
@@ -51,7 +59,7 @@ export function setMode(mode: ModeType, updateHistory = true) {
       backSpan.style.display = 'none'
       view([listViewDiv, listViewAddButton, listViewImportButton]);
       if (inMoving) view([listViewCancelMoveButton]);
-      updateWorks();
+      await updateWorks();
     }
     break;
     case 'work': {
@@ -59,7 +67,7 @@ export function setMode(mode: ModeType, updateHistory = true) {
       view([menuDiv, menuStartButton, menuExportButton, listViewDiv, listViewAddButton, listViewImportButton]);
       if (inMoving && movingWorkId == currentWork && movingType == 'group') view([listViewMoveHereButton]);
       if (inMoving) view([listViewCancelMoveButton]);
-      updateGroups();
+      await updateGroups();
     }
     break;
     case 'group': {
@@ -67,7 +75,7 @@ export function setMode(mode: ModeType, updateHistory = true) {
       view([menuDiv, menuStartButton, menuMoveButton, menuExportButton, listViewDiv, listViewGroupAddButton, listViewQuestionAddButton, listViewImportButton]);
       if (inMoving && movingWorkId == currentWork) view([listViewMoveHereButton]);
       if (inMoving) view([listViewCancelMoveButton]);
-      updateGroupChildren();
+      await updateGroupChildren();
     }
     break;
     case 'question': {
@@ -115,17 +123,23 @@ export function setMode(mode: ModeType, updateHistory = true) {
   }
 }
 
-export function reload() {
-  setMode(currentMode, false);
+export async function reload() {
+  await setMode(currentMode, false);
+  if (listViewListDiv.checkVisibility()) listViewListDiv.scrollTop = listViewScrollHistory.at(-1)!;
 }
 
-export function back() {
+export async function back() {
   if (currentMode == 'group' && modeHistory.at(-1) == 'group') backGroup();
 
   if (modeHistory.length > 0) {
     modeHistory.pop();
-    setMode(modeHistory.at(-1)!, false);
+    listViewScrollHistory.pop();
+    await setMode(modeHistory.at(-1)!, false);
   } else {
-    setMode('all-work', false);
+    await setMode('all-work', false);
+  }
+
+  if (listViewListDiv.checkVisibility()) {
+    listViewListDiv.scrollTop = listViewScrollHistory.at(-1)!;
   }
 }
