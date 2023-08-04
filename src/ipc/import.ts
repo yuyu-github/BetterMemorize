@@ -77,7 +77,7 @@ function importData(mode: string, data: Data, dir: string, workId: string | null
     let questionsFile = path.join(newDir, 'questions.json');
     let questions: string[] = fs.existsSync(questionsFile) ? JSON.parse(fs.readFileSync(questionsFile).toString()) : {};
     let ids = Array.from(Array(data.questions.length), () => crypto.randomUUID());
-    Object.assign(questions, Object.fromEntries(data.questions.map((item, index) => [ids[index], item])));
+    Object.assign(questions, Object.fromEntries(data.questions.map((item, index) => [ids[index], {lastAccessTime: Date.now(), ...item}])));
     fs.writeFileSync(questionsFile, JSON.stringify(questions));
     let priorityFile = path.join(newDir, 'priority.json');
     let priority: string[] = fs.existsSync(priorityFile) ? JSON.parse(fs.readFileSync(priorityFile).toString()) : {};
@@ -92,6 +92,6 @@ function importData(mode: string, data: Data, dir: string, workId: string | null
 function importCsvData(data: string[][], dir: string) {
   let questionsFile = path.join(dir, 'questions.json');
   let questions: string[] = fs.existsSync(questionsFile) ? JSON.parse(fs.readFileSync(questionsFile).toString()) : {};
-  Object.assign(questions, Object.fromEntries(data.map(i => [crypto.randomUUID(), {question: i[0], answer: i[1]}])));
+  Object.assign(questions, Object.fromEntries(data.map(i => [crypto.randomUUID(), {question: i[0], answer: i[1], lastAccessTime: Date.now()}])));
   fs.writeFileSync(questionsFile, JSON.stringify(questions));
 }
