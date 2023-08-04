@@ -46,6 +46,48 @@ export async function setMode(mode: ModeType, updateHistory = true) {
 
   backSpan.style.display = '';
 
+  switch (mode) {
+    case 'all-work': {
+      titleH1.innerText = 'すべてのワーク';
+      backSpan.style.display = 'none';
+      await updateWorks();
+    }
+    break;
+    case 'work': {
+      titleH1.innerText = works[currentWork].name;
+      await updateGroups();
+    }
+    break;
+    case 'group': {
+      titleH1.innerText = groups[currentGroup].name;
+      await updateGroupChildren();
+    }
+    break;
+    case 'question': {
+      titleH1.innerText = questions[currentQuestion].question.replace('\n', ' ');
+      questionViewQuestionTextarea.value = questions[currentQuestion].question;
+      questionViewAnswerTextarea.value = questions[currentQuestion].answer;
+    }
+    break;
+    case 'add-question': {
+      titleH1.innerText = '';
+      editQuestionViewQuestionTextarea.value = '';
+      editQuestionViewAnswerTextarea.value = '';
+    }
+    break;
+    case 'edit-question': {
+      titleH1.innerText = questions[currentQuestion].question.replace('\n', ' ');
+      editQuestionViewQuestionTextarea.value = questions[currentQuestion].question;
+      editQuestionViewAnswerTextarea.value = questions[currentQuestion].answer;
+    }
+    break;
+    case 'start-test': {
+      titleH1.innerText = getTestTitleName();
+      loadPreviousOptions();
+    }
+    break;
+  }
+
   let viewElems: HTMLElement[] = ({
     'all-work': [listViewDiv, listViewAddButton, listViewImportButton],
     'work': [menuDiv, menuStartButton, menuExportButton, listViewDiv, listViewAddButton, listViewImportButton],
@@ -74,7 +116,7 @@ export async function setMode(mode: ModeType, updateHistory = true) {
     }
     break;
   }
-  
+
   [
     menuDiv, menuStartButton, menuMoveButton, menuExportButton,
     listViewDiv, listViewMoveHereButton, listViewCancelMoveButton, listViewAddButton, listViewGroupAddButton, listViewQuestionAddButton, listViewImportButton,
@@ -82,46 +124,16 @@ export async function setMode(mode: ModeType, updateHistory = true) {
   ].forEach(i => i.style.display = viewElems.includes(i) ? '' : 'none');
 
   switch (mode) {
-    case 'all-work': {
-      titleH1.innerText = 'すべてのワーク';
-      backSpan.style.display = 'none';
-      await updateWorks();
-    }
-    break;
-    case 'work': {
-      titleH1.innerText = works[currentWork].name;
-      await updateGroups();
-    }
-    break;
-    case 'group': {
-      titleH1.innerText = groups[currentGroup].name;
-      await updateGroupChildren();
-    }
-    break;
-    case 'question': {
-      titleH1.innerText = questions[currentQuestion].question.replace('\n', ' ');
-      questionViewQuestionTextarea.value = questions[currentQuestion].question;
-      questionViewAnswerTextarea.value = questions[currentQuestion].answer;
-    }
-    break;
     case 'add-question': {
-      titleH1.innerText = '';
-      editQuestionViewQuestionTextarea.value = '';
-      editQuestionViewAnswerTextarea.value = '';
       editQuestionViewQuestionTextarea.focus();
     }
     break;
     case 'edit-question': {
-      titleH1.innerText = questions[currentQuestion].question.replace('\n', ' ');
-      editQuestionViewQuestionTextarea.value = questions[currentQuestion].question;
-      editQuestionViewAnswerTextarea.value = questions[currentQuestion].answer;
       editQuestionViewQuestionTextarea.focus();
     }
     break;
     case 'start-test': {
-      titleH1.innerText = getTestTitleName();
       editQuestionViewQuestionTextarea.focus();
-      loadPreviousOptions();
     }
     break;
   }
