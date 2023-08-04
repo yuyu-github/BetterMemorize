@@ -46,29 +46,55 @@ export async function setMode(mode: ModeType, updateHistory = true) {
 
   backSpan.style.display = '';
 
-  let viewElems: HTMLElement[] = [];
+  let viewElems: HTMLElement[] = ({
+    'all-work': [listViewDiv, listViewAddButton, listViewImportButton],
+    'work': [menuDiv, menuStartButton, menuExportButton, listViewDiv, listViewAddButton, listViewImportButton],
+    'group': [menuDiv, menuStartButton, menuMoveButton, menuExportButton, listViewDiv, listViewGroupAddButton, listViewQuestionAddButton, listViewImportButton],
+    'question': [menuDiv, menuMoveButton, questionViewDiv],
+    'add-question': [editQuestionViewDiv],
+    'edit-question': [editQuestionViewDiv],
+    'start-test': [startTestViewDiv],
+    'test-question': [testViewDiv, testQuestionViewDiv],
+    'test-answer': [testViewDiv, testAnswerViewDiv],
+    'test-result': [testResultViewDiv],
+  } as {[key in ModeType]: HTMLElement[]})[mode];
+  switch (mode) {
+    case 'all-work': {
+      if (inMoving) viewElems.push(listViewCancelMoveButton);
+    }
+    break;
+    case 'work': {
+      if (inMoving && movingWorkId == currentWork && movingType == 'group') viewElems.push(listViewMoveHereButton);
+      if (inMoving) viewElems.push(listViewCancelMoveButton);
+    }
+    break;
+    case 'group': {
+      if (inMoving && movingWorkId == currentWork) viewElems.push(listViewMoveHereButton);
+      if (inMoving) viewElems.push(listViewCancelMoveButton);
+    }
+    break;
+  }
+  
+  [
+    menuDiv, menuStartButton, menuMoveButton, menuExportButton,
+    listViewDiv, listViewMoveHereButton, listViewCancelMoveButton, listViewAddButton, listViewGroupAddButton, listViewQuestionAddButton, listViewImportButton,
+    editQuestionViewDiv, questionViewDiv, startTestViewDiv, testViewDiv, testQuestionViewDiv, testAnswerViewDiv, testResultViewDiv
+  ].forEach(i => i.style.display = viewElems.includes(i) ? '' : 'none');
+
   switch (mode) {
     case 'all-work': {
       titleH1.innerText = 'すべてのワーク';
-      backSpan.style.display = 'none'
-      viewElems.push(listViewDiv, listViewAddButton, listViewImportButton);
-      if (inMoving) viewElems.push(listViewCancelMoveButton);
+      backSpan.style.display = 'none';
       await updateWorks();
     }
     break;
     case 'work': {
       titleH1.innerText = works[currentWork].name;
-      viewElems.push(menuDiv, menuStartButton, menuExportButton, listViewDiv, listViewAddButton, listViewImportButton);
-      if (inMoving && movingWorkId == currentWork && movingType == 'group') viewElems.push(listViewMoveHereButton);
-      if (inMoving) viewElems.push(listViewCancelMoveButton);
       await updateGroups();
     }
     break;
     case 'group': {
       titleH1.innerText = groups[currentGroup].name;
-      viewElems.push(menuDiv, menuStartButton, menuMoveButton, menuExportButton, listViewDiv, listViewGroupAddButton, listViewQuestionAddButton, listViewImportButton);
-      if (inMoving && movingWorkId == currentWork) viewElems.push(listViewMoveHereButton);
-      if (inMoving) viewElems.push(listViewCancelMoveButton);
       await updateGroupChildren();
     }
     break;
@@ -76,14 +102,12 @@ export async function setMode(mode: ModeType, updateHistory = true) {
       titleH1.innerText = questions[currentQuestion].question.replace('\n', ' ');
       questionViewQuestionTextarea.value = questions[currentQuestion].question;
       questionViewAnswerTextarea.value = questions[currentQuestion].answer;
-      viewElems.push(menuDiv, menuMoveButton, questionViewDiv);
     }
     break;
     case 'add-question': {
       titleH1.innerText = '';
       editQuestionViewQuestionTextarea.value = '';
       editQuestionViewAnswerTextarea.value = '';
-      viewElems.push(editQuestionViewDiv);
       editQuestionViewQuestionTextarea.focus();
     }
     break;
@@ -91,36 +115,16 @@ export async function setMode(mode: ModeType, updateHistory = true) {
       titleH1.innerText = questions[currentQuestion].question.replace('\n', ' ');
       editQuestionViewQuestionTextarea.value = questions[currentQuestion].question;
       editQuestionViewAnswerTextarea.value = questions[currentQuestion].answer;
-      viewElems.push(editQuestionViewDiv);
       editQuestionViewQuestionTextarea.focus();
     }
     break;
     case 'start-test': {
       titleH1.innerText = getTestTitleName();
-      viewElems.push(startTestViewDiv);
       editQuestionViewQuestionTextarea.focus();
       loadPreviousOptions();
     }
     break;
-    case 'test-question': {
-      viewElems.push(testViewDiv, testQuestionViewDiv);
-    }
-    break;
-    case 'test-answer': {
-      viewElems.push(testViewDiv, testAnswerViewDiv);
-    }
-    break;
-    case 'test-result': {
-      viewElems.push(testResultViewDiv);
-    }
-    break;
   }
-
-  [
-    menuDiv, menuStartButton, menuMoveButton, menuExportButton,
-    listViewDiv, listViewMoveHereButton, listViewCancelMoveButton, listViewAddButton, listViewGroupAddButton, listViewQuestionAddButton, listViewImportButton,
-    editQuestionViewDiv, questionViewDiv, startTestViewDiv, testViewDiv, testQuestionViewDiv, testAnswerViewDiv, testResultViewDiv
-  ].forEach(i => i.style.display = viewElems.includes(i) ? '' : 'none');
 }
 
 export async function reload() {
