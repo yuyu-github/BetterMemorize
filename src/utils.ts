@@ -21,11 +21,12 @@ export function useFile(path: string | string[], type: 'string' | 'json', func: 
     case 'string': content = buffer != null ? buffer.toString() : ''; break;
     case 'json': content = buffer != null ? JSON.parse(buffer.toString()) : {}; break;
   }
-  content = func(content) ?? content;
+  let result = func(content);
   let newdata;
   switch (type) {
     case 'string': newdata = content; break;
     case 'json': newdata = JSON.stringify(content); break;
   }
   if (file != null || path.length > 0) fs.writeFileSync(file ?? path[0], newdata);
+  return result;
 }

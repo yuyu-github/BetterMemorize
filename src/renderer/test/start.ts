@@ -2,7 +2,7 @@ import { listViewListDiv, menuStartButton, questionViewAnswerTextarea, startTest
 import { currentGroup, groups } from "../group/group.js";
 import { currentMode, setMode } from "../mode.js";
 import { Question, QuestionWithId } from "../question/question.js";
-import { toNumberOrString } from "../utils.js";
+import { WithLastAccessTime, toNumberOrString } from "../utils.js";
 import { currentWork, works } from "../work/work.js";
 import { TestOptions, test } from "./test.js";
 
@@ -17,7 +17,7 @@ let groupId: string | null = null;
 
 export function init() {
   menuStartButton.addEventListener('click', e => {
-    if (currentMode == 'work') {
+    if (currentMode == 'work') { 
       type = 'work';
       workId = currentWork;
     } else if (currentMode == 'group') {
@@ -36,7 +36,10 @@ export function init() {
       else if (currentMode == 'work') type = 'group';
       else if (currentMode == 'group') type = 'group';
       if (type == 'work') workId = target.parentElement!.dataset.id!;
-      else groupId = target.parentElement!.dataset.id!;
+      else {
+        workId = currentWork;
+        groupId = target.parentElement!.dataset.id!;
+      }
       setMode('start-test');
       e.stopImmediatePropagation();
     }
@@ -76,7 +79,7 @@ export function getTitleName() {
 export function loadPreviousOptions() {
   if (localStorage.getItem('testOptions') != null) {
     let options: SavedOptions = JSON.parse(localStorage.getItem('testOptions')!);
-    startTestViewSettingDiv.querySelector<HTMLInputElement>(`input[name=method][value=${options.method}]`)!.checked = true;
+    startTestViewSettingDiv.querySelector<HTMLInputElement>(`input[name=mode][value=${options.mode ?? options['method']}]`)!.checked = true;
     startTestViewSettingDiv.querySelector<HTMLInputElement>(`input[name=amount][value=${options.amount}]`)!.checked = true;
     startTestViewCustomAmountInput.value = options.customAmount;
   }
@@ -84,7 +87,7 @@ export function loadPreviousOptions() {
 
 export async function getAllQuestion() {
   async function getGroupQuestions(workId: string, groupId: string) {
-    let questions: QuestionWithId[];
+    let questions: WithLastAccessTime<QuestionWithId>[];
     questions = [
       ...Object.entries(await api.getQuestions(workId, groupId)).map(([k, v]) => ({workId, groupId, id: k, ...v})),
       ...(await Promise.all(Object.entries(await api.getGroups(workId, groupId)).map(async ([k, v]) => await getGroupQuestions(workId, k)))).flat(),
@@ -92,7 +95,7 @@ export async function getAllQuestion() {
     return questions;
   }
 
-  let questions: QuestionWithId[] = [];
+  let questions: WithLastAccessTime<QuestionWithId>[] = [];
   if (type == 'work') {
     for(let i of Object.keys(await api.getGroups(workId))) {
       questions = [...questions, ...(await getGroupQuestions(workId, i))]
@@ -110,7 +113,7 @@ export async function start() {
   let amount: number | string = startTestViewSettingDiv.querySelector<HTMLInputElement>('input[name=amount]:checked')!.value;
   if (amount == 'custom') amount = Number(startTestViewCustomAmountInput.value);
   let options: TestOptions = {
-    method: startTestViewSettingDiv.querySelector<HTMLInputElement>('input[name=method]:checked')!.value as any,
+    mode: startTestViewSettingDiv.querySelector<HTMLInputElement>('input[name=mode]:checked')!.value as any,
     amount: amount as any,
   };
   localStorage.setItem('testOptions', JSON.stringify({
@@ -120,5 +123,5 @@ export async function start() {
   } as SavedOptions));
 
   api.updateLastAccessTime(workId, groupId)
-  test(getTitleName(), questions, options);
+  test(workId, groupId, getTitleName(), questions, options);
 }

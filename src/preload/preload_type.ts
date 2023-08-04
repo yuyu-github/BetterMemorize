@@ -29,6 +29,8 @@ export interface IApi {
   updateLastAccessTime: (workId: string, groupId?: string | null) => Promise<void>;
   moveGroup: (workId: string, id: string, source: string | null, target: string | null) => Promise<void>;
   moveQuestion: (workId: string, id: string, source: string, target: string) => Promise<void>;
+  setLastTestQuestions: (workId: string, groupId: string | null, questions: string[]) => Promise<void>;
+  getLastTestQuestions: (workId: string, groupId: string | null) => Promise<string[]>;
 }
 
 declare global {

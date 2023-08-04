@@ -189,4 +189,17 @@ export default () => {
     }
     updateLastAccessTime(workId, target);
   })
+
+  ipcMain.handle('setLastTestQuestions', (e, workId: string, groupId: string, questions: string[]) => {
+    useFile(groupId == null ? path.join(dataFolder, 'works', workId, 'last_test.json') : path.join(dataFolder, 'works', workId, 'groups', groupId, 'last_test.json'), 'json', data => {
+      data.questions = questions;
+      console.log(data);
+    })
+  })
+
+  ipcMain.handle('getLastTestQuestions', (e, workId: string, groupId: string) => {
+    return useFile(groupId == null ? path.join(dataFolder, 'works', workId, 'last_test.json') : path.join(dataFolder, 'works', workId, 'groups', groupId, 'last_test.json'), 'json', data => {
+      return data.questions ?? [];
+    })
+  })
 }

@@ -25,4 +25,6 @@ contextBridge.exposeInMainWorld('api', {
   updateLastAccessTime: (workId, groupId = null) => ipcRenderer.invoke('updateLastAccessTime', workId, groupId),
   moveGroup: (workId, id, source, target) => ipcRenderer.invoke('moveGroup', workId, id, source, target),
   moveQuestion: (workId, id, source, target) => ipcRenderer.invoke('moveQuestion', workId, id, source, target),
+  setLastTestQuestions: (workId, groupId, questions) => ipcRenderer.invoke('setLastTestQuestions', workId, groupId, questions),
+  getLastTestQuestions: (workId, groupId) => ipcRenderer.invoke('getLastTestQuestions', workId, groupId),
 })

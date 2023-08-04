@@ -1,17 +1,15 @@
 import { backSpan, testAnswerViewButtonOuterDiv, testAnswerViewContentP, testQuestionViewCheckButton, testQuestionViewContentP, testResultViewAgainButton, testResultViewBackButton, testResultViewCorrectAnswerRateSpan, testViewBackButton, testViewCurrentQuestionP, titleH1 } from "../elements.js";
 import { back, currentMode, setMode } from "../mode.js";
 import { Question, QuestionWithId } from "../question/question.js";
-import { createElement } from "../utils.js";
+import { WithLastAccessTime, createElement } from "../utils.js";
 import { currentWork } from "../work/work.js";
 import { AnswerResult, cachePriority, calcPriority, getPriorityScores, resetPriorityCache, updatePriority } from "./priority.js";
 
 export type TestOptions = {
-  method: 'auto' | 'random',
+  mode: 'auto' | 'random' | 'new' | 'repeat',
   amount: number | 'half' | 'all',
 }
 
-let workId: string = '';
-let groupId: string | null = null;
 let sortedQuestions: QuestionWithId[] = [];
 let amount = 0;
 let index = 0;
@@ -66,14 +64,19 @@ export function init() {
   })
 }
 
-export async function test(title: string, questions: QuestionWithId[], options: TestOptions) {
+export async function test(workId: string, groupId: string | null, title: string, questions: WithLastAccessTime<QuestionWithId>[], options: TestOptions) {
   titleH1.innerText = title;
 
   let sortScores: [number, number][] = [];
-  if (options.method === 'random') {
+  if (options.mode === 'random') {
     sortScores = questions.map((i, index) => [index, Math.random()]);
-  } else if (options.method === 'auto') {
+  } else if (options.mode === 'auto') {
     sortScores = (await getPriorityScores(questions)).map((item, index) => [index, item]);
+  } else if (options.mode === 'new') {
+    sortScores = questions.map((i, index) => [index, i.lastAccessTime]);
+  } else if (options.mode === 'repeat') {
+    let last = await api.getLastTestQuestions(workId, groupId);
+    sortScores = questions.map((i, index) => [index, last.includes(i.id) ? 1 + Math.random() : Math.random()]);
   }
   sortScores.sort((a, b) => b[1] - a[1]);
   sortedQuestions = sortScores.map(i => questions[i[0]]);
@@ -88,8 +91,9 @@ export async function test(title: string, questions: QuestionWithId[], options: 
   index = 0;
   results = [];
   resetPriorityCache();
-
+  
   showQuestion();
+  api.setLastTestQuestions(workId, groupId, sortedQuestions.slice(0, amount).map(i => i.id))
 }
 
 function calcFontSize(str: string) {
