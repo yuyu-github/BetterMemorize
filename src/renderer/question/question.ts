@@ -79,7 +79,7 @@ export function init() {
     }
   }, {capture: true})
   editQuestionViewOkButton.addEventListener('click', () => {
-    if (editQuestionViewQuestionTextarea.value != '' && editQuestionViewAnswerTextarea.value != '') {
+    if (editQuestionViewQuestionTextarea.value != '') {
       if (currentMode == 'add-question') {
         addQuestion(editQuestionViewQuestionTextarea.value, editQuestionViewAnswerTextarea.value);
         updateGroupChildren();
