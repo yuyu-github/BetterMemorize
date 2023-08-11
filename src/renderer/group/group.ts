@@ -31,7 +31,8 @@ export function init() {
       let result = await showDialog('グループを削除', '本当に削除しますか？', 'yes-no-danger');
       if (result.button == ButtonResult.Yes) {
         deleteGroup(currentWork, groupHistory[groupHistoryIndex - 1] ?? null, currentGroup);
-        back();
+        groupHistory = groupHistory.slice(0, groupHistoryIndex);
+        back(true);
       }
     }
   })
@@ -42,10 +43,8 @@ export function init() {
       if (currentMode == 'group' && target.dataset.type != 'group' && target.parentElement?.dataset.type != 'group') return;
       let id = target.dataset.id;
       if (id != null) {
-        if (currentGroup != '') {
-          (groupHistory = groupHistory.slice(0, groupHistoryIndex)).push(currentGroup);
-          groupHistoryIndex++;
-        }
+        (groupHistory = groupHistory.slice(0, groupHistoryIndex + 1)).push(id);
+        groupHistoryIndex++;
         currentGroup = id;
         setMode('group');
         e.stopImmediatePropagation();

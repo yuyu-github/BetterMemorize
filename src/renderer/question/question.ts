@@ -32,7 +32,7 @@ export function init() {
       let result = await showDialog('問題を削除', '本当に削除しますか？', 'yes-no-danger');
       if (result.button == ButtonResult.Yes) {
         deleteQuestion(currentWork, currentGroup, currentQuestion);
-        back();
+        back(true);
       }
     }
   })

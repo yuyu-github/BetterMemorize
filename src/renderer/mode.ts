@@ -24,7 +24,7 @@ export let modeHistoryIndex: number = -1;
 let listViewScrollHistory: number[] = [];
 
 export function init() {
-  backSpan.addEventListener('click', back);
+  backSpan.addEventListener('click', () => back());
 
   history.replaceState({type: 'back'}, '');
   history.pushState(null, '');
@@ -158,11 +158,12 @@ export async function reload() {
   if (listViewListDiv.checkVisibility()) listViewListDiv.scrollTop = listViewScrollHistory.at(modeHistoryIndex)!;
 }
 
-export async function back() {
+export async function back(deleteAfter = false) {
   if (modeHistoryIndex >= 1) {
-    if (currentMode == 'group' && modeHistory[modeHistoryIndex - 1] == 'group') backGroup();
+    if (currentMode == 'group') backGroup();
 
     await setMode(modeHistory[modeHistoryIndex - 1], false);
+    if (deleteAfter) modeHistory = modeHistory.slice(0, modeHistoryIndex);
     modeHistoryIndex--;
 
     if (listViewListDiv.checkVisibility()) {
@@ -173,8 +174,7 @@ export async function back() {
 
 export async function forward() {
   if (modeHistoryIndex + 1 < modeHistory.length) {
-    console.log(modeHistory, modeHistoryIndex);
-    if (currentMode == 'group' && modeHistory[modeHistoryIndex + 1] == 'group') forwardGroup();
+    if (modeHistory[modeHistoryIndex + 1] == 'group') forwardGroup();
 
     await setMode(modeHistory[modeHistoryIndex + 1], false);
     modeHistoryIndex++;

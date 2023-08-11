@@ -26,7 +26,7 @@ export function init() {
       let result = await showDialog('ワークを削除', '本当に削除しますか？', 'yes-no-danger');
       if (result.button == ButtonResult.Yes) {
         deleteWork(currentWork);
-        back();
+        back(true);
       }
     }
   })
