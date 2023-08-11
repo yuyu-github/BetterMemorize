@@ -12,7 +12,8 @@ export type Group = {
 
 export let groups: {[id: string]: Group} = {};
 export let currentGroup = '';
-export let groupPath: string[] = [];
+export let groupHistory: string[] = [];
+export let groupHistoryIndex = -1;
 
 export function init() {
   menuEditButton.addEventListener('click', async () => {
@@ -29,7 +30,7 @@ export function init() {
     if (currentMode == 'group') {
       let result = await showDialog('グループを削除', '本当に削除しますか？', 'yes-no-danger');
       if (result.button == ButtonResult.Yes) {
-        deleteGroup(currentWork, groupPath.at(-1) ?? null, currentGroup);
+        deleteGroup(currentWork, groupHistory[groupHistoryIndex - 1] ?? null, currentGroup);
         back();
       }
     }
@@ -41,7 +42,10 @@ export function init() {
       if (currentMode == 'group' && target.dataset.type != 'group' && target.parentElement?.dataset.type != 'group') return;
       let id = target.dataset.id;
       if (id != null) {
-        if (currentGroup != '') groupPath.push(currentGroup);
+        if (currentGroup != '') {
+          (groupHistory = groupHistory.slice(0, groupHistoryIndex)).push(currentGroup);
+          groupHistoryIndex++;
+        }
         currentGroup = id;
         setMode('group');
         e.stopImmediatePropagation();
@@ -78,8 +82,12 @@ export function init() {
 }
 
 export function backGroup() {
-  currentGroup = groupPath.at(-1) ?? '';
-  groupPath.pop();
+  currentGroup = groupHistory[groupHistoryIndex - 1];
+  groupHistoryIndex--;
+}
+export function forwardGroup() {
+  currentGroup = groupHistory[groupHistoryIndex + 1];
+  groupHistoryIndex++;
 }
 
 async function addGroup(groupId: string | null, name: string) {

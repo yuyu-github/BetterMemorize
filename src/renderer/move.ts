@@ -1,5 +1,5 @@
 import { listViewCancelMoveButton, listViewListDiv, listViewMoveHereButton, menuMoveButton } from "./elements.js";
-import { currentGroup, groupPath } from "./group/group.js";
+import { currentGroup, groupHistory } from "./group/group.js";
 import { back, currentMode, reload } from "./mode.js";
 import { currentQuestion } from "./question/question.js";
 import { currentWork } from "./work/work.js";
@@ -17,7 +17,7 @@ export function init() {
     if (currentMode == 'group') {
       type = 'group';
       id = currentGroup;
-      source = groupPath.at(-1) ?? null;
+      source = groupHistory.at(-1) ?? null;
     } else if (currentMode == 'question') {
       type = 'question';
       id = currentQuestion;

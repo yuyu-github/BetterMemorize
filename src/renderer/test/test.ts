@@ -49,14 +49,14 @@ export function init() {
       else {
         updatePriority();
 
-        setMode('test-result');
+        setMode('test-result', true, 2);
         testResultViewCorrectAnswerRateSpan.innerText = (Math.floor(results.filter(i => i == AnswerResult.Correct).length / amount * 10) * 10) + '%';
       }
     }
   })
 
   testResultViewAgainButton.addEventListener('click', () => {
-    setMode('start-test');
+    setMode('start-test', true, currentMode == 'test-result' ? 1 : 0);
   })
 
   testResultViewBackButton.addEventListener('click', () => {
@@ -104,14 +104,14 @@ function calcFontSize(str: string) {
 }
 
 function showQuestion() {
-  setMode('test-question');
+  setMode('test-question', true, currentMode == 'test-answer' ? 1 : 0);
   testQuestionViewContentP.style.fontSize = calcFontSize(sortedQuestions[index].question) + 'px';
   testQuestionViewContentP.innerText = sortedQuestions[index].question;
   testViewCurrentQuestionP.innerText = `${index + 1}/${amount}`;
 }
 
 function showAnswer() {
-  setMode('test-answer');
+  setMode('test-answer', true, currentMode == 'test-question' ? 1 : 0);
   testAnswerViewContentP.style.fontSize = calcFontSize(sortedQuestions[index].answer) + 'px';
   testAnswerViewContentP.innerText = sortedQuestions[index].answer;
   testViewCurrentQuestionP.innerText = `${index + 1}/${amount}`;

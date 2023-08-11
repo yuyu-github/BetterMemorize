@@ -1,5 +1,5 @@
 import { backSpan, dialogDiv, editQuestionViewAnswerTextarea, editQuestionViewOkButton, editQuestionViewQuestionTextarea, listViewAddButton, listViewGroupAddButton, listViewImportButton, listViewListDiv, listViewQuestionAddButton, menuDeleteButton, menuEditButton, menuExportButton, menuStartButton, testAnswerViewButtonOuterDiv, testQuestionViewCheckButton, testResultViewAgainButton, testResultViewBackButton, testResultViewDiv, testViewBackButton } from "./elements.js";
-import { currentMode } from "./mode.js";
+import { back, currentMode, forward } from "./mode.js";
 
 function clickShortcut(elem: HTMLElement | null, cond: boolean, e: KeyboardEvent) {
   if (elem != null && elem.checkVisibility() && cond) {
@@ -28,6 +28,8 @@ export function init() {
     clickShortcut(testResultViewAgainButton, e.code == 'Enter' || e.code == 'Space', e);
     clickShortcut(testResultViewBackButton, e.code == 'KeyR' && !e.ctrlKey, e);
 
+    if (e.code == 'ArrowLeft' && e.altKey) back();
+    if (e.code == 'ArrowRight' && e.altKey) forward();
     if (listViewListDiv.checkVisibility()) {
       let elem: HTMLElement | null = null;
       if (e.code == 'ArrowUp' && !e.ctrlKey) elem = (listViewListDiv.querySelector('& > div:has(+ div:focus)') ?? listViewListDiv.querySelector('& > div:first-of-type')) as HTMLElement | null;
