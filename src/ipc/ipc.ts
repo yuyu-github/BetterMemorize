@@ -157,6 +157,7 @@ export default () => {
   }
 
   ipcMain.handle('moveGroup', (e, workId: string, id: string, source: string | null, target: string | null) => {
+    if (!fs.existsSync(path.join(dataFolder, 'works', workId))) return;
     let sourceGroupsFile = source == null ? path.join(dataFolder, 'works', workId, 'groups.json') : path.join(dataFolder, 'works', workId, 'groups', source, 'groups.json');
     let sourceGroupsData = JSON.parse(fs.readFileSync(sourceGroupsFile).toString());
     sourceGroupsData.splice(sourceGroupsData.indexOf(id), 1);
@@ -169,6 +170,7 @@ export default () => {
   })
 
   ipcMain.handle('moveQuestion', (e, workId, id, source, target) => {
+    if (!fs.existsSync(path.join(dataFolder, 'works', workId, 'groups', source))) return;
     let question;
     useFile(path.join(dataFolder, 'works', workId, 'groups', source, 'questions.json'), 'json', data => {
       question = data[id];
