@@ -88,18 +88,18 @@ export function loadPreviousOptions() {
 export async function getAllQuestion() {
   async function getGroupQuestions(workId: string, groupId: string) {
     let questions: WithLastAccessTime<QuestionWithId>[];
-    questions = [
-      ...Object.entries(await api.getQuestions(workId, groupId)).map(([k, v]) => ({workId, groupId, id: k, ...v})),
-      ...(await Promise.all(Object.entries(await api.getGroups(workId, groupId)).map(async ([k, v]) => await getGroupQuestions(workId, k)))).flat(),
-    ];
+    let [child, ...grandchild] = await Promise.all([
+      api.getQuestions(workId, groupId),
+      ...Object.keys(await api.getGroups(workId, groupId)).map(async (k) => getGroupQuestions(workId, k))
+    ])
+    questions = Object.entries(child).map(([k, v]) => ({workId, groupId, id: k, ...v})),
+    questions = questions.concat(grandchild.flat());
     return questions;
   }
 
   let questions: WithLastAccessTime<QuestionWithId>[] = [];
   if (type == 'work') {
-    for(let i of Object.keys(await api.getGroups(workId))) {
-      questions = [...questions, ...(await getGroupQuestions(workId, i))]
-    }
+    questions = (await Promise.all(Object.keys(await api.getGroups(workId)).map(async (k) => getGroupQuestions(workId, k)))).flat();
   } else if (type == 'group') {
     questions = await getGroupQuestions(workId, groupId!);
   }
