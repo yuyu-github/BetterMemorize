@@ -60,14 +60,17 @@ export default () => {
   })
 
   ipcMain.handle('deleteGroup', (e, workId: string, groupId: string | null, id: string) => {
-    fs.rmSync(path.join(dataFolder, 'works', workId, 'groups', id), {recursive: true});
-
+    deleteGroup(workId, id);
     let groupsFile = groupId == null ? path.join(dataFolder, 'works', workId, 'groups.json') : path.join(dataFolder, 'works', workId, 'groups', groupId, 'groups.json');
     let groupsFileData = JSON.parse(fs.readFileSync(groupsFile).toString());
     groupsFileData.splice(groupsFileData.indexOf(id), 1);
     fs.writeFileSync(groupsFile, JSON.stringify(groupsFileData));
     updateLastAccessTime(workId);
   })
+  function deleteGroup(workId: string, id: string) {
+    useFile(path.join(dataFolder, 'works', workId, 'groups', id, 'groups.json'), 'json', list => list.forEach(i => deleteGroup(workId, i)), {ignoreNotExist: true})
+    fs.rmSync(path.join(dataFolder, 'works', workId, 'groups', id), {recursive: true});
+  }
 
   ipcMain.handle('getGroups', (e, workId: string, groupId: string | null) => {
     let groupsFile = groupId == null ? path.join(dataFolder, 'works', workId, 'groups.json') : path.join(dataFolder, 'works', workId, 'groups', groupId, 'groups.json');
@@ -195,7 +198,6 @@ export default () => {
   ipcMain.handle('setLastTestQuestions', (e, workId: string, groupId: string, questions: string[]) => {
     useFile(groupId == null ? path.join(dataFolder, 'works', workId, 'last_test.json') : path.join(dataFolder, 'works', workId, 'groups', groupId, 'last_test.json'), 'json', data => {
       data.questions = questions;
-      console.log(data);
     })
   })
 

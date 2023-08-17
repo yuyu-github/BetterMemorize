@@ -4,7 +4,15 @@ import fs from 'fs';
 
 export const dataFolder = path.join(app.getPath('userData'), 'data');
 
-export function useFile(path: string | string[], type: 'string' | 'json', func: (content: any) => any) {
+type useFileOptions = {
+  ignoreNotExist: boolean;
+}
+export function useFile(path: string | string[], type: 'string' | 'json', func: (content: any) => any, options: Partial<useFileOptions> = {}) {
+  options = {
+    ignoreNotExist: false,
+    ...options
+  }
+
   let file: string | null = null;
   if (typeof path == 'string') file = path;
   else {
@@ -16,6 +24,8 @@ export function useFile(path: string | string[], type: 'string' | 'json', func: 
     }
   }
   let buffer = file == null || !fs.existsSync(file) ? null : fs.readFileSync(file);
+  if (options.ignoreNotExist && buffer == null) return;
+
   let content: any;
   switch (type) {
     case 'string': content = buffer != null ? buffer.toString() : ''; break;
