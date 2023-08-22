@@ -42,7 +42,7 @@ export async function updatePriority() {
     for (let groupId in cache[workId]) {
       let priorityData = await api.getPriorityData(workId, groupId);
       for (let [id, data] of Object.entries(cache[workId][groupId])) {
-        let scale = Math.max(0.5, Math.min(Math.sqrt(Date.now() - (priorityData[id]?.lastAnswerTime ?? 0)) / 6000, 2))
+        let scale = Math.max(0.3, Math.min(Math.pow(Date.now() - (priorityData[id]?.lastAnswerTime ?? Date.now()), 0.4) / 1200, 2.5))
         priorityData[id] ??= defaultPriority;
         priorityData[id] = {
           wrongAnswerRate: (priorityData[id].wrongAnswerRate + data.wrongAnswerRate * scale) / (scale + 1),
