@@ -36,11 +36,14 @@ function compileParsed(data: Parsed, options: Partial<compileOptions> = {}): str
   return str;
 }
 
-function command(name: string, value: Parsed): string {
+function command(name: string, content: Parsed): string {
   switch (name) {
     case '$':
     case 'math': {
-      return '\\(' + compileParsed(value, {escapeBackslash: false}) + '\\)';
+      return '\\(' + compileParsed(content, {escapeBackslash: false}) + '\\)';
+    }
+    case 'ce': {
+      return '\\(\\ce{' + compileParsed(content) + '}\\)';
     }
     default: return '';
   }
