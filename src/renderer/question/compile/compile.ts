@@ -12,9 +12,12 @@ type Parsed = ({
 })[]
 
 export function compile(text: string): string {
-  let parsed = parse(text) as Parsed;
-  console.log(parsed);
-  return compileParsed(parsed)
+  try {
+    let parsed = parse(text) as Parsed;
+    return compileParsed(parsed)
+  } catch {
+    return escapeHTML(text);
+  }
 }
 
 type compileOptions = {
@@ -30,6 +33,7 @@ function compileParsed(data: Parsed, options: Partial<compileOptions> = {}): str
   for (let i of data) {
     if (i.type == 'text') {
       let value = i.value;
+      value = escapeHTML(value);
       if (options.escapeBackslash) value = value.replaceAll('\\', '\\\\');
       str += value;
     }
