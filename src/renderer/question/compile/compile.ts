@@ -3,11 +3,11 @@ import { parse } from './parser.js';
 
 type Parsed = ({
   type: 'text',
-  value: string
+  values: string
 } | {
   type: 'command',
   name: string,
-  value: Parsed
+  values: Parsed
 })[]
 
 export function compile(text: string): string {
@@ -27,11 +27,11 @@ function compileParsed(data: Parsed, options: Partial<compileOptions> = {}): str
   let str = '';
   for (let i of data) {
     if (i.type == 'text') {
-      let value = i.value;
+      let value = i.values;
       if (options.escapeBackslash) value = value.replaceAll('\\', '\\\\');
       str += value;
     }
-    else if (i.type == 'command') str += command(i.name, i.value);
+    else if (i.type == 'command') str += command(i.name, i.values);
   }
   return str;
 }
