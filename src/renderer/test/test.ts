@@ -1,5 +1,6 @@
 import { backSpan, testAnswerViewButtonOuterDiv, testAnswerViewContentP, testQuestionViewCheckButton, testQuestionViewContentP, testResultViewAgainButton, testResultViewBackButton, testResultViewCorrectAnswerRateSpan, testViewBackButton, testViewCurrentQuestionP, titleH1 } from "../elements.js";
 import { back, currentMode, setMode } from "../mode.js";
+import { compile } from "../question/compile/compile.js";
 import { Question, QuestionWithId } from "../question/question.js";
 import { WithLastAccessTime, createElement } from "../utils.js";
 import { currentWork } from "../work/work.js";
@@ -106,13 +107,15 @@ function calcFontSize(str: string) {
 function showQuestion() {
   setMode('test-question', true, currentMode == 'test-answer' ? 1 : 0);
   testQuestionViewContentP.style.fontSize = calcFontSize(sortedQuestions[index].question) + 'px';
-  testQuestionViewContentP.innerText = sortedQuestions[index].question;
+  testQuestionViewContentP.innerHTML = compile(sortedQuestions[index].question);
+  MathJax.typeset();
   testViewCurrentQuestionP.innerText = `${index + 1}/${amount}`;
 }
 
 function showAnswer() {
   setMode('test-answer', true, currentMode == 'test-question' ? 1 : 0);
   testAnswerViewContentP.style.fontSize = calcFontSize(sortedQuestions[index].answer) + 'px';
-  testAnswerViewContentP.innerText = sortedQuestions[index].answer;
+  testAnswerViewContentP.innerText = compile(sortedQuestions[index].answer);
+  MathJax.typeset();
   testViewCurrentQuestionP.innerText = `${index + 1}/${amount}`;
 }

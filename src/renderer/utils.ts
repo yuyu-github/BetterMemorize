@@ -27,6 +27,18 @@ export function createElement<T extends HTMLElement>(tag: string, attrs: {[key: 
   return elem as T;
 }
 
+export function escapeHTML(str: string): string {
+  return str.replace(/[&'"<>]/g, m => {
+    return {
+      '&': '&amp;',
+      "'": '&#x27;',
+      '"': '&quot;',
+      '<': '&lt;',
+      '>': '&gt;',
+    }[m]!
+  })
+}
+
 export function drawList<T>(list: T[], func: (item: T) => HTMLElement | null | undefined, reset = true) {
   if (reset) listViewListDiv.innerHTML = '';
   for (let i of list) {
