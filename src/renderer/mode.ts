@@ -33,7 +33,7 @@ export function init() {
   addEventListener('popstate', e => {
     if (e.state == null) return;
     if (e.state?.type == 'back') {
-      back();
+      backSpan.click();
       history.forward();
     }
     else if (e.state?.type == 'forward') {
