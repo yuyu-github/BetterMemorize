@@ -1,5 +1,5 @@
 declare global {
   var MathJax: {
-    typeset: () => void;
+    typeset: (e?: Element[]) => void;
   }
 }
