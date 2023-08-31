@@ -17,11 +17,11 @@
 
 @mixin bigButton() {
   @include button();
-  height: 100px;
-  width: 150px;
-  font-size: 40px;
+  height: 90px;
+  width: 135px;
+  font-size: 36px;
   font-weight: 300;
-  border-radius: 10px;
+  border-radius: 8px;
 }
 
 @mixin input() {
@@ -260,7 +260,7 @@ main {
 
   #question-content-view {
     position: absolute;
-    top: 45%;
+    top: 48%;
     left: 50%;
     transform: translate(-50%, -50%);
     margin: 0;
