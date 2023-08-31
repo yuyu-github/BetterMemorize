@@ -56,12 +56,13 @@ function command(name: string, args: string[], content: Parsed): string {
     }
     case 'fitb': {
       let value = compileParsed(content);
-      let notBlanks = Array.from(new Set(value.match(/(?<=\()[^)]+(?=\))/g)));
-      let count = Math.floor(getArgValue(args[0], 'ratio', {amount: notBlanks.length}) ?? notBlanks.length);
+      let blanks = Array.from(new Set(value.match(/(?<=\()[^)]+(?=\))/g)?.filter(i => !i.match(/^\s*$/))));
+      let count = Math.floor(getArgValue(args[0], 'ratio', {amount: blanks.length}) ?? blanks.length);
+      let notBlanks = Array.of(count);
       for (let i = 0; i < count; i++) {
         notBlanks.splice(Math.floor(Math.random() * notBlanks.length), 1);
       }
-      return value.replace(/\(([^)]+)\)/g, (m, g) => notBlanks.includes(g) ? g : '(' + '&nbsp;'.repeat(10) + ')')
+      return value.replace(/\(([^)]+)\)/g, (m, g) => g.match(/^\s*$/) ? m : notBlanks.includes(g) ? g : '(' + '\u00a0'.repeat(10) + ')')
     }
     default: return '';
   }
