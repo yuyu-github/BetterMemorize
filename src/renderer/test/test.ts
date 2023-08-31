@@ -1,7 +1,8 @@
-import { backSpan, testAnswerViewButtonOuterDiv, testAnswerViewContentP, testQuestionViewCheckButton, testQuestionViewContentP, testResultViewAgainButton, testResultViewBackButton, testResultViewCorrectAnswerRateSpan, testViewBackButton, testViewCurrentQuestionP, titleH1 } from "../elements.js";
+import { backSpan, questionContentViewDiv, testAnswerViewButtonOuterDiv, testQuestionViewCheckButton, testResultViewAgainButton, testResultViewBackButton, testResultViewCorrectAnswerRateSpan, testViewBackButton, testViewCurrentQuestionP, titleH1 } from "../elements.js";
 import { back, currentMode, setMode } from "../mode.js";
 import { compile } from "../question/compile/compile.js";
 import { Question, QuestionWithId } from "../question/question.js";
+import { showQuestionContent } from "../question/show.js";
 import { WithLastAccessTime, createElement } from "../utils.js";
 import { currentWork } from "../work/work.js";
 import { AnswerResult, cachePriority, calcPriority, getPriorityScores, resetPriorityCache, updatePriority } from "./priority.js";
@@ -99,25 +100,14 @@ export async function test(workId: string, groupId: string | null, title: string
   api.setLastTestQuestions(workId, groupId, sortedQuestions.slice(0, amount).map(i => i.id))
 }
 
-function calcFontSize(str: string) {
-  let ctx = document.createElement('canvas').getContext('2d')!;
-  let width = ctx.measureText(str).width;
-  let size = 64 - width / 15;
-  return Math.max(36, Math.ceil(size / 4) * 4);
-}
-
 function showQuestion() {
   setMode('test-question', true, currentMode == 'test-answer' ? 1 : 0);
-  testQuestionViewContentP.style.fontSize = calcFontSize(compiledQuestions[index].question) + 'px';
-  testQuestionViewContentP.innerHTML = compiledQuestions[index].question;
-  MathJax.typeset();
   testViewCurrentQuestionP.innerText = `${index + 1}/${amount}`;
+  showQuestionContent(compiledQuestions[index].question)
 }
 
 function showAnswer() {
   setMode('test-answer', true, currentMode == 'test-question' ? 1 : 0);
-  testAnswerViewContentP.style.fontSize = calcFontSize(compiledQuestions[index].answer) + 'px';
-  testAnswerViewContentP.innerText = compiledQuestions[index].answer;
-  MathJax.typeset();
   testViewCurrentQuestionP.innerText = `${index + 1}/${amount}`;
+  showQuestionContent(compiledQuestions[index].answer)
 }

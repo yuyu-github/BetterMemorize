@@ -1,10 +1,12 @@
 import { ButtonResult, showDialog } from "../dialog.js";
-import { backSpan, editQuestionViewAnswerTextarea, editQuestionViewCancelButton, editQuestionViewOkButton, editQuestionViewQuestionTextarea, listViewAddButton, listViewListDiv, listViewQuestionAddButton, menuDeleteButton, menuEditButton, titleH1 } from "../elements.js";
+import { backSpan, editQuestionViewAnswerTextarea, editQuestionViewCancelButton, editQuestionViewOkButton, editQuestionViewQuestionTextarea, listViewAddButton, listViewListDiv, listViewQuestionAddButton, menuDeleteButton, menuEditButton, questionContentViewDiv, questionViewToggleButton, titleH1 } from "../elements.js";
 import { cacheGroups, currentGroup, drawGroupList } from "../group/group.js";
 import { back, currentMode, reload, setMode } from "../mode.js";
 import { isMoving } from "../move.js";
 import { createElement, drawList } from "../utils.js";
 import { currentWork } from "../work/work.js";
+import { compile } from "./compile/compile.js";
+import { showQuestionContent } from "./show.js";
 
 export type Question = {
   question: string,
@@ -18,6 +20,9 @@ export type QuestionWithId = Question & {
 
 export let questions: {[id: string]: Question} = {};
 export let currentQuestion = '';
+
+let compiledQuestion: {question: string, answer: string} | null = null;
+let showing: 'question' | 'answer' = 'question';
 
 export function init() {
   menuEditButton.addEventListener('click', e => {
@@ -67,6 +72,18 @@ export function init() {
       e.stopImmediatePropagation();
     }
   });
+
+  questionViewToggleButton.addEventListener('click', () => {
+    if (showing == 'question') {
+      showing = 'answer';
+      questionViewToggleButton.innerText = '問題';
+      showQuestionContent(compiledQuestion!.answer);
+    } else if (showing == 'answer') {
+      showing = 'question';
+      questionViewToggleButton.innerText = '解答';
+      showQuestionContent(compiledQuestion!.question);
+    }
+  })
 
   editQuestionViewQuestionTextarea.addEventListener('input', () => {
     titleH1.innerText = editQuestionViewQuestionTextarea.value.replace('\n', ' ');
@@ -130,4 +147,11 @@ export async function updateGroupChildren() {
     ]);
   }, false);
   listViewListDiv.querySelector('& > hr:first-child, & > hr:last-child')?.remove();
+}
+
+export function showQuestion() {
+  compiledQuestion = compile(questions[currentQuestion].question, questions[currentQuestion].answer);
+  showing = 'question';
+  questionViewToggleButton.innerText = '解答';
+  showQuestionContent(compiledQuestion.question);
 }

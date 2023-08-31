@@ -258,7 +258,28 @@ main {
     }
   }
 
-  #question-view, #edit-question-view {
+  #question-content-view {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    text-align: center;
+    width: 90%;
+    white-space: pre-wrap;
+  }
+
+  #question-view {
+    .toggle {
+      @include bigButton();
+      position: absolute;
+      margin: 20px;
+      right: 0px;
+      bottom: 0px;
+    }
+  }
+
+  #edit-question-view {
     $gap: 8px;
 
     display: grid;
@@ -366,19 +387,6 @@ main {
       font-size: 16px;
       padding: 10px 20px;
       margin: 16px auto;
-    }
-  }
-
-  #test-question-view, #test-answer-view {
-    .content {
-      position: absolute;
-      top: 45%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      margin: 0;
-      text-align: center;
-      width: 90%;
-      white-space: pre-wrap;
     }
   }
 

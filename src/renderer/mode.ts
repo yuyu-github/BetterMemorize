@@ -1,7 +1,7 @@
-import { listViewAddButton, backSpan, titleH1, menuDiv, listViewDiv, editQuestionViewDiv, editQuestionViewQuestionTextarea, editQuestionViewAnswerTextarea, questionViewDiv, questionViewQuestionTextarea, questionViewAnswerTextarea, listViewListDiv, menuStartButton, startTestViewDiv, testQuestionViewDiv, testAnswerViewDiv, listViewGroupAddButton, listViewQuestionAddButton, startTestViewSettingDiv, startTestViewCustomAmountInput, testResultViewDiv, menuExportButton, listViewImportButton, testViewDiv, menuMoveButton, listViewMoveHereButton, listViewCancelMoveButton } from "./elements.js";
+import { listViewAddButton, backSpan, titleH1, menuDiv, listViewDiv, editQuestionViewDiv, editQuestionViewQuestionTextarea, editQuestionViewAnswerTextarea, questionViewDiv, listViewListDiv, menuStartButton, startTestViewDiv, testQuestionViewDiv, testAnswerViewDiv, listViewGroupAddButton, listViewQuestionAddButton, startTestViewSettingDiv, startTestViewCustomAmountInput, testResultViewDiv, menuExportButton, listViewImportButton, testViewDiv, menuMoveButton, listViewMoveHereButton, listViewCancelMoveButton, questionContentViewDiv } from "./elements.js";
 import { backGroup, currentGroup, forwardGroup, groups, updateGroups } from "./group/group.js";
 import { inMoving, type as movingType, workId as movingWorkId } from "./move.js";
-import { currentQuestion, questions, updateGroupChildren } from "./question/question.js";
+import { currentQuestion, questions, showQuestion, updateGroupChildren } from "./question/question.js";
 import { getTitleName as getTestTitleName, loadPreviousOptions } from "./test/start.js";
 import { TestOptions } from "./test/test.js";
 import { currentWork, updateWorks, works } from "./work/work.js";
@@ -79,8 +79,7 @@ export async function setMode(mode: ModeType, updateHistory = true, replaceHisto
     break;
     case 'question': {
       titleH1.innerText = questions[currentQuestion].question.replace('\n', ' ');
-      questionViewQuestionTextarea.value = questions[currentQuestion].question;
-      questionViewAnswerTextarea.value = questions[currentQuestion].answer;
+      showQuestion();
     }
     break;
     case 'add-question': {
@@ -106,12 +105,12 @@ export async function setMode(mode: ModeType, updateHistory = true, replaceHisto
     'all-work': [listViewDiv, listViewAddButton, listViewImportButton],
     'work': [menuDiv, menuStartButton, menuExportButton, listViewDiv, listViewAddButton, listViewImportButton],
     'group': [menuDiv, menuStartButton, menuMoveButton, menuExportButton, listViewDiv, listViewGroupAddButton, listViewQuestionAddButton, listViewImportButton],
-    'question': [menuDiv, menuMoveButton, questionViewDiv],
+    'question': [menuDiv, menuMoveButton, questionContentViewDiv, questionViewDiv],
     'add-question': [editQuestionViewDiv],
     'edit-question': [editQuestionViewDiv],
     'start-test': [startTestViewDiv],
-    'test-question': [testViewDiv, testQuestionViewDiv],
-    'test-answer': [testViewDiv, testAnswerViewDiv],
+    'test-question': [questionContentViewDiv, testViewDiv, testQuestionViewDiv],
+    'test-answer': [questionContentViewDiv, testViewDiv, testAnswerViewDiv],
     'test-result': [testResultViewDiv],
   } as {[key in ModeType]: HTMLElement[]})[mode];
   switch (mode) {
@@ -134,7 +133,7 @@ export async function setMode(mode: ModeType, updateHistory = true, replaceHisto
   [
     menuDiv, menuStartButton, menuMoveButton, menuExportButton,
     listViewDiv, listViewMoveHereButton, listViewCancelMoveButton, listViewAddButton, listViewGroupAddButton, listViewQuestionAddButton, listViewImportButton,
-    editQuestionViewDiv, questionViewDiv, startTestViewDiv, testViewDiv, testQuestionViewDiv, testAnswerViewDiv, testResultViewDiv
+    questionContentViewDiv, editQuestionViewDiv, questionViewDiv, startTestViewDiv, testViewDiv, testQuestionViewDiv, testAnswerViewDiv, testResultViewDiv
   ].forEach(i => i.style.display = viewElems.includes(i) ? '' : 'none');
 
   switch (mode) {
