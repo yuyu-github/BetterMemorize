@@ -12,6 +12,7 @@ export type TestOptions = {
 }
 
 let sortedQuestions: QuestionWithId[] = [];
+let compiledQuestions: {question: string, answer: string}[] = [];
 let amount = 0;
 let index = 0;
 let results: AnswerResult[] = [];
@@ -81,6 +82,7 @@ export async function test(workId: string, groupId: string | null, title: string
   }
   sortScores.sort((a, b) => b[1] - a[1]);
   sortedQuestions = sortScores.map(i => questions[i[0]]);
+  compiledQuestions = sortedQuestions.map(i => compile(i.question, i.answer));
   
   if (typeof options.amount == 'number') amount = options.amount;
   else {
@@ -106,16 +108,16 @@ function calcFontSize(str: string) {
 
 function showQuestion() {
   setMode('test-question', true, currentMode == 'test-answer' ? 1 : 0);
-  testQuestionViewContentP.style.fontSize = calcFontSize(sortedQuestions[index].question) + 'px';
-  testQuestionViewContentP.innerHTML = compile(sortedQuestions[index].question);
+  testQuestionViewContentP.style.fontSize = calcFontSize(compiledQuestions[index].question) + 'px';
+  testQuestionViewContentP.innerHTML = compiledQuestions[index].question;
   MathJax.typeset();
   testViewCurrentQuestionP.innerText = `${index + 1}/${amount}`;
 }
 
 function showAnswer() {
   setMode('test-answer', true, currentMode == 'test-question' ? 1 : 0);
-  testAnswerViewContentP.style.fontSize = calcFontSize(sortedQuestions[index].answer) + 'px';
-  testAnswerViewContentP.innerText = compile(sortedQuestions[index].answer);
+  testAnswerViewContentP.style.fontSize = calcFontSize(compiledQuestions[index].answer) + 'px';
+  testAnswerViewContentP.innerText = compiledQuestions[index].answer;
   MathJax.typeset();
   testViewCurrentQuestionP.innerText = `${index + 1}/${amount}`;
 }
