@@ -202,7 +202,7 @@ function peg$parse(input, options) {
   var peg$e11 = peg$otherExpectation("space");
   var peg$e12 = peg$classExpectation([" ", "\t", "\n", "\r"], false, false);
 
-  var peg$f0 = function(name, args, values) {return {type: 'command', name, args: args ?? [], values: values ?? []}};
+  var peg$f0 = function(name, args, values) {return {type: 'command', name, args: args ?? [], values: values ?? [], raw: text()}};
   var peg$f1 = function(text) {return {type: 'text', value: text.join('')}};
   var peg$currPos = 0;
   var peg$savedPos = 0;

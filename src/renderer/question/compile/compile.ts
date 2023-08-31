@@ -8,7 +8,8 @@ type Parsed = ({
   type: 'command',
   name: string,
   args: string[],
-  values: Parsed
+  values: Parsed,
+  raw: string
 })[]
 
 export function compile(text: string): string {
@@ -21,23 +22,25 @@ export function compile(text: string): string {
 }
 
 type compileOptions = {
+  command: boolean;
   escapeBackslash: boolean;
 }
 function compileParsed(data: Parsed, options: Partial<compileOptions> = {}): string {
   options = {
+    command: true,
     escapeBackslash: true,
     ...options
   } as compileOptions;
 
   let str = '';
   for (let i of data) {
-    if (i.type == 'text') {
-      let value = i.value;
+    if (i.type == 'command' && options.command) str += command(i.name, i.args, i.values);
+    else {
+      let value = i.type == 'text' ? i.value : i.raw;
       value = escapeHTML(value);
       if (options.escapeBackslash) value = value.replaceAll('\\', '\\\\');
       str += value;
     }
-    else if (i.type == 'command') str += command(i.name, i.args, i.values);
   }
   return str;
 }
@@ -46,10 +49,10 @@ function command(name: string, args: string[], content: Parsed): string {
   switch (name) {
     case '$':
     case 'math': {
-      return '\\(' + compileParsed(content, {escapeBackslash: false}) + '\\)';
+      return '\\(' + compileParsed(content, {escapeBackslash: false, command: false}) + '\\)';
     }
     case 'ce': {
-      return '\\(\\ce{' + compileParsed(content) + '}\\)';
+      return '\\(\\ce{' + compileParsed(content, {command: false}) + '}\\)';
     }
     case 'fitb': {
       let value = compileParsed(content);
