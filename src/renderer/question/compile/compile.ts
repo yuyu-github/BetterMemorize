@@ -14,14 +14,14 @@ type Parsed = ({
 })[]
 
 type Capture = {
-
+  answer?: string
 }
 
 export const defaultCapture = Symbol('default');
 
 export function compile(questionText: string, answerText: string): {question: string, answer: string} {
   let captures = {};
-  let question, answer
+  let question, answer;
   try {
     let parsed = parse(questionText) as Parsed;
     question = compileParsed(parsed, captures);
@@ -72,36 +72,47 @@ function command(name: string, args: string[], content: Parsed, captures: {[labe
   switch (name) {
     case '$':
     case 'math': {
-      return {result: '\\(' + compileParsed(content, {escapeBackslash: false, command: false}) + '\\)'};
+      return {result: '\\(' + compileParsed(content, captures, {escapeBackslash: false, command: false}) + '\\)'};
     }
     case 'ce': {
-      return {result: '\\(\\ce{' + compileParsed(content, {command: false}) + '}\\)'};
+      return {result: '\\(\\ce{' + compileParsed(content, captures, {command: false}) + '}\\)'};
     }
     case 'fitb': {
       let value = compileParsed(content, captures);
       let blanks = Array.from(new Set(value.match(/(?<=\()[^)]+(?=\))/g)?.filter(i => !i.match(/^\s*$/))));
       let count = Math.floor(getArgValue(args[0], 'ratio', {amount: blanks.length}) ?? blanks.length);
-      let notBlanks = Array.of(count);
+      let notBlanks = blanks.concat();
       for (let i = 0; i < count; i++) {
         notBlanks.splice(Math.floor(Math.random() * notBlanks.length), 1);
       }
       return {
         result: value.replace(/\(([^)]+)\)/g, (m, g) => g.match(/^\s*$/) ? m : notBlanks.includes(g) ? g : '(' + '\u00a0'.repeat(10) + ')'),
-        capture: value.replace(/\(([^)]+)\)/g, (m, g) => g.match(/^\s*$/) || notBlanks.includes(g) ? m : g)
+        capture: {
+          answer: value.replace(/\(([^)]+)\)/g, (m, g) => g.match(/^\s*$/) || !notBlanks.includes(g) ? m : g)
+        }
       }
+    }
+    case 'answer': {
+      return {result: getArgValue(args[0], 'capture', {captures: captures})?.answer ?? ''};
     }
     default: return {result: ''};
   }
 }
 
-function getArgValue(raw: string | null, type: 'ratio', extra) {
-  if (raw == null) return;
+function getArgValue(raw: string | null, type: 'ratio', extra: {amount: number}): number | null;
+function getArgValue(raw: string | null, type: 'capture', extra: {captures: {[label: string]: Capture, [defaultCapture]?: Capture}}): Capture | null;
+function getArgValue(raw: string | null, type: 'ratio' | 'capture', extra) {
   switch (type) {
     case 'ratio': {
+      if (raw == null) return null;
       let value: number;
       if (raw.endsWith('%')) value = extra.amount * Math.min(1, Number(raw.slice(0, -1)) / 100);
       else value = Math.min(extra.amount, Number(raw))
       return Number.isNaN(value) ? null : value;
+    }
+    case 'capture': {
+      if (raw == null) return extra.captures[defaultCapture] ?? null;
+      return extra.captures[raw] ?? null;
     }
   }
 }
