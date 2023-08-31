@@ -20,5 +20,9 @@ initExport();
 initShortcut();
 initMove();
 
+addEventListener('click', e => {
+  if ((e.target as HTMLElement).tagName == 'BUTTON') (e.target as HTMLElement).blur();
+})
+
 await setMode('all-work');
 document.documentElement.style.display = 'block';
