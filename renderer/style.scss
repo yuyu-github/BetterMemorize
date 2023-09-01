@@ -107,6 +107,10 @@ label:has(input[type=radio]) {
   }
 }
 
+mjx-container * {
+  font-family: inherit;
+}
+
 html {
   display: none;
 }

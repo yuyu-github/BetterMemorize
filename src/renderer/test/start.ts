@@ -1,4 +1,4 @@
-import { listViewListDiv, menuStartButton, questionViewAnswerTextarea, startTestViewCustomAmountInput, startTestViewDiv, startTestViewSettingDiv, startTestViewStartButton } from "../elements.js";
+import { listViewListDiv, menuStartButton, startTestViewCustomAmountInput, startTestViewDiv, startTestViewSettingDiv, startTestViewStartButton } from "../elements.js";
 import { currentGroup, groups } from "../group/group.js";
 import { currentMode, setMode } from "../mode.js";
 import { Question, QuestionWithId } from "../question/question.js";
