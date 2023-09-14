@@ -9,7 +9,6 @@ function calcFontSize(content: string) {
   let widthSize = mainElem.clientWidth / elem.clientWidth * 0.84 * 16;
   let heightSize = mainElem.clientHeight / elem.clientHeight * 0.84 * 16;
   elem.remove();
-  console.log(widthSize);
   let fontSize = content.includes('\n') ? Math.min(widthSize, heightSize) : Math.max(widthSize, Math.min(widthSize * 2, 45));
   return Math.max(30, Math.min(fontSize, 70));
 }
