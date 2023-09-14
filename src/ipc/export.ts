@@ -45,13 +45,13 @@ function getData(workId: string, dir: string, options: {includeStatData: boolean
   let groupsFile = path.join(dir, 'groups.json');
   let groupIds: string[] = fs.existsSync(groupsFile) ? JSON.parse(fs.readFileSync(groupsFile).toString()) : [];
   let questionsFile = path.join(dir, 'questions.json');
-  let questionEntries: [string, object][] = Object.entries(JSON.parse(fs.readFileSync(questionsFile).toString()));
-  let questions: object[] = fs.existsSync(questionsFile) ? questionEntries.map(i => i[1]) : [];
+  let questionEntries: [string, object][] = fs.existsSync(questionsFile) ? Object.entries(JSON.parse(fs.readFileSync(questionsFile).toString())) : [];
+  let questions: object[] = questionEntries.map(i => i[1]);
   let priority: object[] = [];
   if (options.includeStatData) {
     let priorityFile = path.join(dir, 'priority.json');
-    let priorityRawData = JSON.parse(fs.readFileSync(priorityFile).toString());
-    priority = fs.existsSync(priorityFile) ? questionEntries.map(i => priorityRawData[i[0]]) : [];
+    let priorityRawData = fs.existsSync(priorityFile) ? JSON.parse(fs.readFileSync(priorityFile).toString()) : [];
+    priority = questionEntries.map(i => priorityRawData[i[0]]);
   }
   let groups = groupIds.map(id => getData(workId, path.join(dataFolder, 'works', workId, 'groups', id), options))
   return {info, questions, groups, priority};
