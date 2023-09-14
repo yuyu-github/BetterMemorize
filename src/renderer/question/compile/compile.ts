@@ -29,7 +29,7 @@ export function compile(questionText: string, answerText: string): {question: st
     question = escapeHTML(questionText);
   }
   try {
-    let parsed = parse(answerText) as Parsed;
+    let parsed = parse(answerText != '' ? answerText : '/answer') as Parsed;
     answer = compileParsed(parsed, captures);
   } catch {
     answer = escapeHTML(answerText);
