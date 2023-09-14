@@ -72,7 +72,9 @@ function command(name: string, args: string[], content: Parsed, captures: {[labe
   switch (name) {
     case '$':
     case 'math': {
-      return {result: '\\(' + compileParsed(content, captures, {escapeBackslash: false, command: false}) + '\\)'};
+      let value = compileParsed(content, captures, {escapeBackslash: false, command: false});
+      if (args[0] != null) return {result: `\\(\\begin{${args[0]}}${value}\\end{${args[0]}}\\)`}
+      return {result: `\\(${value}\\)`};
     }
     case 'ce': {
       return {result: '\\(\\ce{' + compileParsed(content, captures, {command: false}) + '}\\)'};
