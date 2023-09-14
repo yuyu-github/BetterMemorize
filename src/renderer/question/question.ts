@@ -86,7 +86,7 @@ export function init() {
   })
 
   editQuestionViewQuestionTextarea.addEventListener('input', () => {
-    titleH1.innerText = editQuestionViewQuestionTextarea.value.replace('\n', ' ');
+    titleH1.innerText = editQuestionViewQuestionTextarea.value.replaceAll('\n', ' ');
   })
 
   backSpan.addEventListener('click', e => {

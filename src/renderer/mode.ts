@@ -78,7 +78,7 @@ export async function setMode(mode: ModeType, updateHistory = true, replaceHisto
     }
     break;
     case 'question': {
-      titleH1.innerText = questions[currentQuestion].question.replace('\n', ' ');
+      titleH1.innerText = questions[currentQuestion].question.replaceAll('\n', ' ');
       showQuestion();
     }
     break;
@@ -89,7 +89,7 @@ export async function setMode(mode: ModeType, updateHistory = true, replaceHisto
     }
     break;
     case 'edit-question': {
-      titleH1.innerText = questions[currentQuestion].question.replace('\n', ' ');
+      titleH1.innerText = questions[currentQuestion].question.replaceAll('\n', ' ');
       editQuestionViewQuestionTextarea.value = questions[currentQuestion].question;
       editQuestionViewAnswerTextarea.value = questions[currentQuestion].answer;
     }
