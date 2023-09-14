@@ -19,7 +19,7 @@ contextBridge.exposeInMainWorld('api', {
   importWork: (path, options) => ipcRenderer.invoke('importWork', path, options),
   importGroup: (path, workId, options) => ipcRenderer.invoke('importGroup', path, workId, options),
   importSubGroup: (path, workId, groupId, options) => ipcRenderer.invoke('importSubGroup', path, workId, groupId, options),
-  getExportTargetFile: () => ipcRenderer.invoke('getExportTargetFile'),
+  getExportTargetFile: (name) => ipcRenderer.invoke('getExportTargetFile', name),
   exportWork: (path, workId, options) => ipcRenderer.invoke('exportWork', path, workId, options),
   exportGroup: (path, workId, groupId, options) => ipcRenderer.invoke('exportGroup', path, workId, groupId, options),
   updateLastAccessTime: (workId, groupId = null) => ipcRenderer.invoke('updateLastAccessTime', workId, groupId),

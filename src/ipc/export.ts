@@ -4,7 +4,7 @@ import { dataFolder } from "../utils.js";
 import { dialog } from "electron";
 import { mainWindow } from "../main.js";
 
-export function getExportTargetFile() {
+export function getExportTargetFile(e, name: string) {
   return dialog.showSaveDialogSync(mainWindow!, {
     title: 'エクスポート',
     buttonLabel: 'エクスポート',
@@ -12,7 +12,8 @@ export function getExportTargetFile() {
       {name: 'BetterMemorizeファイル', extensions: ['bmr']},
       {name: 'CSVファイル', extensions: ['csv']},
     ],
-    properties: ["createDirectory"]
+    properties: ["createDirectory"],
+    defaultPath: name,
   })
 }
 

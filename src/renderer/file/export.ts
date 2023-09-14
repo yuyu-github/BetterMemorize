@@ -1,12 +1,13 @@
 import { ButtonResult, showDialog } from "../dialog.js";
 import { menuExportButton } from "../elements.js";
-import { currentGroup } from "../group/group.js";
+import { currentGroup, groups } from "../group/group.js";
 import { currentMode } from "../mode.js";
-import { currentWork } from "../work/work.js";
+import { currentWork, works } from "../work/work.js";
 
 export function init() {
   menuExportButton.addEventListener('click', async () => {
-    let path = await api.getExportTargetFile();
+    let name = currentMode == 'work' ? works[currentWork].name : currentMode == 'group' ? groups[currentGroup].name : '';
+    let path = await api.getExportTargetFile(name);
     if (path == null) return;
     
     let options = {

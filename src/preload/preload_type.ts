@@ -23,7 +23,7 @@ export interface IApi {
   importWork: (path: string, options: object) => Promise<void>;
   importGroup: (path: string, workId: string, options: object) => Promise<void>;
   importSubGroup: (path: string, workId: string, groupId: string, options: object) => Promise<void>;
-  getExportTargetFile: () => Promise<string>;
+  getExportTargetFile: (name: string) => Promise<string>;
   exportWork: (path: string, workId: string, options: object) => Promise<void>;
   exportGroup: (path: string, workId: string, groupId: string, options: object) => Promise<void>;
   updateLastAccessTime: (workId: string, groupId?: string | null) => Promise<void>;
