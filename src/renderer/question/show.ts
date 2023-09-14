@@ -6,11 +6,11 @@ function calcFontSize(content: string) {
   elem.innerHTML = content;
   document.body.appendChild(elem);
   MathJax.typeset([elem]);
-  let widthSize = mainElem.clientWidth / elem.clientWidth * 0.84 * 16;
-  let heightSize = mainElem.clientHeight / elem.clientHeight * 0.84 * 16;
+  let widthSize = mainElem.clientWidth / elem.clientWidth * 0.88 * 16;
+  let heightSize = mainElem.clientHeight / elem.clientHeight * 0.88 * 16;
   elem.remove();
   let fontSize = content.includes('\n') ? Math.min(widthSize, heightSize) : Math.max(widthSize, Math.min(widthSize * 2, 45));
-  return Math.max(30, Math.min(fontSize, 70));
+  return Math.max(mainElem.clientHeight / 20, Math.min(fontSize, mainElem.clientHeight / 10));
 }
 
 export function showQuestionContent(content: string) {
