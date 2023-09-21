@@ -30,8 +30,8 @@ export default (args: string[], content: Parsed, captures: {[label: string]: Cap
   },
   'answer': {result: getArgValue(args[0], 'capture', {captures: captures})?.answer ?? ''},
   'link': {result: `<a href="${getArgValue(args[0], 'string')}">${compileParsed(content, captures)}</a>`},
-  'bold': {result: `<b>${compileParsed(content, captures)}</b>`},
-  'italic': {result: `<i>${compileParsed(content, captures)}</i>`},
+  'bold': {result: `<strong>${compileParsed(content, captures)}</strong>`},
+  'italic': {result: `<em>${compileParsed(content, captures)}</em>`},
   'strike': {result: `<del>${compileParsed(content, captures)}</del>`},
 })
 
