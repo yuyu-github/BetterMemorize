@@ -1,7 +1,8 @@
 import { escapeHTML } from '../../utils.js';
 import { parse } from './parser.js';
+import commandProcess from './command.js';
 
-type Parsed = ({
+export type Parsed = ({
   type: 'text',
   value: string
 } | {
@@ -13,7 +14,8 @@ type Parsed = ({
   raw: string
 })[]
 
-type Capture = {
+export type CommandResult = {result: string, capture?: Capture};
+export type Capture = {
   answer?: string
 }
 
@@ -41,7 +43,7 @@ type compileOptions = {
   command: boolean;
   escapeBackslash: boolean;
 }
-function compileParsed(data: Parsed, captures: {[label: string]: Capture, [defaultCapture]?: Capture}, options: Partial<compileOptions> = {}): string {
+export function compileParsed(data: Parsed, captures: {[label: string]: Capture, [defaultCapture]?: Capture}, options: Partial<compileOptions> = {}): string {
   options = {
     command: true,
     escapeBackslash: true,
@@ -68,53 +70,13 @@ function compileParsed(data: Parsed, captures: {[label: string]: Capture, [defau
   return compiled;
 }
 
-function command(name: string, args: string[], content: Parsed, captures: {[label: string]: Capture}): {result: string, capture?: Capture} {
-  switch (name) {
-    case '$':
-    case 'math': {
-      let value = compileParsed(content, captures, {escapeBackslash: false, command: false});
-      if (args[0] != null) return {result: `\\(\\begin{${args[0]}}${value}\\end{${args[0]}}\\)`}
-      return {result: `\\(${value}\\)`};
-    }
-    case 'ce': {
-      return {result: '\\(\\ce{' + compileParsed(content, captures, {command: false}) + '}\\)'};
-    }
-    case 'fitb': {
-      let value = compileParsed(content, captures);
-      let blanks = Array.from(new Set(value.match(/(?<=\()[^)]+(?=\))/g)?.filter(i => !i.match(/^\s*$/))));
-      let count = Math.floor(getArgValue(args[0], 'ratio', {amount: blanks.length}) ?? blanks.length);
-      let notBlanks = blanks.concat();
-      for (let i = 0; i < count; i++) {
-        notBlanks.splice(Math.floor(Math.random() * notBlanks.length), 1);
-      }
-      return {
-        result: value.replace(/\(([^)]+)\)/g, (m, g) => g.match(/^\s*$/) ? m : notBlanks.includes(g) ? g : '(' + '\u00a0'.repeat(10) + ')'),
-        capture: {
-          answer: value.replace(/\(([^)]+)\)/g, (m, g) => g.match(/^\s*$/) || !notBlanks.includes(g) ? m : g)
-        }
-      }
-    }
-    case 'answer': {
-      return {result: getArgValue(args[0], 'capture', {captures: captures})?.answer ?? ''};
-    }
-    default: return {result: ''};
+function command(name: string, args: string[], content: Parsed, captures: {[label: string]: Capture}): CommandResult {
+  let commandList = commandProcess(args, content, captures);
+  if (name in commandList) {
+    let value = commandList[name];
+    if (typeof value == 'string') value = commandList[value];
+    if (typeof value == 'function') return value();
+    if (typeof value == 'object') return value;
   }
-}
-
-function getArgValue(raw: string | null, type: 'ratio', extra: {amount: number}): number | null;
-function getArgValue(raw: string | null, type: 'capture', extra: {captures: {[label: string]: Capture, [defaultCapture]?: Capture}}): Capture | null;
-function getArgValue(raw: string | null, type: 'ratio' | 'capture', extra) {
-  switch (type) {
-    case 'ratio': {
-      if (raw == null) return null;
-      let value: number;
-      if (raw.endsWith('%')) value = extra.amount * Math.min(1, Number(raw.slice(0, -1)) / 100);
-      else value = Math.min(extra.amount, Number(raw))
-      return Number.isNaN(value) ? null : value;
-    }
-    case 'capture': {
-      if (raw == null) return extra.captures[defaultCapture] ?? null;
-      return extra.captures[raw] ?? null;
-    }
-  }
+  return {result: ''};
 }
