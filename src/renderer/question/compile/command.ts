@@ -1,3 +1,4 @@
+import { escapeHTML } from "../../utils.js";
 import { Capture, CommandResult, Parsed, compileParsed, defaultCapture } from "./compile.js";
 
 export default (args: string[], content: Parsed, captures: {[label: string]: Capture}): {[type: string]: string | CommandResult | (() => CommandResult)} => ({
@@ -24,7 +25,8 @@ export default (args: string[], content: Parsed, captures: {[label: string]: Cap
       }
     }
   },
-  'answer': {result: getArgValue(args[0], 'capture', {captures: captures})?.answer ?? ''}
+  'answer': {result: getArgValue(args[0], 'capture', {captures: captures})?.answer ?? ''},
+  'link': {result: `<a href="${getArgValue(args[0], 'string')}">${compileParsed(content, captures)}</a>`}
 })
 
 function getArgValue(raw: string | null, type: 'ratio', extra: {amount: number}): number | null;
@@ -42,6 +44,9 @@ function getArgValue(raw: string | null, type: 'ratio' | 'capture' | 'string', e
     case 'capture': {
       if (raw == null) return extra.captures[defaultCapture] ?? null;
       return extra.captures[raw] ?? null;
+    }
+    case 'string': {
+      return escapeHTML(raw ?? '');
     }
   }
 }

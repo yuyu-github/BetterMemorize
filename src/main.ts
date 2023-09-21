@@ -1,4 +1,4 @@
-import { app, ipcMain, BrowserWindow, Menu } from 'electron';
+import { app, ipcMain, BrowserWindow, Menu, shell } from 'electron';
 import path from 'path';
 import fs from 'fs';
 import { env } from 'process';
@@ -31,6 +31,11 @@ function createMainWindow() {
   else mainWindow.setMenu(menu);
 
   mainWindow.loadFile('renderer/index.html');
+
+  mainWindow.webContents.on('will-navigate', (e, url) => {
+    e.preventDefault();
+    shell.openExternal(url)
+  })
 
   mainWindow.on('closed', () => {
     mainWindow = null;
