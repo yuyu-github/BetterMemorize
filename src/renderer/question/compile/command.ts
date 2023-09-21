@@ -6,6 +6,7 @@ export default (args: string[], content: Parsed, captures: {[label: string]: Cap
   'l': 'link',
   'b': 'bold',
   'i': 'italic',
+  's': 'strike',
   'math': () => {
     let value = compileParsed(content, captures, {escapeBackslash: false, command: false});
     if (args[0] != null) return {result: `\\(\\begin{${args[0]}}${value}\\end{${args[0]}}\\)`}
@@ -31,6 +32,7 @@ export default (args: string[], content: Parsed, captures: {[label: string]: Cap
   'link': {result: `<a href="${getArgValue(args[0], 'string')}">${compileParsed(content, captures)}</a>`},
   'bold': {result: `<b>${compileParsed(content, captures)}</b>`},
   'italic': {result: `<i>${compileParsed(content, captures)}</i>`},
+  'strike': {result: `<del>${compileParsed(content, captures)}</del>`},
 })
 
 function getArgValue(raw: string | null, type: 'ratio', extra: {amount: number}): number | null;
