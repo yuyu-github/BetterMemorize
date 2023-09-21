@@ -1,9 +1,10 @@
 import { escapeHTML } from "../../utils.js";
-import { Capture, CommandResult, Parsed, compileParsed, defaultCapture } from "./compile.js";
+import { Capture, CommandResult, Parsed, compile, compileParsed, defaultCapture } from "./compile.js";
 
 export default (args: string[], content: Parsed, captures: {[label: string]: Capture}): {[type: string]: string | CommandResult | (() => CommandResult)} => ({
   $: 'math',
   'l': 'link',
+  'b': 'bold',
   'math': () => {
     let value = compileParsed(content, captures, {escapeBackslash: false, command: false});
     if (args[0] != null) return {result: `\\(\\begin{${args[0]}}${value}\\end{${args[0]}}\\)`}
@@ -26,7 +27,8 @@ export default (args: string[], content: Parsed, captures: {[label: string]: Cap
     }
   },
   'answer': {result: getArgValue(args[0], 'capture', {captures: captures})?.answer ?? ''},
-  'link': {result: `<a href="${getArgValue(args[0], 'string')}">${compileParsed(content, captures)}</a>`}
+  'link': {result: `<a href="${getArgValue(args[0], 'string')}">${compileParsed(content, captures)}</a>`},
+  'bold': {result: `<b>${compileParsed(content, captures)}</b>`}
 })
 
 function getArgValue(raw: string | null, type: 'ratio', extra: {amount: number}): number | null;
